@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Admin Panel - Gavin Games</title>
+<style>
+body { font-family: Arial; background:#111; color:#fff; margin:0; }
+header { background:#222; padding:15px; text-align:center; font-size:24px; }
+section { padding:20px; }
+input, button { padding:10px; margin:5px; border:none; border-radius:5px; }
+button { cursor:pointer; background:#4CAF50; color:white; }
+button.delete { background:#e74c3c; }
+.card { background:#1e1e1e; padding:15px; margin:10px 0; border-radius:10px; }
+</style>
+</head>
+
+<body>
+
+<header>Admin Panel</header>
+
+<section>
+<h2>Add Game</h2>
+<input type="text" id="gameName" placeholder="Game Name">
+<input type="text" id="gameLink" placeholder="Game Embed Link">
+<button onclick="addGame()">Add Game</button>
+</section>
+
+<section>
+<h2>Games List</h2>
+<div id="gameList"></div>
+</section>
+
+<section>
+<h2>Suggestions (Manual)</h2>
+<div id="suggestions">
+<div class="card">Check Formspree dashboard for real suggestions</div>
+</div>
+</section>
+
+<script>
+let games = JSON.parse(localStorage.getItem("games") || "[]");
+
+function saveGames() {
+  localStorage.setItem("games", JSON.stringify(games));
+}
+
+function renderGames() {
+  const list = document.getElementById("gameList");
+  list.innerHTML = "";
+  games.forEach((g, i) => {
+    list.innerHTML += `
+      <div class="card">
+        <strong>${g.name}</strong><br>
+        <small>${g.link}</small><br>
+        <button onclick="previewGame('${g.link}')">Preview</button>
+        <button class="delete" onclick="deleteGame(${i})">Delete</button>
+      </div>
+    `;
+  });
+}
+
+function addGame() {
+  const name = document.getElementById("gameName").value;
+  const link = document.getElementById("gameLink").value;
+  if (!name || !link) return;
+  games.push({name, link});
+  saveGames();
+  renderGames();
+}
+
+function deleteGame(index) {
+  games.splice(index, 1);
+  saveGames();
+  renderGames();
+}
+
+function previewGame(link) {
+  const win = window.open("about:blank");
+  win.document.write(`
+    <html>
+    <body style="margin:0">
+    <iframe src="${link}" style="width:100%;height:100%;border:none;"></iframe>
+    </body>
+    </html>
+  `);
+  win.document.close();
+}
+
+renderGames();
+</script>
+
+</body>
+</html>
