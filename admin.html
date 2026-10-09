@@ -7,138 +7,69 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg: #0f0f0f;
-      --surface: #1a1a1a;
-      --surface2: #242424;
-      --border: #2e2e2e;
-      --text: #f0f0f0;
-      --muted: #888;
-      --accent: #7c6fff;
-      --danger: #ff5555;
-      --success: #50c878;
-      --radius: 10px;
+      --bg: #0f0f0f; --surface: #1a1a1a; --surface2: #242424;
+      --border: #2e2e2e; --text: #f0f0f0; --muted: #888;
+      --accent: #7c6fff; --danger: #ff5555; --success: #50c878; --radius: 10px;
     }
     body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
-
-    /* LOGIN */
     #login-screen { width: 100%; max-width: 360px; }
     #login-screen h1 { font-size: 20px; font-weight: 600; margin-bottom: 6px; }
     #login-screen p { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
+    #admin-screen { display: none; width: 100%; max-width: 600px; }
+    .header-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+    .header-row h1 { font-size: 20px; font-weight: 600; }
+    .logout-btn { font-size: 12px; color: var(--muted); background: none; border: none; cursor: pointer; font-family: inherit; }
+    .logout-btn:hover { color: var(--danger); }
 
-    /* ADMIN */
-    #admin-screen { display: none; width: 100%; max-width: 560px; }
-    #admin-screen h1 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
-    #admin-screen .sub { font-size: 13px; color: var(--muted); margin-bottom: 28px; }
+    /* TABS */
+    .tabs { display: flex; gap: 4px; margin-bottom: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 6px; }
+    .tab { flex: 1; padding: 8px; border-radius: var(--radius); font-size: 13px; font-weight: 500; cursor: pointer; border: none; background: none; color: var(--muted); font-family: inherit; transition: all 0.15s; }
+    .tab:hover { color: var(--text); }
+    .tab.active { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
 
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 24px;
-      margin-bottom: 16px;
-    }
-
-    .card h2 { font-size: 14px; font-weight: 500; margin-bottom: 16px; color: var(--text); }
-
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 16px; }
+    .card h2 { font-size: 14px; font-weight: 500; margin-bottom: 16px; }
     label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; margin-top: 14px; }
     label:first-of-type { margin-top: 0; }
-
-    input, select, textarea {
-      width: 100%;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 9px 12px;
-      font-size: 13px;
-      color: var(--text);
-      font-family: inherit;
-      transition: border-color 0.15s;
-    }
+    input, select, textarea { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 9px 12px; font-size: 13px; color: var(--text); font-family: inherit; transition: border-color 0.15s; }
     input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); }
     input::placeholder, textarea::placeholder { color: var(--muted); }
-    textarea { resize: vertical; min-height: 80px; }
+    textarea { resize: vertical; min-height: 70px; }
     select option { background: var(--surface2); }
-
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .btn-row { display: flex; gap: 10px; margin-top: 20px; }
-
-    .btn {
-      flex: 1;
-      padding: 10px;
-      border-radius: var(--radius);
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      border: 1px solid var(--border);
-      background: var(--surface2);
-      color: var(--muted);
-      font-family: inherit;
-      transition: color 0.15s, border-color 0.15s;
-    }
+    .btn { flex: 1; padding: 10px; border-radius: var(--radius); font-size: 13px; font-weight: 500; cursor: pointer; border: 1px solid var(--border); background: var(--surface2); color: var(--muted); font-family: inherit; transition: color 0.15s, border-color 0.15s; }
     .btn:hover { color: var(--text); border-color: #444; }
     .btn-primary { background: var(--accent); color: #fff; border-color: transparent; flex: 2; }
     .btn-primary:hover { opacity: 0.9; color: #fff; }
     .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-    .btn-danger { background: none; border-color: var(--border); color: var(--muted); }
-    .btn-danger:hover { border-color: var(--danger); color: var(--danger); }
-
-    .status {
-      font-size: 13px;
-      padding: 10px 14px;
-      border-radius: var(--radius);
-      margin-top: 14px;
-      display: none;
-    }
+    .status { font-size: 13px; padding: 10px 14px; border-radius: var(--radius); margin-top: 14px; display: none; }
     .status.success { background: rgba(80,200,120,0.1); color: var(--success); border: 1px solid rgba(80,200,120,0.2); display: block; }
     .status.error { background: rgba(255,85,85,0.1); color: var(--danger); border: 1px solid rgba(255,85,85,0.2); display: block; }
     .status.loading { background: rgba(124,111,255,0.1); color: var(--accent); border: 1px solid rgba(124,111,255,0.2); display: block; }
-
     .token-note { font-size: 11px; color: var(--muted); margin-top: 8px; line-height: 1.6; }
     .token-note a { color: var(--accent); }
-
-    .tag-preview {
-      display: inline-block;
-      font-size: 11px;
-      font-weight: 600;
-      padding: 2px 8px;
-      border-radius: 20px;
-      margin-left: 6px;
-      vertical-align: middle;
-    }
-    .tag-new { background: rgba(124,111,255,0.2); color: var(--accent); }
-    .tag-fix { background: rgba(80,200,120,0.12); color: #50c878; }
-    .tag-update { background: rgba(255,180,50,0.12); color: #ffb432; }
-
-    .preview-box {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 12px 14px;
-      margin-top: 14px;
-      font-size: 13px;
-      display: flex;
-      gap: 16px;
-    }
-    .preview-date { color: var(--muted); font-size: 12px; min-width: 72px; padding-top: 2px; }
-
-    .existing-entry {
-      display: flex;
-      gap: 16px;
-      padding: 12px 0;
-      border-bottom: 1px solid var(--border);
-      font-size: 13px;
-      align-items: flex-start;
-    }
-    .existing-entry:last-child { border-bottom: none; }
-    .existing-date { color: var(--muted); font-size: 12px; min-width: 72px; padding-top: 2px; }
-
     .token-row { display: flex; gap: 8px; }
     .token-row input { flex: 1; font-family: monospace; font-size: 12px; }
     .token-row button { padding: 9px 14px; white-space: nowrap; }
+    .tag-preview { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px; margin-right: 6px; vertical-align: middle; }
+    .tag-new { background: rgba(124,111,255,0.2); color: var(--accent); }
+    .tag-fix { background: rgba(80,200,120,0.12); color: #50c878; }
+    .tag-update { background: rgba(255,180,50,0.12); color: #ffb432; }
+    .preview-box { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; margin-top: 14px; font-size: 13px; display: flex; gap: 16px; }
+    .preview-date { color: var(--muted); font-size: 12px; min-width: 72px; padding-top: 2px; }
+    .existing-entry { display: flex; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+    .existing-entry:last-child { border-bottom: none; }
+    .existing-date { color: var(--muted); font-size: 12px; min-width: 72px; padding-top: 2px; }
 
-    .logout-btn { font-size: 12px; color: var(--muted); background: none; border: none; cursor: pointer; padding: 0; font-family: inherit; }
-    .logout-btn:hover { color: var(--danger); }
-
-    .header-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+    /* GAME PREVIEW CARD */
+    .game-card-preview { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-top: 14px; display: flex; align-items: center; gap: 14px; }
+    .game-card-preview .icon { font-size: 28px; }
+    .game-card-preview h3 { font-size: 14px; font-weight: 500; margin-bottom: 3px; }
+    .game-card-preview p { font-size: 12px; color: var(--muted); }
+    .slug-preview { font-size: 11px; color: var(--muted); margin-top: 8px; font-family: monospace; background: var(--surface2); padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border); }
   </style>
 </head>
 <body>
@@ -146,9 +77,9 @@
 <!-- LOGIN -->
 <div id="login-screen">
   <h1>🎮 Gavin Games Admin</h1>
-  <p>Enter your password to manage updates.</p>
-  <label>Password</label>
-  <input type="password" id="password-input" placeholder="Enter password" onkeydown="if(event.key==='Enter')doLogin()">
+  <p>Enter your PIN to continue.</p>
+  <label>PIN</label>
+  <input type="password" id="password-input" placeholder="Enter PIN" onkeydown="if(event.key==='Enter')doLogin()">
   <div class="btn-row">
     <button class="btn btn-primary" onclick="doLogin()">Log in</button>
   </div>
@@ -158,236 +89,414 @@
 <!-- ADMIN -->
 <div id="admin-screen">
   <div class="header-row">
-    <h1>🎮 Update log admin</h1>
+    <h1>🎮 Gavin Games Admin</h1>
     <button class="logout-btn" onclick="doLogout()">Log out</button>
   </div>
-  <p class="sub">Post a new entry to the Gavin Games update log. It commits directly to GitHub and Netlify redeploys automatically.</p>
 
-  <!-- TOKEN CARD -->
-  <div class="card" id="token-card">
-    <h2>GitHub token <span style="font-size:11px;color:var(--muted);font-weight:400;">(saved in browser, one time only)</span></h2>
-    <div class="token-row">
-      <input type="password" id="token-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off">
-      <button class="btn" onclick="saveToken()">Save</button>
-    </div>
-    <p class="token-note">
-      Create a token at <a href="https://github.com/settings/tokens/new" target="_blank">github.com/settings/tokens/new</a> — select <strong>repo</strong> scope, set expiry to No expiration. Paste it above and it'll be stored in your browser only.
-    </p>
-    <div class="status" id="token-status"></div>
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('updates', this)">📋 Post Update</button>
+    <button class="tab" onclick="switchTab('addgame', this)">🎮 Add Game</button>
+    <button class="tab" onclick="switchTab('token', this)">🔑 GitHub Token</button>
   </div>
 
-  <!-- POST UPDATE CARD -->
-  <div class="card">
-    <h2>Post a new update</h2>
-
-    <label>Date</label>
-    <input type="text" id="upd-date" placeholder="Oct 2026">
-
-    <label>Tag</label>
-    <select id="upd-tag">
-      <option value="new">🟣 new — added a game or feature</option>
-      <option value="update">🟡 update — changed something existing</option>
-      <option value="fix">🟢 fix — fixed a bug or typo</option>
-    </select>
-
-    <label>Update text</label>
-    <textarea id="upd-text" placeholder="Describe what changed..." oninput="updatePreview()"></textarea>
-
-    <label>Preview</label>
-    <div class="preview-box">
-      <div class="preview-date" id="prev-date">Oct 2026</div>
-      <div><span class="tag-preview tag-new" id="prev-tag">new</span><span id="prev-text">Your update text will appear here.</span></div>
+  <!-- TAB: UPDATES -->
+  <div class="tab-panel active" id="tab-updates">
+    <div class="card">
+      <h2>Post a new update</h2>
+      <label>Date</label>
+      <input type="text" id="upd-date" placeholder="Oct 2026">
+      <label>Tag</label>
+      <select id="upd-tag" onchange="updatePreview()">
+        <option value="new">🟣 new — added a game or feature</option>
+        <option value="update">🟡 update — changed something existing</option>
+        <option value="fix">🟢 fix — fixed a bug or typo</option>
+      </select>
+      <label>Update text</label>
+      <textarea id="upd-text" placeholder="Describe what changed..." oninput="updatePreview()"></textarea>
+      <label>Preview</label>
+      <div class="preview-box">
+        <div class="preview-date" id="prev-date">Oct 2026</div>
+        <div><span class="tag-preview tag-new" id="prev-tag">new</span><span id="prev-text">Your update text will appear here.</span></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn" onclick="clearUpdateForm()">Clear</button>
+        <button class="btn btn-primary" id="publish-btn" onclick="publishUpdate()">Publish update →</button>
+      </div>
+      <div class="status" id="publish-status"></div>
     </div>
-
-    <div class="btn-row">
-      <button class="btn" onclick="clearForm()">Clear</button>
-      <button class="btn btn-primary" id="publish-btn" onclick="publishUpdate()">Publish update →</button>
+    <div class="card">
+      <h2>Current entries</h2>
+      <div id="existing-entries"><div style="color:var(--muted);font-size:13px;">Loading...</div></div>
     </div>
-    <div class="status" id="publish-status"></div>
   </div>
 
-  <!-- EXISTING ENTRIES CARD -->
-  <div class="card">
-    <h2>Current entries</h2>
-    <div id="existing-entries">
-      <div style="color:var(--muted);font-size:13px;">Loading...</div>
+  <!-- TAB: ADD GAME -->
+  <div class="tab-panel" id="tab-addgame">
+    <div class="card">
+      <h2>Add a new game</h2>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">Fill in the details and hit Publish — it creates the game page and adds it to the homepage automatically.</p>
+
+      <div class="two-col">
+        <div>
+          <label>Game name</label>
+          <input type="text" id="g-name" placeholder="e.g. Cookie Clicker" oninput="updateGamePreview()">
+        </div>
+        <div>
+          <label>Icon (emoji)</label>
+          <input type="text" id="g-icon" placeholder="🍪" maxlength="4" oninput="updateGamePreview()">
+        </div>
+      </div>
+
+      <label>Iframe src URL</label>
+      <input type="text" id="g-src" placeholder="https://..." oninput="updateGamePreview()">
+
+      <label>Short description <span style="color:var(--muted);font-weight:400;">(shows on card — keep it brief)</span></label>
+      <input type="text" id="g-shortdesc" placeholder="e.g. Click cookies to take over the world" oninput="updateGamePreview()">
+
+      <label>Full description <span style="color:var(--muted);font-weight:400;">(shows on game page)</span></label>
+      <textarea id="g-desc" placeholder="Describe the game in a few sentences..."></textarea>
+
+      <div class="two-col">
+        <div>
+          <label>Genre tag</label>
+          <select id="g-genre">
+            <option>Arcade</option>
+            <option>Puzzle</option>
+            <option>Racing</option>
+            <option>Platformer</option>
+            <option>Strategy</option>
+            <option>Action</option>
+            <option>Idle</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div>
+          <label>Controls</label>
+          <input type="text" id="g-controls" placeholder="e.g. Click to play">
+        </div>
+      </div>
+
+      <label>Badge</label>
+      <select id="g-badge">
+        <option value="">None</option>
+        <option value="new">🟣 New</option>
+        <option value="hot">🔥 Popular</option>
+      </select>
+
+      <label>Preview</label>
+      <div class="game-card-preview">
+        <div class="icon" id="gp-icon">🎮</div>
+        <div>
+          <h3 id="gp-name">Game Name <span id="gp-badge"></span></h3>
+          <p id="gp-desc">Short description appears here.</p>
+        </div>
+      </div>
+      <div class="slug-preview" id="gp-slug">Page will be created at: games/game-name.html</div>
+
+      <div class="btn-row">
+        <button class="btn" onclick="clearGameForm()">Clear</button>
+        <button class="btn btn-primary" id="addgame-btn" onclick="publishGame()">Add game to site →</button>
+      </div>
+      <div class="status" id="addgame-status"></div>
+    </div>
+  </div>
+
+  <!-- TAB: TOKEN -->
+  <div class="tab-panel" id="tab-token">
+    <div class="card" id="token-card">
+      <h2>GitHub token <span style="font-size:11px;color:var(--muted);font-weight:400;">(saved in browser)</span></h2>
+      <div class="token-row">
+        <input type="password" id="token-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off">
+        <button class="btn" onclick="saveToken()">Save</button>
+      </div>
+      <p class="token-note">
+        Create a token at <a href="https://github.com/settings/tokens/new" target="_blank">github.com/settings/tokens/new</a> — select <strong>repo</strong> scope, set expiry to No expiration. Stored in your browser only.
+      </p>
+      <div class="status" id="token-status"></div>
     </div>
   </div>
 </div>
 
 <script>
 const OWNER = 'hacker01011';
-const REPO = 'gavingames';
-const FILE = 'updates.html';
+const REPO  = 'gavingames';
 const CORRECT_PASSWORD = '3123537';
 
+// ── AUTH ──
 function doLogin() {
-  const pw = document.getElementById('password-input').value;
-  if (pw === CORRECT_PASSWORD) {
+  if (document.getElementById('password-input').value === CORRECT_PASSWORD) {
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('admin-screen').style.display = 'block';
-    loadToken();
-    setDefaultDate();
-    loadExistingEntries();
-    updatePreview();
-  } else {
-    showStatus('login-status', 'Wrong password.', 'error');
-  }
+    loadToken(); setDefaultDate(); loadExistingEntries(); updatePreview(); updateGamePreview();
+  } else { showStatus('login-status', 'Wrong PIN.', 'error'); }
 }
-
 function doLogout() {
   document.getElementById('login-screen').style.display = 'flex';
   document.getElementById('admin-screen').style.display = 'none';
   document.getElementById('password-input').value = '';
 }
 
-function setDefaultDate() {
-  const d = new Date();
-  const month = d.toLocaleString('default', { month: 'short' });
-  document.getElementById('upd-date').value = `${month} ${d.getFullYear()}`;
-  updatePreview();
+// ── TABS ──
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
 }
 
+// ── TOKEN ──
 function saveToken() {
   const t = document.getElementById('token-input').value.trim();
   if (!t.startsWith('ghp_') && !t.startsWith('github_pat_')) {
-    showStatus('token-status', 'That doesn\'t look like a valid GitHub token. It should start with ghp_ or github_pat_', 'error');
-    return;
+    showStatus('token-status', 'Doesn\'t look like a valid token — should start with ghp_ or github_pat_', 'error'); return;
   }
   localStorage.setItem('gg_gh_token', t);
-  showStatus('token-status', 'Token saved. You won\'t need to enter it again on this device.', 'success');
-  document.getElementById('token-card').style.borderColor = '#50c87855';
+  showStatus('token-status', '✓ Token saved. Won\'t need to enter it again on this device.', 'success');
 }
-
 function loadToken() {
   const t = localStorage.getItem('gg_gh_token');
-  if (t) {
-    document.getElementById('token-input').value = t;
-    document.getElementById('token-card').style.borderColor = '#50c87855';
-  }
+  if (t) document.getElementById('token-input').value = t;
 }
-
 function getToken() { return localStorage.getItem('gg_gh_token') || document.getElementById('token-input').value.trim(); }
 
+// ── GITHUB HELPERS ──
+async function ghGet(path) {
+  const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}`, {
+    headers: { Authorization: `token ${getToken()}`, Accept: 'application/vnd.github.v3+json' }
+  });
+  if (!res.ok) throw new Error('GitHub fetch failed for ' + path + '. Check your token.');
+  const data = await res.json();
+  return { sha: data.sha, content: decodeURIComponent(escape(atob(data.content.replace(/\n/g,'')))) };
+}
+async function ghPut(path, content, sha, message) {
+  const encoded = btoa(unescape(encodeURIComponent(content)));
+  const body = { message, content: encoded };
+  if (sha) body.sha = sha;
+  const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}`, {
+    method: 'PUT',
+    headers: { Authorization: `token ${getToken()}`, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) { const e = await res.json(); throw new Error(e.message || 'GitHub write failed'); }
+}
+
+// ── UPDATES TAB ──
+function setDefaultDate() {
+  const d = new Date();
+  document.getElementById('upd-date').value = d.toLocaleString('default',{month:'short'}) + ' ' + d.getFullYear();
+  updatePreview();
+}
 function updatePreview() {
   const date = document.getElementById('upd-date').value || 'Oct 2026';
-  const tag = document.getElementById('upd-tag').value;
+  const tag  = document.getElementById('upd-tag').value;
   const text = document.getElementById('upd-text').value || 'Your update text will appear here.';
   document.getElementById('prev-date').textContent = date;
   document.getElementById('prev-text').textContent = text;
-  const tagEl = document.getElementById('prev-tag');
-  tagEl.textContent = tag;
-  tagEl.className = `tag-preview tag-${tag}`;
+  const el = document.getElementById('prev-tag');
+  el.textContent = tag; el.className = 'tag-preview tag-' + tag;
 }
-
-document.getElementById('upd-date').addEventListener('input', updatePreview);
-document.getElementById('upd-tag').addEventListener('change', updatePreview);
-
-function clearForm() {
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('upd-date').addEventListener('input', updatePreview);
+});
+function clearUpdateForm() {
   document.getElementById('upd-text').value = '';
-  setDefaultDate();
   document.getElementById('upd-tag').value = 'new';
-  updatePreview();
+  setDefaultDate();
 }
-
-async function getFileSHA() {
-  const token = getToken();
-  const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE}`, {
-    headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github.v3+json' }
-  });
-  if (!res.ok) throw new Error('Could not fetch file from GitHub. Check your token has repo access.');
-  const data = await res.json();
-  return { sha: data.sha, content: atob(data.content.replace(/\n/g, '')) };
-}
-
-function buildNewEntry(date, tag, text) {
-  return `  <div class="update-entry">
-    <div class="update-date">${date}</div>
-    <div class="update-text"><span class="update-tag tag-${tag}">${tag}</span>${text}</div>
-  </div>`;
-}
-
-function injectEntry(html, newEntry) {
-  const marker = '<p class="sub">Every change to Gavin Games, newest first.</p>';
-  const idx = html.indexOf(marker);
-  if (idx === -1) throw new Error('Could not find insertion point in updates.html. Make sure the file has not been modified.');
-  return html.slice(0, idx + marker.length) + '\n\n' + newEntry + '\n' + html.slice(idx + marker.length);
-}
-
 async function publishUpdate() {
   const token = getToken();
-  if (!token) { showStatus('publish-status', 'Paste your GitHub token in the card above first.', 'error'); return; }
+  if (!token) { showStatus('publish-status','Paste your GitHub token in the Token tab first.','error'); return; }
   const date = document.getElementById('upd-date').value.trim();
-  const tag = document.getElementById('upd-tag').value;
+  const tag  = document.getElementById('upd-tag').value;
   const text = document.getElementById('upd-text').value.trim();
-  if (!date) { showStatus('publish-status', 'Enter a date.', 'error'); return; }
-  if (!text) { showStatus('publish-status', 'Enter some update text.', 'error'); return; }
-
+  if (!date || !text) { showStatus('publish-status','Fill in date and update text.','error'); return; }
   const btn = document.getElementById('publish-btn');
-  btn.disabled = true;
-  btn.textContent = 'Publishing...';
-  showStatus('publish-status', 'Fetching current file from GitHub...', 'loading');
-
+  btn.disabled = true; btn.textContent = 'Publishing...';
+  showStatus('publish-status','Fetching updates.html...','loading');
   try {
-    const { sha, content } = await getFileSHA();
-    const newEntry = buildNewEntry(date, tag, text);
-    const newContent = injectEntry(content, newEntry);
-    const encoded = btoa(unescape(encodeURIComponent(newContent)));
-
-    showStatus('publish-status', 'Committing to GitHub...', 'loading');
-
-    const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE}`, {
-      method: 'PUT',
-      headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: `Add update: ${date} — ${text.slice(0, 60)}`, content: encoded, sha })
-    });
-
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.message || 'GitHub API error');
-    }
-
-    showStatus('publish-status', '✓ Published! Netlify is redeploying — changes will be live in about 30 seconds.', 'success');
-    clearForm();
-    setTimeout(loadExistingEntries, 2000);
-  } catch (e) {
-    showStatus('publish-status', '✗ ' + e.message, 'error');
-  } finally {
-    btn.disabled = false;
-    btn.textContent = 'Publish update →';
-  }
+    const { sha, content } = await ghGet('updates.html');
+    const entry = `  <div class="update-entry">\n    <div class="update-date">${date}</div>\n    <div class="update-text"><span class="update-tag tag-${tag}">${tag}</span>${text}</div>\n  </div>`;
+    const marker = '<p class="sub">Every change to Gavin Games, newest first.</p>';
+    const idx = content.indexOf(marker);
+    if (idx === -1) throw new Error('Insertion point not found in updates.html');
+    const newContent = content.slice(0, idx + marker.length) + '\n\n' + entry + '\n' + content.slice(idx + marker.length);
+    showStatus('publish-status','Committing to GitHub...','loading');
+    await ghPut('updates.html', newContent, sha, `Add update: ${date} — ${text.slice(0,60)}`);
+    showStatus('publish-status','✓ Published! Netlify is redeploying — live in ~30 seconds.','success');
+    clearUpdateForm(); setTimeout(loadExistingEntries, 2000);
+  } catch(e) { showStatus('publish-status','✗ ' + e.message,'error'); }
+  finally { btn.disabled = false; btn.textContent = 'Publish update →'; }
 }
-
 async function loadExistingEntries() {
-  const token = getToken();
-  if (!token) return;
+  if (!getToken()) return;
   try {
-    const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE}`, {
-      headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github.v3+json' }
-    });
-    const data = await res.json();
-    const html = atob(data.content.replace(/\n/g, ''));
-    const matches = [...html.matchAll(/<div class="update-entry">([\s\S]*?)<\/div>\s*<\/div>/g)];
+    const { content } = await ghGet('updates.html');
+    const matches = [...content.matchAll(/<div class="update-entry">([\s\S]*?)<\/div>\s*<\/div>/g)];
     const container = document.getElementById('existing-entries');
-    if (!matches.length) { container.innerHTML = '<div style="color:var(--muted);font-size:13px;">No entries found.</div>'; return; }
+    if (!matches.length) { container.innerHTML = '<div style="color:var(--muted);font-size:13px;">No entries yet.</div>'; return; }
     container.innerHTML = matches.map(m => {
       const dateM = m[1].match(/class="update-date">([^<]+)</);
-      const tagM = m[1].match(/class="update-tag tag-(\w+)">(\w+)</);
+      const tagM  = m[1].match(/class="update-tag tag-(\w+)">/);
       const textM = m[1].match(/tag-\w+">\w+<\/span>([^<]+)/);
-      const date = dateM ? dateM[1] : '';
-      const tag = tagM ? tagM[1] : 'new';
-      const text = textM ? textM[1].trim() : '';
-      return `<div class="existing-entry"><div class="existing-date">${date}</div><div><span class="tag-preview tag-${tag}">${tag}</span> ${text}</div></div>`;
+      return `<div class="existing-entry"><div class="existing-date">${dateM?dateM[1]:''}</div><div><span class="tag-preview tag-${tagM?tagM[1]:'new'}">${tagM?tagM[1]:'new'}</span> ${textM?textM[1].trim():''}</div></div>`;
     }).join('');
-  } catch(e) { /* silent fail */ }
+  } catch(e) {}
 }
 
+// ── ADD GAME TAB ──
+function toSlug(name) {
+  return name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
+function updateGamePreview() {
+  const name  = document.getElementById('g-name').value || 'Game Name';
+  const icon  = document.getElementById('g-icon').value || '🎮';
+  const desc  = document.getElementById('g-shortdesc').value || 'Short description appears here.';
+  const badge = document.getElementById('g-badge') ? document.getElementById('g-badge').value : '';
+  const slug  = toSlug(document.getElementById('g-name').value || 'game-name');
+  document.getElementById('gp-name').childNodes[0].textContent = name + ' ';
+  document.getElementById('gp-icon').textContent = icon;
+  document.getElementById('gp-desc').textContent = desc;
+  document.getElementById('gp-slug').textContent = `Page will be created at: games/${slug}.html`;
+  const badgeEl = document.getElementById('gp-badge');
+  if (badge === 'new') { badgeEl.className='badge badge-new'; badgeEl.textContent='new'; }
+  else if (badge === 'hot') { badgeEl.className='badge badge-hot'; badgeEl.textContent='popular'; }
+  else { badgeEl.className=''; badgeEl.textContent=''; }
+}
+// attach badge listener after DOM ready
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('g-badge').addEventListener('change', updateGamePreview);
+});
+function clearGameForm() {
+  ['g-name','g-icon','g-src','g-shortdesc','g-desc','g-controls'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('g-genre').value = 'Arcade';
+  document.getElementById('g-badge').value = '';
+  updateGamePreview();
+}
+function buildGamePage(name, icon, src, shortDesc, fullDesc, genre, controls, badge) {
+  const badgeHTML = badge === 'new' ? ' <span class="badge badge-new">new</span>'
+                  : badge === 'hot' ? ' <span class="badge badge-hot">popular</span>' : '';
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>${name} — Gavin Games</title>
+  <meta name="description" content="Play ${name} unblocked free in your browser at Gavin Games. ${shortDesc}">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo"><a href="../index.html">🎮 <span>Gavin</span>Games</a></div>
+  <div class="nav-links">
+    <a href="../index.html">Home</a>
+    <a href="../updates.html">Updates</a>
+  </div>
+  <a href="../index.html" class="nav-games-btn">All games</a>
+</nav>
+
+<div class="game-header">
+  <a href="../index.html" class="btn">← Back</a>
+  <span class="game-title">${icon} ${name}${badgeHTML}</span>
+  <div class="game-actions">
+    <button class="btn" onclick="openBlank()">Open in new tab</button>
+    <button class="btn btn-primary" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+  </div>
+</div>
+
+<div class="embed-wrap" id="embedWrap">
+  <iframe src="${src}" allowfullscreen title="${name} game"></iframe>
+</div>
+<button class="fullscreen-exit" onclick="toggleFullscreen()">✕ Exit fullscreen</button>
+
+<div class="game-tags">
+  <span class="game-tag">${genre}</span>
+  <span class="game-tag">Single player</span>
+  <span class="game-tag">🖱 ${controls}</span>
+</div>
+
+<div style="padding: 0 24px 8px; max-width: 560px;">
+  <p style="font-size:14px; color:var(--muted); line-height:1.7;">${fullDesc}</p>
+</div>
+
+<footer>
+  © Gavin Games · <a href="../index.html" style="color:var(--accent)">← All games</a>
+</footer>
+
+<script>
+function toggleFullscreen() {
+  document.getElementById('embedWrap').classList.toggle('fullscreen');
+}
+function openBlank() {
+  const w = window.open("about:blank");
+  if (w) {
+    w.document.write(\`<!DOCTYPE html><html><head><title>${name} - Gavin Games</title></head><body style="margin:0;height:100vh;overflow:hidden;background:#000"><iframe src="${src}" style="border:none;width:100%;height:100%" allowfullscreen></iframe></body></html>\`);
+    w.document.close();
+  } else { alert("Popup blocked! Please allow popups for this site."); }
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.getElementById('embedWrap').classList.remove('fullscreen');
+});
+<\/script>
+</body>
+</html>`;
+}
+function buildCardHTML(name, icon, slug, shortDesc, badge) {
+  const badgeHTML = badge === 'new' ? ' <span class="badge badge-new">new</span>'
+                  : badge === 'hot' ? ' <span class="badge badge-hot">popular</span>' : '';
+  return `  <a class="game-card" href="games/${slug}.html">
+    <span class="game-card-icon">${icon}</span>
+    <h3>${name}${badgeHTML}</h3>
+    <p>${shortDesc}</p>
+  </a>`;
+}
+async function publishGame() {
+  const token = getToken();
+  if (!token) { showStatus('addgame-status','Paste your GitHub token in the Token tab first.','error'); return; }
+  const name      = document.getElementById('g-name').value.trim();
+  const icon      = document.getElementById('g-icon').value.trim() || '🎮';
+  const src       = document.getElementById('g-src').value.trim();
+  const shortDesc = document.getElementById('g-shortdesc').value.trim();
+  const fullDesc  = document.getElementById('g-desc').value.trim();
+  const genre     = document.getElementById('g-genre').value;
+  const controls  = document.getElementById('g-controls').value.trim() || 'Keyboard / Mouse';
+  const badge     = document.getElementById('g-badge').value;
+  if (!name) { showStatus('addgame-status','Enter a game name.','error'); return; }
+  if (!src)  { showStatus('addgame-status','Enter the iframe src URL.','error'); return; }
+  if (!shortDesc) { showStatus('addgame-status','Enter a short description.','error'); return; }
+  const slug = toSlug(name);
+  const btn = document.getElementById('addgame-btn');
+  btn.disabled = true; btn.textContent = 'Publishing...';
+  showStatus('addgame-status','Creating game page...','loading');
+  try {
+    // 1. Create the game page
+    const gamePage = buildGamePage(name, icon, src, shortDesc, fullDesc || shortDesc, genre, controls, badge);
+    await ghPut(`games/${slug}.html`, gamePage, null, `Add game: ${name}`);
+    showStatus('addgame-status','Game page created. Updating homepage...','loading');
+    // 2. Inject card into index.html
+    const { sha: indexSha, content: indexContent } = await ghGet('index.html');
+    const cardHTML = buildCardHTML(name, icon, slug, shortDesc, badge);
+    const marker = '</div>\n\n<div class="suggestion-box">';
+    const idx = indexContent.indexOf(marker);
+    if (idx === -1) throw new Error('Could not find insertion point in index.html');
+    const newIndex = indexContent.slice(0, idx) + '\n' + cardHTML + '\n' + indexContent.slice(idx);
+    await ghPut('index.html', newIndex, indexSha, `Add ${name} to homepage`);
+    showStatus('addgame-status',`✓ "${name}" is live! Netlify is redeploying — check gavingames.net in ~30 seconds.`,'success');
+    clearGameForm();
+  } catch(e) { showStatus('addgame-status','✗ ' + e.message,'error'); }
+  finally { btn.disabled = false; btn.textContent = 'Add game to site →'; }
+}
+
+// ── UTILS ──
 function showStatus(id, msg, type) {
   const el = document.getElementById(id);
-  el.textContent = msg;
-  el.className = 'status ' + type;
+  el.textContent = msg; el.className = 'status ' + type;
 }
-
 document.getElementById('password-input').focus();
 </script>
 </body>
