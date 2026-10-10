@@ -588,12 +588,20 @@ async function loadManageUpdates() {
           <p style="margin-top:3px;">${date}</p>
         </div>
         <div class="manage-item-btns">
-          <button class="mini-btn mini-btn-accent" onclick="openEditUpdate(${i})">Edit</button>
-          <button class="mini-btn mini-btn-danger" onclick="confirmDeleteUpdate(${i})">Remove</button>
+          <button class="mini-btn mini-btn-accent" data-idx="${i}" data-action="edit-upd">Edit</button>
+          <button class="mini-btn mini-btn-danger" data-idx="${i}" data-action="del-upd">Remove</button>
         </div>
       </div>
       <div class="edit-panel" id="uedit-${i}" style="display:none"></div>`;
     }).join('');
+    // Attach listeners after rendering to avoid inline onclick quoting issues
+    container.querySelectorAll('[data-action]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const i = parseInt(btn.dataset.idx);
+        if (btn.dataset.action === 'edit-upd') openEditUpdate(i);
+        else if (btn.dataset.action === 'del-upd') confirmDeleteUpdate(i);
+      });
+    });
   } catch(e) { container.innerHTML=`<div style="color:var(--danger);font-size:13px;">✗ ${e.message}</div>`; }
 }
 
@@ -622,10 +630,12 @@ function openEditUpdate(i) {
     <label>Text</label>
     <textarea id="ue-text-${i}">${text}</textarea>
     <div class="btn-row" style="margin-top:14px;">
-      <button class="btn" onclick="document.getElementById('uedit-${i}').style.display='none'">Cancel</button>
-      <button class="btn btn-primary" onclick="saveUpdateEdit(${i})">Save changes</button>
+      <button class="btn" id="ue-cancel-${i}">Cancel</button>
+      <button class="btn btn-primary" id="ue-save-${i}">Save changes</button>
     </div>
     <div class="status" id="uedit-status-${i}"></div>`;
+  document.getElementById(`ue-cancel-${i}`).addEventListener('click', () => { panel.style.display='none'; });
+  document.getElementById(`ue-save-${i}`).addEventListener('click', () => saveUpdateEdit(i));
 }
 
 async function saveUpdateEdit(i) {
