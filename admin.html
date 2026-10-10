@@ -320,11 +320,9 @@ async function ghDelete(path, sha, message) {
 }
 
 // ── MODAL ──
-let modalCallback = null;
-function confirm(title, body, cb) {
+function askConfirm(title, body, cb) {
   document.getElementById('modal-title').textContent = title;
   document.getElementById('modal-body').textContent = body;
-  modalCallback = cb;
   document.getElementById('modal-confirm-btn').onclick = () => { closeModal(); cb(); };
   document.getElementById('confirmModal').classList.add('open');
 }
@@ -512,7 +510,7 @@ async function saveGameEdit(file, i) {
 }
 
 function confirmDeleteGame(file, name) {
-  confirm(
+  askConfirm(
     `Remove "${name}"?`,
     `This will delete games/${file} and remove it from the homepage. This cannot be undone.`,
     () => deleteGame(file, name)
@@ -535,28 +533,63 @@ async function deleteGame(file, name) {
 }
 
 // ── MANAGE UPDATES ──
+// Store raw entry HTML blocks by index so we can splice by position, not regex
+let _updateBlocks = [];
+
+function splitUpdateBlocks(content) {
+  // Split on the opening tag to get individual entries
+  const OPEN = '<div class="update-entry">';
+  const CLOSE = '</div>\n  </div>';
+  const blocks = [];
+  let search = content;
+  let pos = 0;
+  while (true) {
+    const start = search.indexOf(OPEN, pos);
+    if (start === -1) break;
+    const end = search.indexOf(CLOSE, start);
+    if (end === -1) break;
+    blocks.push({ start, end: end + CLOSE.length, raw: search.slice(start, end + CLOSE.length) });
+    pos = end + CLOSE.length;
+  }
+  return blocks;
+}
+
+function rebuildUpdatesContent(content, blocks) {
+  // Rebuild content from remaining blocks (blocks array already modified)
+  // Replace everything between first and last block with joined blocks
+  if (blocks.length === 0) {
+    // Remove all entries
+    const first = _updateBlocks[0].start;
+    const last  = _updateBlocks[_updateBlocks.length-1].end;
+    return content.slice(0, first) + content.slice(last);
+  }
+  const first = _updateBlocks[0].start;
+  const last  = _updateBlocks[_updateBlocks.length-1].end;
+  return content.slice(0, first) + blocks.map(b=>b.raw).join('\n  ') + content.slice(last);
+}
+
 async function loadManageUpdates() {
   const container = document.getElementById('updates-list');
   container.innerHTML = '<div style="color:var(--muted);font-size:13px;">Loading...</div>';
   try {
     const {content} = await ghGet('updates.html');
-    const matches = [...content.matchAll(/<div class="update-entry">([\s\S]*?)<\/div>\s*<\/div>/g)];
-    if (!matches.length) { container.innerHTML='<div style="color:var(--muted);font-size:13px;">No entries found.</div>'; return; }
-    container.innerHTML = matches.map((m,i) => {
-      const dateM = m[1].match(/class="update-date">([^<]+)</);
-      const tagM  = m[1].match(/class="update-tag tag-(\w+)">/);
-      const textM = m[1].match(/tag-\w+">\w+<\/span>([^<]+)/);
-      const date  = dateM?dateM[1].trim():'';
-      const tag   = tagM?tagM[1]:'new';
-      const text  = textM?textM[1].trim():'';
+    _updateBlocks = splitUpdateBlocks(content);
+    if (!_updateBlocks.length) { container.innerHTML='<div style="color:var(--muted);font-size:13px;">No entries found.</div>'; return; }
+    container.innerHTML = _updateBlocks.map((block, i) => {
+      const dateM = block.raw.match(/class="update-date">([^<]+)</);
+      const tagM  = block.raw.match(/class="update-tag tag-(\w+)">/);
+      const textM = block.raw.match(/class="update-tag[^"]*">[^<]+<\/span>([^<]+)/);
+      const date  = dateM ? dateM[1].trim() : '';
+      const tag   = tagM  ? tagM[1] : 'new';
+      const text  = textM ? textM[1].trim() : '';
       return `<div class="manage-item" id="uitem-${i}">
         <div class="manage-item-info">
-          <h3><span class="tag-preview tag-${tag}">${tag}</span>${text}</h3>
-          <p>${date}</p>
+          <h3><span class="tag-preview tag-${tag}">${tag}</span> ${text}</h3>
+          <p style="margin-top:3px;">${date}</p>
         </div>
         <div class="manage-item-btns">
-          <button class="mini-btn mini-btn-accent" onclick="openEditUpdate(${i},'${date}','${tag}',${JSON.stringify(text)})">Edit</button>
-          <button class="mini-btn mini-btn-danger" onclick="confirmDeleteUpdate(${i},${JSON.stringify(text)})">Remove</button>
+          <button class="mini-btn mini-btn-accent" onclick="openEditUpdate(${i})">Edit</button>
+          <button class="mini-btn mini-btn-danger" onclick="confirmDeleteUpdate(${i})">Remove</button>
         </div>
       </div>
       <div class="edit-panel" id="uedit-${i}" style="display:none"></div>`;
@@ -564,9 +597,18 @@ async function loadManageUpdates() {
   } catch(e) { container.innerHTML=`<div style="color:var(--danger);font-size:13px;">✗ ${e.message}</div>`; }
 }
 
-function openEditUpdate(i, date, tag, text) {
+function openEditUpdate(i) {
+  // Close any other open panels
+  document.querySelectorAll('.edit-panel').forEach(p => { if (p.id !== `uedit-${i}`) p.style.display='none'; });
   const panel = document.getElementById('uedit-'+i);
   if (panel.style.display !== 'none') { panel.style.display='none'; return; }
+  const block = _updateBlocks[i];
+  const dateM = block.raw.match(/class="update-date">([^<]+)</);
+  const tagM  = block.raw.match(/class="update-tag tag-(\w+)">/);
+  const textM = block.raw.match(/class="update-tag[^"]*">[^<]+<\/span>([^<]+)/);
+  const date  = dateM ? dateM[1].trim() : '';
+  const tag   = tagM  ? tagM[1] : 'new';
+  const text  = textM ? textM[1].trim() : '';
   panel.style.display = 'block';
   panel.innerHTML = `
     <h3>Editing entry</h3>
@@ -581,12 +623,12 @@ function openEditUpdate(i, date, tag, text) {
     <textarea id="ue-text-${i}">${text}</textarea>
     <div class="btn-row" style="margin-top:14px;">
       <button class="btn" onclick="document.getElementById('uedit-${i}').style.display='none'">Cancel</button>
-      <button class="btn btn-primary" onclick="saveUpdateEdit(${i},${JSON.stringify(text)})">Save changes</button>
+      <button class="btn btn-primary" onclick="saveUpdateEdit(${i})">Save changes</button>
     </div>
     <div class="status" id="uedit-status-${i}"></div>`;
 }
 
-async function saveUpdateEdit(i, oldText) {
+async function saveUpdateEdit(i) {
   const newDate = document.getElementById(`ue-date-${i}`).value.trim();
   const newTag  = document.getElementById(`ue-tag-${i}`).value;
   const newText = document.getElementById(`ue-text-${i}`).value.trim();
@@ -594,31 +636,43 @@ async function saveUpdateEdit(i, oldText) {
   showStatus(`uedit-status-${i}`,'Saving...','loading');
   try {
     const {sha, content} = await ghGet('updates.html');
-    const oldEntry = new RegExp(`<div class="update-entry">[\\s\\S]*?${oldText.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}[\\s\\S]*?<\\/div>\\s*<\\/div>`);
-    const newEntry = `<div class="update-entry">\n    <div class="update-date">${newDate}</div>\n    <div class="update-text"><span class="update-tag tag-${newTag}">${newTag}</span>${newText}</div>\n  </div>`;
-    const newContent = content.replace(oldEntry, newEntry);
-    await ghPut('updates.html', newContent, sha, `Edit update entry: ${newDate}`);
+    const blocks = splitUpdateBlocks(content);
+    // Replace block at index i with new content
+    const newRaw = `<div class="update-entry">\n    <div class="update-date">${newDate}</div>\n    <div class="update-text"><span class="update-tag tag-${newTag}">${newTag}</span>${newText}</div>\n  </div>`;
+    // Splice into raw content using character positions
+    const block = blocks[i];
+    const newContent = content.slice(0, block.start) + newRaw + content.slice(block.end);
+    await ghPut('updates.html', newContent, sha, `Edit update: ${newDate}`);
     showStatus(`uedit-status-${i}`,'✓ Saved! Live in ~30 seconds.','success');
     setTimeout(loadManageUpdates, 1500);
   } catch(e) { showStatus(`uedit-status-${i}`,'✗ '+e.message,'error'); }
 }
 
-function confirmDeleteUpdate(i, text) {
-  confirm(
+function confirmDeleteUpdate(i) {
+  const block = _updateBlocks[i];
+  const textM = block.raw.match(/class="update-tag[^"]*">[^<]+<\/span>([^<]+)/);
+  const text  = textM ? textM[1].trim() : 'this entry';
+  askConfirm(
     'Remove this update?',
-    `"${text.slice(0,80)}${text.length>80?'…':''}" — This cannot be undone.`,
-    () => deleteUpdate(i, text)
+    `"${text.slice(0,100)}${text.length>100?'…':''}" — This cannot be undone.`,
+    () => deleteUpdate(i)
   );
 }
-async function deleteUpdate(i, text) {
+
+async function deleteUpdate(i) {
   showStatus('manageupdates-status','Deleting...','loading');
   try {
     const {sha, content} = await ghGet('updates.html');
-    const pattern = new RegExp(`\\s*<div class="update-entry">[\\s\\S]*?${text.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}[\\s\\S]*?<\\/div>\\s*<\\/div>`);
-    const newContent = content.replace(pattern,'');
+    const blocks = splitUpdateBlocks(content);
+    const block = blocks[i];
+    // Remove block including any leading whitespace/newline before it
+    let removeStart = block.start;
+    if (content[removeStart-1] === '\n') removeStart--;
+    if (content[removeStart-1] === '\n') removeStart--;
+    const newContent = content.slice(0, removeStart) + content.slice(block.end);
     await ghPut('updates.html', newContent, sha, `Remove update entry`);
     showStatus('manageupdates-status','✓ Entry removed. Live in ~30 seconds.','success');
-    loadManageUpdates();
+    setTimeout(loadManageUpdates, 1000);
   } catch(e) { showStatus('manageupdates-status','✗ '+e.message,'error'); }
 }
 
