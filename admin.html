@@ -9,26 +9,24 @@
     :root {
       --bg: #0f0f0f; --surface: #1a1a1a; --surface2: #242424;
       --border: #2e2e2e; --text: #f0f0f0; --muted: #888;
-      --accent: #7c6fff; --danger: #ff5555; --success: #50c878; --radius: 10px;
+      --accent: #7c6fff; --danger: #ff5555; --success: #50c878;
+      --warning: #ffb432; --radius: 10px;
     }
     body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
     #login-screen { width: 100%; max-width: 360px; }
     #login-screen h1 { font-size: 20px; font-weight: 600; margin-bottom: 6px; }
     #login-screen p { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
-    #admin-screen { display: none; width: 100%; max-width: 600px; }
+    #admin-screen { display: none; width: 100%; max-width: 640px; }
     .header-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
     .header-row h1 { font-size: 20px; font-weight: 600; }
     .logout-btn { font-size: 12px; color: var(--muted); background: none; border: none; cursor: pointer; font-family: inherit; }
     .logout-btn:hover { color: var(--danger); }
-
-    /* TABS */
-    .tabs { display: flex; gap: 4px; margin-bottom: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 6px; }
-    .tab { flex: 1; padding: 8px; border-radius: var(--radius); font-size: 13px; font-weight: 500; cursor: pointer; border: none; background: none; color: var(--muted); font-family: inherit; transition: all 0.15s; }
+    .tabs { display: flex; gap: 4px; margin-bottom: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 6px; flex-wrap: wrap; }
+    .tab { flex: 1; padding: 8px 6px; border-radius: var(--radius); font-size: 12px; font-weight: 500; cursor: pointer; border: none; background: none; color: var(--muted); font-family: inherit; transition: all 0.15s; white-space: nowrap; }
     .tab:hover { color: var(--text); }
     .tab.active { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
-
     .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 16px; }
     .card h2 { font-size: 14px; font-weight: 500; margin-bottom: 16px; }
     label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; margin-top: 14px; }
@@ -45,7 +43,9 @@
     .btn-primary { background: var(--accent); color: #fff; border-color: transparent; flex: 2; }
     .btn-primary:hover { opacity: 0.9; color: #fff; }
     .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-    .status { font-size: 13px; padding: 10px 14px; border-radius: var(--radius); margin-top: 14px; display: none; }
+    .btn-danger { background: none; border-color: var(--border); color: var(--muted); }
+    .btn-danger:hover { border-color: var(--danger); color: var(--danger); }
+    .status { font-size: 13px; padding: 10px 14px; border-radius: var(--radius); margin-top: 14px; display: none; line-height: 1.5; }
     .status.success { background: rgba(80,200,120,0.1); color: var(--success); border: 1px solid rgba(80,200,120,0.2); display: block; }
     .status.error { background: rgba(255,85,85,0.1); color: var(--danger); border: 1px solid rgba(255,85,85,0.2); display: block; }
     .status.loading { background: rgba(124,111,255,0.1); color: var(--accent); border: 1px solid rgba(124,111,255,0.2); display: block; }
@@ -53,26 +53,55 @@
     .token-note a { color: var(--accent); }
     .token-row { display: flex; gap: 8px; }
     .token-row input { flex: 1; font-family: monospace; font-size: 12px; }
-    .token-row button { padding: 9px 14px; white-space: nowrap; }
     .tag-preview { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px; margin-right: 6px; vertical-align: middle; }
     .tag-new { background: rgba(124,111,255,0.2); color: var(--accent); }
     .tag-fix { background: rgba(80,200,120,0.12); color: #50c878; }
     .tag-update { background: rgba(255,180,50,0.12); color: #ffb432; }
     .preview-box { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; margin-top: 14px; font-size: 13px; display: flex; gap: 16px; }
     .preview-date { color: var(--muted); font-size: 12px; min-width: 72px; padding-top: 2px; }
-    .existing-entry { display: flex; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
-    .existing-entry:last-child { border-bottom: none; }
-    .existing-date { color: var(--muted); font-size: 12px; min-width: 72px; padding-top: 2px; }
-
-    /* GAME PREVIEW CARD */
+    .slug-preview { font-size: 11px; color: var(--muted); margin-top: 8px; font-family: monospace; background: var(--surface2); padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border); }
     .game-card-preview { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-top: 14px; display: flex; align-items: center; gap: 14px; }
     .game-card-preview .icon { font-size: 28px; }
     .game-card-preview h3 { font-size: 14px; font-weight: 500; margin-bottom: 3px; }
     .game-card-preview p { font-size: 12px; color: var(--muted); }
-    .slug-preview { font-size: 11px; color: var(--muted); margin-top: 8px; font-family: monospace; background: var(--surface2); padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border); }
+    /* MANAGE LIST */
+    .manage-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+    .manage-item:last-child { border-bottom: none; }
+    .manage-item-icon { font-size: 22px; flex-shrink: 0; }
+    .manage-item-info { flex: 1; }
+    .manage-item-info h3 { font-size: 13px; font-weight: 500; margin-bottom: 2px; }
+    .manage-item-info p { font-size: 12px; color: var(--muted); }
+    .manage-item-btns { display: flex; gap: 6px; flex-shrink: 0; }
+    .mini-btn { padding: 5px 12px; font-size: 12px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface2); color: var(--muted); cursor: pointer; font-family: inherit; white-space: nowrap; }
+    .mini-btn:hover { color: var(--text); border-color: #444; }
+    .mini-btn-danger:hover { color: var(--danger); border-color: var(--danger); }
+    .mini-btn-accent { background: var(--accent); color: #fff; border-color: transparent; }
+    .mini-btn-accent:hover { opacity: 0.9; color: #fff; }
+    /* EDIT PANEL */
+    .edit-panel { background: var(--surface2); border: 1px solid var(--accent); border-radius: 12px; padding: 20px; margin-top: 12px; }
+    .edit-panel h3 { font-size: 13px; font-weight: 500; margin-bottom: 14px; color: var(--accent); }
+    /* CONFIRM MODAL */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 28px; max-width: 360px; width: 100%; }
+    .modal h3 { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+    .modal p { font-size: 13px; color: var(--muted); margin-bottom: 24px; line-height: 1.6; }
+    .modal .btn-row { margin-top: 0; }
   </style>
 </head>
 <body>
+
+<!-- CONFIRM MODAL -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal">
+    <h3 id="modal-title">Are you sure?</h3>
+    <p id="modal-body">This action cannot be undone.</p>
+    <div class="btn-row">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-danger" id="modal-confirm-btn" style="flex:1.5">Delete</button>
+    </div>
+  </div>
+</div>
 
 <!-- LOGIN -->
 <div id="login-screen">
@@ -93,14 +122,15 @@
     <button class="logout-btn" onclick="doLogout()">Log out</button>
   </div>
 
-  <!-- TABS -->
   <div class="tabs">
-    <button class="tab active" onclick="switchTab('updates', this)">📋 Post Update</button>
-    <button class="tab" onclick="switchTab('addgame', this)">🎮 Add Game</button>
-    <button class="tab" onclick="switchTab('token', this)">🔑 GitHub Token</button>
+    <button class="tab active" onclick="switchTab('updates',this)">📋 Post Update</button>
+    <button class="tab" onclick="switchTab('addgame',this)">➕ Add Game</button>
+    <button class="tab" onclick="switchTab('managegames',this)">🎮 Manage Games</button>
+    <button class="tab" onclick="switchTab('manageupdates',this)">✏️ Manage Updates</button>
+    <button class="tab" onclick="switchTab('token',this)">🔑 Token</button>
   </div>
 
-  <!-- TAB: UPDATES -->
+  <!-- POST UPDATE -->
   <div class="tab-panel active" id="tab-updates">
     <div class="card">
       <h2>Post a new update</h2>
@@ -108,9 +138,9 @@
       <input type="text" id="upd-date" placeholder="Oct 2026">
       <label>Tag</label>
       <select id="upd-tag" onchange="updatePreview()">
-        <option value="new">🟣 new — added a game or feature</option>
-        <option value="update">🟡 update — changed something existing</option>
-        <option value="fix">🟢 fix — fixed a bug or typo</option>
+        <option value="new">🟣 new</option>
+        <option value="update">🟡 update</option>
+        <option value="fix">🟢 fix</option>
       </select>
       <label>Update text</label>
       <textarea id="upd-text" placeholder="Describe what changed..." oninput="updatePreview()"></textarea>
@@ -125,18 +155,12 @@
       </div>
       <div class="status" id="publish-status"></div>
     </div>
-    <div class="card">
-      <h2>Current entries</h2>
-      <div id="existing-entries"><div style="color:var(--muted);font-size:13px;">Loading...</div></div>
-    </div>
   </div>
 
-  <!-- TAB: ADD GAME -->
+  <!-- ADD GAME -->
   <div class="tab-panel" id="tab-addgame">
     <div class="card">
       <h2>Add a new game</h2>
-      <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">Fill in the details and hit Publish — it creates the game page and adds it to the homepage automatically.</p>
-
       <div class="two-col">
         <div>
           <label>Game name</label>
@@ -147,28 +171,19 @@
           <input type="text" id="g-icon" placeholder="🍪" maxlength="4" oninput="updateGamePreview()">
         </div>
       </div>
-
       <label>Iframe src URL</label>
-      <input type="text" id="g-src" placeholder="https://..." oninput="updateGamePreview()">
-
-      <label>Short description <span style="color:var(--muted);font-weight:400;">(shows on card — keep it brief)</span></label>
+      <input type="text" id="g-src" placeholder="https://...">
+      <label>Short description <span style="color:var(--muted);font-weight:400;">(card)</span></label>
       <input type="text" id="g-shortdesc" placeholder="e.g. Click cookies to take over the world" oninput="updateGamePreview()">
-
-      <label>Full description <span style="color:var(--muted);font-weight:400;">(shows on game page)</span></label>
+      <label>Full description <span style="color:var(--muted);font-weight:400;">(game page)</span></label>
       <textarea id="g-desc" placeholder="Describe the game in a few sentences..."></textarea>
-
       <div class="two-col">
         <div>
-          <label>Genre tag</label>
+          <label>Genre</label>
           <select id="g-genre">
-            <option>Arcade</option>
-            <option>Puzzle</option>
-            <option>Racing</option>
-            <option>Platformer</option>
-            <option>Strategy</option>
-            <option>Action</option>
-            <option>Idle</option>
-            <option>Other</option>
+            <option>Arcade</option><option>Puzzle</option><option>Racing</option>
+            <option>Platformer</option><option>Strategy</option><option>Action</option>
+            <option>Idle</option><option>Other</option>
           </select>
         </div>
         <div>
@@ -176,14 +191,12 @@
           <input type="text" id="g-controls" placeholder="e.g. Click to play">
         </div>
       </div>
-
       <label>Badge</label>
-      <select id="g-badge">
+      <select id="g-badge" onchange="updateGamePreview()">
         <option value="">None</option>
         <option value="new">🟣 New</option>
         <option value="hot">🔥 Popular</option>
       </select>
-
       <label>Preview</label>
       <div class="game-card-preview">
         <div class="icon" id="gp-icon">🎮</div>
@@ -192,8 +205,7 @@
           <p id="gp-desc">Short description appears here.</p>
         </div>
       </div>
-      <div class="slug-preview" id="gp-slug">Page will be created at: games/game-name.html</div>
-
+      <div class="slug-preview" id="gp-slug">Page: games/game-name.html</div>
       <div class="btn-row">
         <button class="btn" onclick="clearGameForm()">Clear</button>
         <button class="btn btn-primary" id="addgame-btn" onclick="publishGame()">Add game to site →</button>
@@ -202,17 +214,33 @@
     </div>
   </div>
 
-  <!-- TAB: TOKEN -->
+  <!-- MANAGE GAMES -->
+  <div class="tab-panel" id="tab-managegames">
+    <div class="card">
+      <h2>Manage games</h2>
+      <div id="games-list"><div style="color:var(--muted);font-size:13px;">Loading...</div></div>
+      <div class="status" id="managegames-status"></div>
+    </div>
+  </div>
+
+  <!-- MANAGE UPDATES -->
+  <div class="tab-panel" id="tab-manageupdates">
+    <div class="card">
+      <h2>Manage update log</h2>
+      <div id="updates-list"><div style="color:var(--muted);font-size:13px;">Loading...</div></div>
+      <div class="status" id="manageupdates-status"></div>
+    </div>
+  </div>
+
+  <!-- TOKEN -->
   <div class="tab-panel" id="tab-token">
-    <div class="card" id="token-card">
-      <h2>GitHub token <span style="font-size:11px;color:var(--muted);font-weight:400;">(saved in browser)</span></h2>
+    <div class="card">
+      <h2>GitHub token</h2>
       <div class="token-row">
         <input type="password" id="token-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off">
-        <button class="btn" onclick="saveToken()">Save</button>
+        <button class="btn" onclick="saveToken()" style="flex:0;white-space:nowrap;padding:9px 14px;">Save</button>
       </div>
-      <p class="token-note">
-        Create a token at <a href="https://github.com/settings/tokens/new" target="_blank">github.com/settings/tokens/new</a> — select <strong>repo</strong> scope, set expiry to No expiration. Stored in your browser only.
-      </p>
+      <p class="token-note">Create at <a href="https://github.com/settings/tokens/new" target="_blank">github.com/settings/tokens/new</a> — select <strong>repo</strong> scope, No expiration. Stored in your browser only.</p>
       <div class="status" id="token-status"></div>
     </div>
   </div>
@@ -221,15 +249,15 @@
 <script>
 const OWNER = 'hacker01011';
 const REPO  = 'gavingames';
-const CORRECT_PASSWORD = '3123537';
+const PIN   = '3123537';
 
 // ── AUTH ──
 function doLogin() {
-  if (document.getElementById('password-input').value === CORRECT_PASSWORD) {
+  if (document.getElementById('password-input').value === PIN) {
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('admin-screen').style.display = 'block';
-    loadToken(); setDefaultDate(); loadExistingEntries(); updatePreview(); updateGamePreview();
-  } else { showStatus('login-status', 'Wrong PIN.', 'error'); }
+    loadToken(); setDefaultDate(); updatePreview(); updateGamePreview();
+  } else { showStatus('login-status','Wrong PIN.','error'); }
 }
 function doLogout() {
   document.getElementById('login-screen').style.display = 'flex';
@@ -243,16 +271,18 @@ function switchTab(name, btn) {
   document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
   btn.classList.add('active');
+  if (name === 'managegames') loadManageGames();
+  if (name === 'manageupdates') loadManageUpdates();
 }
 
 // ── TOKEN ──
 function saveToken() {
   const t = document.getElementById('token-input').value.trim();
   if (!t.startsWith('ghp_') && !t.startsWith('github_pat_')) {
-    showStatus('token-status', 'Doesn\'t look like a valid token — should start with ghp_ or github_pat_', 'error'); return;
+    showStatus('token-status','Doesn\'t look like a valid token.','error'); return;
   }
   localStorage.setItem('gg_gh_token', t);
-  showStatus('token-status', '✓ Token saved. Won\'t need to enter it again on this device.', 'success');
+  showStatus('token-status','✓ Token saved.','success');
 }
 function loadToken() {
   const t = localStorage.getItem('gg_gh_token');
@@ -260,7 +290,7 @@ function loadToken() {
 }
 function getToken() { return localStorage.getItem('gg_gh_token') || document.getElementById('token-input').value.trim(); }
 
-// ── GITHUB HELPERS ──
+// ── GITHUB ──
 async function ghGet(path) {
   const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}`, {
     headers: { Authorization: `token ${getToken()}`, Accept: 'application/vnd.github.v3+json' }
@@ -280,13 +310,36 @@ async function ghPut(path, content, sha, message) {
   });
   if (!res.ok) { const e = await res.json(); throw new Error(e.message || 'GitHub write failed'); }
 }
+async function ghDelete(path, sha, message) {
+  const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}`, {
+    method: 'DELETE',
+    headers: { Authorization: `token ${getToken()}`, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message, sha })
+  });
+  if (!res.ok) { const e = await res.json(); throw new Error(e.message || 'GitHub delete failed'); }
+}
 
-// ── UPDATES TAB ──
+// ── MODAL ──
+let modalCallback = null;
+function confirm(title, body, cb) {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-body').textContent = body;
+  modalCallback = cb;
+  document.getElementById('modal-confirm-btn').onclick = () => { closeModal(); cb(); };
+  document.getElementById('confirmModal').classList.add('open');
+}
+function closeModal() { document.getElementById('confirmModal').classList.remove('open'); }
+
+// ── UTILS ──
+function toSlug(name) { return name.toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
+function showStatus(id, msg, type) { const el=document.getElementById(id); el.textContent=msg; el.className='status '+type; }
 function setDefaultDate() {
   const d = new Date();
-  document.getElementById('upd-date').value = d.toLocaleString('default',{month:'short'}) + ' ' + d.getFullYear();
+  document.getElementById('upd-date').value = d.toLocaleString('default',{month:'short'})+' '+d.getFullYear();
   updatePreview();
 }
+
+// ── POST UPDATE ──
 function updatePreview() {
   const date = document.getElementById('upd-date').value || 'Oct 2026';
   const tag  = document.getElementById('upd-tag').value;
@@ -296,207 +349,279 @@ function updatePreview() {
   const el = document.getElementById('prev-tag');
   el.textContent = tag; el.className = 'tag-preview tag-' + tag;
 }
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('upd-date').addEventListener('input', updatePreview);
-});
+document.getElementById('upd-date').addEventListener('input', updatePreview);
+document.getElementById('upd-tag').addEventListener('change', updatePreview);
 function clearUpdateForm() {
   document.getElementById('upd-text').value = '';
   document.getElementById('upd-tag').value = 'new';
   setDefaultDate();
 }
 async function publishUpdate() {
-  const token = getToken();
-  if (!token) { showStatus('publish-status','Paste your GitHub token in the Token tab first.','error'); return; }
+  if (!getToken()) { showStatus('publish-status','Add your GitHub token in the Token tab.','error'); return; }
   const date = document.getElementById('upd-date').value.trim();
   const tag  = document.getElementById('upd-tag').value;
   const text = document.getElementById('upd-text').value.trim();
-  if (!date || !text) { showStatus('publish-status','Fill in date and update text.','error'); return; }
+  if (!date || !text) { showStatus('publish-status','Fill in date and text.','error'); return; }
   const btn = document.getElementById('publish-btn');
-  btn.disabled = true; btn.textContent = 'Publishing...';
+  btn.disabled=true; btn.textContent='Publishing...';
   showStatus('publish-status','Fetching updates.html...','loading');
   try {
     const { sha, content } = await ghGet('updates.html');
     const entry = `  <div class="update-entry">\n    <div class="update-date">${date}</div>\n    <div class="update-text"><span class="update-tag tag-${tag}">${tag}</span>${text}</div>\n  </div>`;
     const marker = '<p class="sub">Every change to Gavin Games, newest first.</p>';
     const idx = content.indexOf(marker);
-    if (idx === -1) throw new Error('Insertion point not found in updates.html');
-    const newContent = content.slice(0, idx + marker.length) + '\n\n' + entry + '\n' + content.slice(idx + marker.length);
-    showStatus('publish-status','Committing to GitHub...','loading');
+    if (idx===-1) throw new Error('Insertion point not found in updates.html');
+    const newContent = content.slice(0,idx+marker.length)+'\n\n'+entry+'\n'+content.slice(idx+marker.length);
+    showStatus('publish-status','Committing...','loading');
     await ghPut('updates.html', newContent, sha, `Add update: ${date} — ${text.slice(0,60)}`);
-    showStatus('publish-status','✓ Published! Netlify is redeploying — live in ~30 seconds.','success');
-    clearUpdateForm(); setTimeout(loadExistingEntries, 2000);
-  } catch(e) { showStatus('publish-status','✗ ' + e.message,'error'); }
-  finally { btn.disabled = false; btn.textContent = 'Publish update →'; }
-}
-async function loadExistingEntries() {
-  if (!getToken()) return;
-  try {
-    const { content } = await ghGet('updates.html');
-    const matches = [...content.matchAll(/<div class="update-entry">([\s\S]*?)<\/div>\s*<\/div>/g)];
-    const container = document.getElementById('existing-entries');
-    if (!matches.length) { container.innerHTML = '<div style="color:var(--muted);font-size:13px;">No entries yet.</div>'; return; }
-    container.innerHTML = matches.map(m => {
-      const dateM = m[1].match(/class="update-date">([^<]+)</);
-      const tagM  = m[1].match(/class="update-tag tag-(\w+)">/);
-      const textM = m[1].match(/tag-\w+">\w+<\/span>([^<]+)/);
-      return `<div class="existing-entry"><div class="existing-date">${dateM?dateM[1]:''}</div><div><span class="tag-preview tag-${tagM?tagM[1]:'new'}">${tagM?tagM[1]:'new'}</span> ${textM?textM[1].trim():''}</div></div>`;
-    }).join('');
-  } catch(e) {}
+    showStatus('publish-status','✓ Published! Live in ~30 seconds.','success');
+    clearUpdateForm();
+  } catch(e) { showStatus('publish-status','✗ '+e.message,'error'); }
+  finally { btn.disabled=false; btn.textContent='Publish update →'; }
 }
 
-// ── ADD GAME TAB ──
-function toSlug(name) {
-  return name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-}
+// ── ADD GAME ──
 function updateGamePreview() {
   const name  = document.getElementById('g-name').value || 'Game Name';
   const icon  = document.getElementById('g-icon').value || '🎮';
   const desc  = document.getElementById('g-shortdesc').value || 'Short description appears here.';
-  const badge = document.getElementById('g-badge') ? document.getElementById('g-badge').value : '';
+  const badge = document.getElementById('g-badge').value;
   const slug  = toSlug(document.getElementById('g-name').value || 'game-name');
-  document.getElementById('gp-name').childNodes[0].textContent = name + ' ';
   document.getElementById('gp-icon').textContent = icon;
   document.getElementById('gp-desc').textContent = desc;
-  document.getElementById('gp-slug').textContent = `Page will be created at: games/${slug}.html`;
+  document.getElementById('gp-slug').textContent = `Page: games/${slug}.html`;
+  const nameEl = document.getElementById('gp-name');
   const badgeEl = document.getElementById('gp-badge');
-  if (badge === 'new') { badgeEl.className='badge badge-new'; badgeEl.textContent='new'; }
-  else if (badge === 'hot') { badgeEl.className='badge badge-hot'; badgeEl.textContent='popular'; }
+  nameEl.childNodes[0] && (nameEl.childNodes[0].textContent = name+' ');
+  if (badge==='new') { badgeEl.className='badge badge-new'; badgeEl.textContent='new'; }
+  else if (badge==='hot') { badgeEl.className='badge badge-hot'; badgeEl.textContent='popular'; }
   else { badgeEl.className=''; badgeEl.textContent=''; }
 }
-// attach badge listener after DOM ready
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('g-badge').addEventListener('change', updateGamePreview);
-});
 function clearGameForm() {
-  ['g-name','g-icon','g-src','g-shortdesc','g-desc','g-controls'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('g-genre').value = 'Arcade';
-  document.getElementById('g-badge').value = '';
+  ['g-name','g-icon','g-src','g-shortdesc','g-desc','g-controls'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('g-genre').value='Arcade';
+  document.getElementById('g-badge').value='';
   updateGamePreview();
 }
-function buildGamePage(name, icon, src, shortDesc, fullDesc, genre, controls, badge) {
-  const badgeHTML = badge === 'new' ? ' <span class="badge badge-new">new</span>'
-                  : badge === 'hot' ? ' <span class="badge badge-hot">popular</span>' : '';
-  return `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>${name} — Gavin Games</title>
-  <meta name="description" content="Play ${name} unblocked free in your browser at Gavin Games. ${shortDesc}">
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="manifest" href="/site.webmanifest">
-  <link rel="stylesheet" href="../styles.css">
-</head>
-<body>
-
-<nav>
-  <div class="nav-logo"><a href="../index.html">🎮 <span>Gavin</span>Games</a></div>
-  <div class="nav-links">
-    <a href="../index.html">Home</a>
-    <a href="../updates.html">Updates</a>
-  </div>
-  <a href="../index.html" class="nav-games-btn">All games</a>
-</nav>
-
-<div class="game-header">
-  <a href="../index.html" class="btn">← Back</a>
-  <span class="game-title">${icon} ${name}${badgeHTML}</span>
-  <div class="game-actions">
-    <button class="btn" onclick="openBlank()">Open in new tab</button>
-    <button class="btn btn-primary" onclick="toggleFullscreen()">⛶ Fullscreen</button>
-  </div>
-</div>
-
-<div class="embed-wrap" id="embedWrap">
-  <iframe src="${src}" allowfullscreen title="${name} game"></iframe>
-</div>
-<button class="fullscreen-exit" onclick="toggleFullscreen()">✕ Exit fullscreen</button>
-
-<div class="game-tags">
-  <span class="game-tag">${genre}</span>
-  <span class="game-tag">Single player</span>
-  <span class="game-tag">🖱 ${controls}</span>
-</div>
-
-<div style="padding: 0 24px 8px; max-width: 560px;">
-  <p style="font-size:14px; color:var(--muted); line-height:1.7;">${fullDesc}</p>
-</div>
-
-<footer>
-  © Gavin Games · <a href="../index.html" style="color:var(--accent)">← All games</a>
-</footer>
-
-<script>
-function toggleFullscreen() {
-  document.getElementById('embedWrap').classList.toggle('fullscreen');
+function buildGamePage(name,icon,src,shortDesc,fullDesc,genre,controls,badge) {
+  const bHTML = badge==='new'?' <span class="badge badge-new">new</span>':badge==='hot'?' <span class="badge badge-hot">popular</span>':'';
+  return `<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="utf-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1">\n  <title>${name} — Gavin Games</title>\n  <meta name="description" content="Play ${name} unblocked free in your browser at Gavin Games. ${shortDesc}">\n  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">\n  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">\n  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">\n  <link rel="manifest" href="/site.webmanifest">\n  <link rel="stylesheet" href="../styles.css">\n</head>\n<body>\n\n<nav>\n  <div class="nav-logo"><a href="../index.html">🎮 <span>Gavin</span>Games</a></div>\n  <div class="nav-links">\n    <a href="../index.html">Home</a>\n    <a href="../updates.html">Updates</a>\n  </div>\n  <a href="../index.html" class="nav-games-btn">All games</a>\n</nav>\n\n<div class="game-header">\n  <a href="../index.html" class="btn">← Back</a>\n  <span class="game-title">${icon} ${name}${bHTML}</span>\n  <div class="game-actions">\n    <button class="btn" onclick="openBlank()">Open in new tab</button>\n    <button class="btn btn-primary" onclick="toggleFullscreen()">⛶ Fullscreen</button>\n  </div>\n</div>\n\n<div class="embed-wrap" id="embedWrap">\n  <iframe src="${src}" allowfullscreen title="${name} game"></iframe>\n</div>\n<button class="fullscreen-exit" onclick="toggleFullscreen()">✕ Exit fullscreen</button>\n\n<div class="game-tags">\n  <span class="game-tag">${genre}</span>\n  <span class="game-tag">Single player</span>\n  <span class="game-tag">🖱 ${controls}</span>\n</div>\n\n<div style="padding: 0 24px 8px; max-width: 560px;">\n  <p style="font-size:14px; color:var(--muted); line-height:1.7;">${fullDesc}</p>\n</div>\n\n<footer>\n  © Gavin Games · <a href="../index.html" style="color:var(--accent)">← All games</a>\n</footer>\n\n<script>\nfunction toggleFullscreen() { document.getElementById('embedWrap').classList.toggle('fullscreen'); }\nfunction openBlank() {\n  const w = window.open("about:blank");\n  if (w) { w.document.write(\`<!DOCTYPE html><html><head><title>${name} - Gavin Games</title></head><body style="margin:0;height:100vh;overflow:hidden;background:#000"><iframe src="${src}" style="border:none;width:100%;height:100%" allowfullscreen></iframe></body></html>\`); w.document.close(); }\n  else { alert("Popup blocked!"); }\n}\ndocument.addEventListener('keydown', e => { if (e.key==='Escape') document.getElementById('embedWrap').classList.remove('fullscreen'); });\n<\/script>\n</body>\n</html>`;
 }
-function openBlank() {
-  const w = window.open("about:blank");
-  if (w) {
-    w.document.write(\`<!DOCTYPE html><html><head><title>${name} - Gavin Games</title></head><body style="margin:0;height:100vh;overflow:hidden;background:#000"><iframe src="${src}" style="border:none;width:100%;height:100%" allowfullscreen></iframe></body></html>\`);
-    w.document.close();
-  } else { alert("Popup blocked! Please allow popups for this site."); }
-}
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') document.getElementById('embedWrap').classList.remove('fullscreen');
-});
-<\/script>
-</body>
-</html>`;
-}
-function buildCardHTML(name, icon, slug, shortDesc, badge) {
-  const badgeHTML = badge === 'new' ? ' <span class="badge badge-new">new</span>'
-                  : badge === 'hot' ? ' <span class="badge badge-hot">popular</span>' : '';
-  return `  <a class="game-card" href="games/${slug}.html">
-    <span class="game-card-icon">${icon}</span>
-    <h3>${name}${badgeHTML}</h3>
-    <p>${shortDesc}</p>
-  </a>`;
+function buildCardHTML(name,icon,slug,shortDesc,badge) {
+  const bHTML = badge==='new'?' <span class="badge badge-new">new</span>':badge==='hot'?' <span class="badge badge-hot">popular</span>':'';
+  return `  <a class="game-card" href="games/${slug}.html">\n    <span class="game-card-icon">${icon}</span>\n    <h3>${name}${bHTML}</h3>\n    <p>${shortDesc}</p>\n  </a>`;
 }
 async function publishGame() {
-  const token = getToken();
-  if (!token) { showStatus('addgame-status','Paste your GitHub token in the Token tab first.','error'); return; }
-  const name      = document.getElementById('g-name').value.trim();
-  const icon      = document.getElementById('g-icon').value.trim() || '🎮';
-  const src       = document.getElementById('g-src').value.trim();
-  const shortDesc = document.getElementById('g-shortdesc').value.trim();
-  const fullDesc  = document.getElementById('g-desc').value.trim();
-  const genre     = document.getElementById('g-genre').value;
-  const controls  = document.getElementById('g-controls').value.trim() || 'Keyboard / Mouse';
-  const badge     = document.getElementById('g-badge').value;
+  if (!getToken()) { showStatus('addgame-status','Add your GitHub token in the Token tab.','error'); return; }
+  const name=document.getElementById('g-name').value.trim();
+  const icon=document.getElementById('g-icon').value.trim()||'🎮';
+  const src=document.getElementById('g-src').value.trim();
+  const shortDesc=document.getElementById('g-shortdesc').value.trim();
+  const fullDesc=document.getElementById('g-desc').value.trim();
+  const genre=document.getElementById('g-genre').value;
+  const controls=document.getElementById('g-controls').value.trim()||'Keyboard / Mouse';
+  const badge=document.getElementById('g-badge').value;
   if (!name) { showStatus('addgame-status','Enter a game name.','error'); return; }
   if (!src)  { showStatus('addgame-status','Enter the iframe src URL.','error'); return; }
   if (!shortDesc) { showStatus('addgame-status','Enter a short description.','error'); return; }
-  const slug = toSlug(name);
-  const btn = document.getElementById('addgame-btn');
-  btn.disabled = true; btn.textContent = 'Publishing...';
+  const slug=toSlug(name);
+  const btn=document.getElementById('addgame-btn');
+  btn.disabled=true; btn.textContent='Publishing...';
   showStatus('addgame-status','Creating game page...','loading');
   try {
-    // 1. Create the game page
-    const gamePage = buildGamePage(name, icon, src, shortDesc, fullDesc || shortDesc, genre, controls, badge);
-    await ghPut(`games/${slug}.html`, gamePage, null, `Add game: ${name}`);
+    await ghPut(`games/${slug}.html`, buildGamePage(name,icon,src,shortDesc,fullDesc||shortDesc,genre,controls,badge), null, `Add game: ${name}`);
     showStatus('addgame-status','Game page created. Updating homepage...','loading');
-    // 2. Inject card into index.html
-    const { sha: indexSha, content: indexContent } = await ghGet('index.html');
-    const cardHTML = buildCardHTML(name, icon, slug, shortDesc, badge);
+    const {sha:iSha,content:iContent} = await ghGet('index.html');
+    const card = buildCardHTML(name,icon,slug,shortDesc,badge);
     const marker = '</div>\n\n<div class="suggestion-box">';
-    const idx = indexContent.indexOf(marker);
-    if (idx === -1) throw new Error('Could not find insertion point in index.html');
-    const newIndex = indexContent.slice(0, idx) + '\n' + cardHTML + '\n' + indexContent.slice(idx);
-    await ghPut('index.html', newIndex, indexSha, `Add ${name} to homepage`);
-    showStatus('addgame-status',`✓ "${name}" is live! Netlify is redeploying — check gavingames.net in ~30 seconds.`,'success');
+    const idx = iContent.indexOf(marker);
+    if (idx===-1) throw new Error('Could not find insertion point in index.html');
+    await ghPut('index.html', iContent.slice(0,idx)+'\n'+card+'\n'+iContent.slice(idx), iSha, `Add ${name} to homepage`);
+    showStatus('addgame-status',`✓ "${name}" is live! Netlify redeploying in ~30 seconds.`,'success');
     clearGameForm();
-  } catch(e) { showStatus('addgame-status','✗ ' + e.message,'error'); }
-  finally { btn.disabled = false; btn.textContent = 'Add game to site →'; }
+  } catch(e) { showStatus('addgame-status','✗ '+e.message,'error'); }
+  finally { btn.disabled=false; btn.textContent='Add game to site →'; }
 }
 
-// ── UTILS ──
-function showStatus(id, msg, type) {
-  const el = document.getElementById(id);
-  el.textContent = msg; el.className = 'status ' + type;
+// ── MANAGE GAMES ──
+async function loadManageGames() {
+  const container = document.getElementById('games-list');
+  container.innerHTML = '<div style="color:var(--muted);font-size:13px;">Loading...</div>';
+  try {
+    const {content} = await ghGet('index.html');
+    // parse all game cards from All Games section
+    const allSection = content.split('<div class="section-label" id="all">')[1] || '';
+    const cards = [...allSection.matchAll(/<a class="game-card" href="games\/([^"]+)">\s*<span class="game-card-icon">([^<]+)<\/span>\s*<h3>([^<]+)(?:<span[^>]*>[^<]*<\/span>)?\s*<\/h3>\s*<p>([^<]+)<\/p>\s*<\/a>/g)];
+    if (!cards.length) { container.innerHTML='<div style="color:var(--muted);font-size:13px;">No games found.</div>'; return; }
+    container.innerHTML = cards.map((m,i) => {
+      const file=m[1], icon=m[2].trim(), name=m[3].trim(), desc=m[4].trim();
+      return `<div class="manage-item" id="gitem-${i}">
+        <div class="manage-item-icon">${icon}</div>
+        <div class="manage-item-info"><h3>${name}</h3><p>${desc}</p></div>
+        <div class="manage-item-btns">
+          <button class="mini-btn mini-btn-accent" onclick="openEditGame(${i},'${file}','${name}','${icon}','${desc}')">Edit</button>
+          <button class="mini-btn mini-btn-danger" onclick="confirmDeleteGame('${file}','${name}')">Remove</button>
+        </div>
+      </div>
+      <div class="edit-panel" id="gedit-${i}" style="display:none"></div>`;
+    }).join('');
+  } catch(e) { container.innerHTML=`<div style="color:var(--danger);font-size:13px;">✗ ${e.message}</div>`; }
 }
+
+function openEditGame(i, file, name, icon, desc) {
+  const panel = document.getElementById('gedit-'+i);
+  if (panel.style.display !== 'none') { panel.style.display='none'; return; }
+  panel.style.display = 'block';
+  panel.innerHTML = `
+    <h3>Editing: ${name}</h3>
+    <label>Icon</label><input id="ge-icon-${i}" value="${icon}" maxlength="4">
+    <label>Name</label><input id="ge-name-${i}" value="${name}">
+    <label>Short description (card)</label><input id="ge-desc-${i}" value="${desc}">
+    <label>Badge</label>
+    <select id="ge-badge-${i}">
+      <option value="">None</option>
+      <option value="new">🟣 New</option>
+      <option value="hot">🔥 Popular</option>
+    </select>
+    <div class="btn-row" style="margin-top:14px;">
+      <button class="btn" onclick="document.getElementById('gedit-${i}').style.display='none'">Cancel</button>
+      <button class="btn btn-primary" onclick="saveGameEdit('${file}','${i}')">Save changes</button>
+    </div>
+    <div class="status" id="gedit-status-${i}"></div>`;
+}
+
+async function saveGameEdit(file, i) {
+  const newIcon  = document.getElementById(`ge-icon-${i}`).value.trim();
+  const newName  = document.getElementById(`ge-name-${i}`).value.trim();
+  const newDesc  = document.getElementById(`ge-desc-${i}`).value.trim();
+  const newBadge = document.getElementById(`ge-badge-${i}`).value;
+  if (!newName || !newDesc) { showStatus(`gedit-status-${i}`,'Fill in name and description.','error'); return; }
+  showStatus(`gedit-status-${i}`,'Updating index.html...','loading');
+  try {
+    // Update index.html card
+    const {sha:iSha, content:iContent} = await ghGet('index.html');
+    // Replace both occurrences (popular + all sections) of this game card
+    const cardPattern = new RegExp(`<a class="game-card" href="games/${file}">[\\s\\S]*?</a>`, 'g');
+    const bHTML = newBadge==='new'?' <span class="badge badge-new">new</span>':newBadge==='hot'?' <span class="badge badge-hot">popular</span>':'';
+    const newCard = `<a class="game-card" href="games/${file}">\n    <span class="game-card-icon">${newIcon}</span>\n    <h3>${newName}${bHTML}</h3>\n    <p>${newDesc}</p>\n  </a>`;
+    const newIndex = iContent.replace(cardPattern, newCard);
+    await ghPut('index.html', newIndex, iSha, `Edit game card: ${newName}`);
+    showStatus(`gedit-status-${i}`,'✓ Saved! Reloading list...','success');
+    setTimeout(loadManageGames, 1500);
+  } catch(e) { showStatus(`gedit-status-${i}`,'✗ '+e.message,'error'); }
+}
+
+function confirmDeleteGame(file, name) {
+  confirm(
+    `Remove "${name}"?`,
+    `This will delete games/${file} and remove it from the homepage. This cannot be undone.`,
+    () => deleteGame(file, name)
+  );
+}
+async function deleteGame(file, name) {
+  showStatus('managegames-status','Deleting game...','loading');
+  try {
+    // Delete game file
+    const {sha} = await ghGet(`games/${file}`);
+    await ghDelete(`games/${file}`, sha, `Remove game: ${name}`);
+    // Remove card from index.html (both sections)
+    const {sha:iSha, content:iContent} = await ghGet('index.html');
+    const cardPattern = new RegExp(`\\s*<a class="game-card" href="games/${file}">[\\s\\S]*?</a>`, 'g');
+    const newIndex = iContent.replace(cardPattern, '');
+    await ghPut('index.html', newIndex, iSha, `Remove ${name} from homepage`);
+    showStatus('managegames-status',`✓ "${name}" removed. Netlify redeploying in ~30 seconds.`,'success');
+    loadManageGames();
+  } catch(e) { showStatus('managegames-status','✗ '+e.message,'error'); }
+}
+
+// ── MANAGE UPDATES ──
+async function loadManageUpdates() {
+  const container = document.getElementById('updates-list');
+  container.innerHTML = '<div style="color:var(--muted);font-size:13px;">Loading...</div>';
+  try {
+    const {content} = await ghGet('updates.html');
+    const matches = [...content.matchAll(/<div class="update-entry">([\s\S]*?)<\/div>\s*<\/div>/g)];
+    if (!matches.length) { container.innerHTML='<div style="color:var(--muted);font-size:13px;">No entries found.</div>'; return; }
+    container.innerHTML = matches.map((m,i) => {
+      const dateM = m[1].match(/class="update-date">([^<]+)</);
+      const tagM  = m[1].match(/class="update-tag tag-(\w+)">/);
+      const textM = m[1].match(/tag-\w+">\w+<\/span>([^<]+)/);
+      const date  = dateM?dateM[1].trim():'';
+      const tag   = tagM?tagM[1]:'new';
+      const text  = textM?textM[1].trim():'';
+      return `<div class="manage-item" id="uitem-${i}">
+        <div class="manage-item-info">
+          <h3><span class="tag-preview tag-${tag}">${tag}</span>${text}</h3>
+          <p>${date}</p>
+        </div>
+        <div class="manage-item-btns">
+          <button class="mini-btn mini-btn-accent" onclick="openEditUpdate(${i},'${date}','${tag}',${JSON.stringify(text)})">Edit</button>
+          <button class="mini-btn mini-btn-danger" onclick="confirmDeleteUpdate(${i},${JSON.stringify(text)})">Remove</button>
+        </div>
+      </div>
+      <div class="edit-panel" id="uedit-${i}" style="display:none"></div>`;
+    }).join('');
+  } catch(e) { container.innerHTML=`<div style="color:var(--danger);font-size:13px;">✗ ${e.message}</div>`; }
+}
+
+function openEditUpdate(i, date, tag, text) {
+  const panel = document.getElementById('uedit-'+i);
+  if (panel.style.display !== 'none') { panel.style.display='none'; return; }
+  panel.style.display = 'block';
+  panel.innerHTML = `
+    <h3>Editing entry</h3>
+    <label>Date</label><input id="ue-date-${i}" value="${date}">
+    <label>Tag</label>
+    <select id="ue-tag-${i}">
+      <option value="new" ${tag==='new'?'selected':''}>🟣 new</option>
+      <option value="update" ${tag==='update'?'selected':''}>🟡 update</option>
+      <option value="fix" ${tag==='fix'?'selected':''}>🟢 fix</option>
+    </select>
+    <label>Text</label>
+    <textarea id="ue-text-${i}">${text}</textarea>
+    <div class="btn-row" style="margin-top:14px;">
+      <button class="btn" onclick="document.getElementById('uedit-${i}').style.display='none'">Cancel</button>
+      <button class="btn btn-primary" onclick="saveUpdateEdit(${i},${JSON.stringify(text)})">Save changes</button>
+    </div>
+    <div class="status" id="uedit-status-${i}"></div>`;
+}
+
+async function saveUpdateEdit(i, oldText) {
+  const newDate = document.getElementById(`ue-date-${i}`).value.trim();
+  const newTag  = document.getElementById(`ue-tag-${i}`).value;
+  const newText = document.getElementById(`ue-text-${i}`).value.trim();
+  if (!newDate || !newText) { showStatus(`uedit-status-${i}`,'Fill in date and text.','error'); return; }
+  showStatus(`uedit-status-${i}`,'Saving...','loading');
+  try {
+    const {sha, content} = await ghGet('updates.html');
+    const oldEntry = new RegExp(`<div class="update-entry">[\\s\\S]*?${oldText.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}[\\s\\S]*?<\\/div>\\s*<\\/div>`);
+    const newEntry = `<div class="update-entry">\n    <div class="update-date">${newDate}</div>\n    <div class="update-text"><span class="update-tag tag-${newTag}">${newTag}</span>${newText}</div>\n  </div>`;
+    const newContent = content.replace(oldEntry, newEntry);
+    await ghPut('updates.html', newContent, sha, `Edit update entry: ${newDate}`);
+    showStatus(`uedit-status-${i}`,'✓ Saved! Live in ~30 seconds.','success');
+    setTimeout(loadManageUpdates, 1500);
+  } catch(e) { showStatus(`uedit-status-${i}`,'✗ '+e.message,'error'); }
+}
+
+function confirmDeleteUpdate(i, text) {
+  confirm(
+    'Remove this update?',
+    `"${text.slice(0,80)}${text.length>80?'…':''}" — This cannot be undone.`,
+    () => deleteUpdate(i, text)
+  );
+}
+async function deleteUpdate(i, text) {
+  showStatus('manageupdates-status','Deleting...','loading');
+  try {
+    const {sha, content} = await ghGet('updates.html');
+    const pattern = new RegExp(`\\s*<div class="update-entry">[\\s\\S]*?${text.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}[\\s\\S]*?<\\/div>\\s*<\\/div>`);
+    const newContent = content.replace(pattern,'');
+    await ghPut('updates.html', newContent, sha, `Remove update entry`);
+    showStatus('manageupdates-status','✓ Entry removed. Live in ~30 seconds.','success');
+    loadManageUpdates();
+  } catch(e) { showStatus('manageupdates-status','✗ '+e.message,'error'); }
+}
+
 document.getElementById('password-input').focus();
 </script>
 </body>
