@@ -1,0 +1,1304 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Glitch Game Night</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Lilita+One&family=Figtree:wght@400;600;700&display=swap">
+<style>
+/* Layout: one phone-sized column shared by a hub, two pass-and-play games and an account area. Lizard = leaf green, Tsunami = sea blue. */
+:root{
+  --bg:#eef2f5; --surface:#ffffff; --ink:#14212b; --muted:#566673; --line:#d2dce3;
+  --accent:#ff7a1a; --accent-ink:#1a0d00;
+  --leaf:#2f8a3e; --leaf-ink:#ffffff; --sea:#0e7fa6; --sea-ink:#ffffff;
+  --foam:#bfe9f5; --b4:#0b6e8f; --b3:#3aa5c7; --b2:#9ad6e8;
+  --gold:#b7791f; --ok:#15803d; --bad:#c2410c; --rare-bg:#fff1e6;
+  --display:"Lilita One", "Arial Rounded MT Bold", system-ui, sans-serif;
+  --body:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --meme:"Anton", Impact, "Arial Narrow Bold", sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0b1218; --surface:#141f28; --ink:#e6eef3; --muted:#93a6b3; --line:#26343f;
+  --accent:#ff9447; --accent-ink:#1a0d00;
+  --leaf:#5cc96b; --leaf-ink:#0b170c; --sea:#38b6dc; --sea-ink:#04131a;
+  --foam:#123a4a; --b4:#5fd0f0; --b3:#2f97b8; --b2:#1d5f75;
+  --gold:#f6c453; --ok:#4ade80; --bad:#fdba74; --rare-bg:#2a1608; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0b1218; --surface:#141f28; --ink:#e6eef3; --muted:#93a6b3; --line:#26343f;
+  --accent:#ff9447; --accent-ink:#1a0d00;
+  --leaf:#5cc96b; --leaf-ink:#0b170c; --sea:#38b6dc; --sea-ink:#04131a;
+  --foam:#123a4a; --b4:#5fd0f0; --b3:#2f97b8; --b2:#1d5f75;
+  --gold:#f6c453; --ok:#4ade80; --bad:#fdba74; --rare-bg:#2a1608; color-scheme:dark}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 var(--body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px}
+.stage{max-width:480px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+.stage.lizard{--main:var(--leaf);--main-ink:var(--leaf-ink)}
+.stage.tsunami{--main:var(--sea);--main-ink:var(--sea-ink)}
+.stage{--main:var(--accent);--main-ink:var(--accent-ink)}
+h1,h2,h3{font-family:var(--display);font-weight:400;line-height:1.05;text-wrap:balance;margin:0}
+h1{font-size:2.5rem}
+h2{font-size:1.7rem}
+h3{font-size:1.25rem}
+p{margin:0}
+.eyebrow{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.small-print{font-size:.88rem;color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.center{text-align:center;align-items:center}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.spread{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+label{font-weight:600;font-size:.9rem}
+select,input[type=text]{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%;min-width:0}
+button{font:700 1rem var(--body);border:0;border-radius:14px;padding:14px 18px;cursor:pointer;background:var(--main);color:var(--main-ink)}
+button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+button.small{padding:8px 12px;font-size:.9rem;border-radius:10px}
+button.big{width:100%;font-size:1.15rem;padding:18px}
+button.power{background:var(--rare-bg);color:var(--ink);border:2px solid var(--accent)}
+button:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--main);outline-offset:2px}
+.who{font:400 2.4rem var(--display)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tabs button{flex:1;min-width:0}
+.tabs button[aria-pressed="false"]{background:transparent;color:var(--ink);border:1px solid var(--line)}
+
+/* hub */
+.gamecard{display:flex;gap:14px;align-items:center;text-align:left;width:100%;padding:18px;border-radius:18px}
+.gamecard .ic{font-size:2.6rem;line-height:1}
+.gamecard b{font:400 1.5rem var(--display);display:block}
+.gamecard span{font-weight:400;font-size:.9rem}
+.gc-liz{background:var(--leaf);color:var(--leaf-ink)}
+.gc-tsu{background:var(--sea);color:var(--sea-ink)}
+
+/* avatars */
+.av{--s:44px;position:relative;width:var(--s);height:var(--s);border-radius:50%;background:var(--avbg,#888);display:inline-grid;place-items:center;flex:none;box-shadow:inset 0 -3px 0 rgba(0,0,0,.18)}
+.av .f{font-size:calc(var(--s)*.58);line-height:1}
+.av .h{position:absolute;top:calc(var(--s)*-.30);left:50%;transform:translateX(-50%);font-size:calc(var(--s)*.42);line-height:1}
+.av .b{position:absolute;right:calc(var(--s)*-.12);top:calc(var(--s)*.02);font-size:calc(var(--s)*.32);line-height:1}
+.av .o{position:absolute;bottom:calc(var(--s)*-.26);left:50%;transform:translateX(-50%);font-size:calc(var(--s)*.44);line-height:1}
+.shopgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.sitem{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 8px 12px;border-radius:16px;color:#fff;text-align:center;
+  background:linear-gradient(160deg,var(--rc),color-mix(in srgb,var(--rc) 45%,#000));border:2px solid transparent;min-width:0}
+.sitem .e{font-size:2.6rem;line-height:1.1}
+.sitem .chipc{width:44px;height:44px;border-radius:50%;border:2px solid rgba(255,255,255,.6)}
+.sitem small{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;opacity:.85}
+.sitem .price{background:rgba(0,0,0,.35);border-radius:999px;padding:2px 10px;font-weight:700}
+.sitem.owned{opacity:.55}
+.sitem[aria-pressed="true"]{border-color:#fff;box-shadow:0 0 0 3px var(--rc)}
+.rewardrow{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px dashed var(--line)}
+.rewardrow .lv{font:400 1.1rem var(--display);width:3.2em;flex:none}
+.rewardrow.locked{opacity:.5}
+.mini{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mini .log{font-size:.88rem}
+.av.lg{--s:96px}
+.av.md{--s:60px}
+.av.sm{--s:32px}
+.player{display:flex;gap:12px;align-items:center;padding:8px 0;border-bottom:1px dashed var(--line)}
+.player .nm{flex:1;min-width:0;font-weight:700;overflow:hidden;text-overflow:ellipsis}
+.tag{font-size:.75rem;font-weight:700;border-radius:999px;padding:2px 8px;border:1px solid var(--line);color:var(--muted)}
+.acct-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px}
+.acct-grid button{display:flex;flex-direction:column;align-items:center;gap:8px;background:var(--bg);color:var(--ink);border:1px solid var(--line);padding:16px 8px 10px}
+.acct-grid button small{font-weight:400;color:var(--muted)}
+
+/* color login */
+.swatches{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.sw{aspect-ratio:1/1;border-radius:14px;border:2px solid var(--line);padding:0;display:flex;align-items:flex-end;justify-content:center;font-size:.7rem;font-weight:700;padding-bottom:4px;max-width:100%}
+.qbig{font:400 1.9rem var(--display);text-align:center}
+.dots{display:flex;gap:6px;justify-content:center}
+.dots i{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.dots i.on{background:var(--main)}
+.pad{display:grid;grid-template-columns:repeat(3,64px);gap:10px;justify-content:center}
+.pad button{height:56px;font:400 1.5rem var(--display);padding:0}
+.progress{height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.progress i{display:block;height:100%;background:var(--main)}
+
+/* economy */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
+.stats div{background:var(--bg);border-radius:12px;padding:10px 4px}
+.stats b{display:block;font:400 1.5rem var(--display);font-variant-numeric:tabular-nums}
+.gb{color:var(--gold);font-weight:700}
+.items{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px}
+.item{display:flex;flex-direction:column;align-items:center;gap:4px;background:var(--bg);color:var(--ink);border:2px solid var(--line);border-radius:12px;padding:10px 4px;font-size:.78rem;font-weight:600;text-align:center}
+.item .e{font-size:1.8rem;line-height:1.1}
+.item .chipc{width:28px;height:28px;border-radius:50%}
+.item[aria-pressed="true"]{border-color:var(--accent)}
+.packs4{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pack{display:flex;flex-direction:column;gap:4px;align-items:flex-start;text-align:left;padding:14px;border-radius:14px;color:#fff}
+.pack b{font:400 1.2rem var(--display)}
+.pack span{font-weight:400;font-size:.8rem;opacity:.9}
+.pk-pirate{background:linear-gradient(140deg,#c0392b,#1f4e79)}
+.pk-idol{background:linear-gradient(140deg,#d63384,#3b1d6e)}
+.pk-cursed{background:linear-gradient(140deg,#3d1a6e,#0d0d14)}
+.pk-glitch{background:linear-gradient(140deg,#118a4e,#0b2a3a)}
+.toast{background:var(--rare-bg);border:2px solid var(--accent);border-radius:14px;padding:12px 14px;font-weight:600}
+
+/* lizard */
+.public{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--leaf);color:var(--leaf-ink);border-radius:14px;padding:12px 16px}
+.public b{font:400 1.4rem var(--display)}
+.public .eyebrow{color:inherit;opacity:.85}
+.word{font:400 3rem var(--display);line-height:1;word-break:break-word}
+.role{min-height:300px;justify-content:center;align-items:center;text-align:center}
+.role.liz{animation:shift 4s linear infinite;border-color:transparent;color:#0b170c}
+.role.liz .eyebrow{color:#0b170c}
+@keyframes shift{0%{background:#7bd88f}25%{background:#f6d365}50%{background:#fda085}75%{background:#a18cd1}100%{background:#7bd88f}}
+.hintbox{background:rgba(255,255,255,.6);border-radius:10px;padding:8px 12px;color:#0b170c}
+.order{display:flex;flex-wrap:wrap;gap:6px}
+.order span{border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-weight:600;font-size:.9rem}
+.order span:first-child{background:var(--leaf);color:var(--leaf-ink);border-color:var(--leaf)}
+
+/* tsunami meter */
+.ends{display:flex;justify-content:space-between;gap:12px;font:400 1.25rem var(--display)}
+.ends span:last-child{text-align:right}
+.meter{position:relative;height:64px;border-radius:14px;background:var(--foam);overflow:hidden;border:1px solid var(--line)}
+.meter .water{position:absolute;inset:0 auto 0 0;width:0;background:linear-gradient(90deg,transparent,var(--sea));opacity:.35;transition:width 1.6s cubic-bezier(.2,.8,.2,1)}
+.meter .zone{position:absolute;top:0;bottom:0;background:repeating-linear-gradient(45deg,transparent 0 6px,rgba(255,122,26,.35) 6px 12px)}
+.band{position:absolute;top:0;bottom:0;transform:translateX(-50%)}
+.band.b2{background:var(--b2)} .band.b3{background:var(--b3)} .band.b4{background:var(--b4)}
+.band span{position:absolute;bottom:4px;left:50%;transform:translateX(-50%);font:700 .72rem var(--body);color:var(--sea-ink)}
+.pin{position:absolute;top:-2px;bottom:-2px;width:4px;margin-left:-2px;background:var(--ink);border-radius:2px}
+.pin b{position:absolute;top:2px;left:6px;font-size:.72rem;white-space:nowrap;background:var(--surface);color:var(--ink);padding:0 4px;border-radius:4px;border:1px solid var(--line)}
+.pin.right b{left:auto;right:6px}
+.ticks{display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--sea);height:36px}
+.readout{font:400 1.4rem var(--display);font-variant-numeric:tabular-nums;text-align:center}
+.rare{background:var(--rare-bg);border:2px solid var(--bad);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:4px;animation:pop .5s ease-out}
+.rare .eyebrow{color:var(--bad)}
+.rare b{font:400 1.5rem var(--display);color:var(--bad)}
+@keyframes pop{0%{transform:scale(.9);opacity:.4}60%{transform:scale(1.04)}100%{transform:scale(1);opacity:1}}
+.packs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.chip{display:flex;gap:8px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:10px;cursor:pointer;font-weight:600;font-size:.92rem;min-width:0}
+.chip input{width:20px;height:20px;accent-color:var(--sea);flex:none}
+.chip small{display:block;font-weight:400;color:var(--muted);font-size:.75rem}
+
+/* shared bits */
+.ring{position:relative;width:84px;height:84px}
+.ring svg{transform:rotate(-90deg)}
+.ring span{position:absolute;inset:0;display:grid;place-items:center;font:400 1.7rem var(--display);font-variant-numeric:tabular-nums}
+.log{display:flex;flex-direction:column;gap:6px;font-size:.95rem}
+.log>div{display:flex;justify-content:space-between;align-items:center;gap:10px;border-bottom:1px dashed var(--line);padding-bottom:6px}
+.log b{font-variant-numeric:tabular-nums}
+.plus{color:var(--ok);font-weight:700}
+.minus{color:var(--bad);font-weight:700}
+.meme{background:#000;border-radius:14px;overflow:hidden;position:relative;aspect-ratio:1/1;width:100%;max-width:100%;display:flex;flex-direction:column;justify-content:space-between;align-items:center;padding:12px;color:#fff}
+.meme .face{font-size:7rem;line-height:1}
+.meme .t{font:400 1.6rem/1.05 var(--meme);text-transform:uppercase;text-align:center;text-shadow:2px 2px 0 #000,-2px 2px 0 #000,2px -2px 0 #000,-2px -2px 0 #000}
+.scare{position:fixed;inset:0;z-index:50;background:#000;display:grid;place-items:center;color:#fff;text-align:center;cursor:pointer;
+  padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.scare .boo{font-size:min(60vw,320px);line-height:1;animation:boo .6s cubic-bezier(.2,2,.4,1) both, shake .12s linear .6s 6}
+.scare p{font:400 1.6rem var(--meme);letter-spacing:.04em}
+@keyframes boo{from{transform:scale(.1) rotate(-20deg)}to{transform:scale(1) rotate(0)}}
+@keyframes shake{0%{transform:translate(8px,-6px)}50%{transform:translate(-8px,6px)}100%{transform:translate(0,0)}}
+.status{font-size:.8rem;color:var(--muted);text-align:center}
+@media (prefers-reduced-motion: reduce){.meter .water{transition:none}.rare,.role.liz,.scare .boo{animation:none}.role.liz{background:#f6d365}}
+</style>
+
+<div class="stage" id="app"></div>
+<div id="overlay"></div>
+
+<script>
+/* ================= shared data ================= */
+const COLORS = [["red","#e5484d"],["orange","#f76b15"],["yellow","#ffc53d"],["green","#30a46c"],["blue","#0090ff"],
+  ["purple","#8e4ec6"],["pink","#e93d82"],["brown","#a1662f"],["black","#1c1c1c"],["white","#f5f5f5"]];
+const SUBJECTS = ["Math","Science","English","History"];
+const NUMBERS = ["1","2","3"];
+const SEASONS = ["Winter","Spring","Summer","Fall"];
+const QKEYS = [...SUBJECTS.map(s=>"s:"+s), ...NUMBERS.map(n=>"n:"+n), ...SEASONS.map(w=>"w:"+w)];
+// Full mode adds more questions on top of the simplified 11, so switching back never needs a redo
+const FULL_KEYS = [...QKEYS, ...["Art","Music","Gym"].map(s=>"s:"+s), ...["4","5","6","7","8","9"].map(n=>"n:"+n),
+  ...["January","February","March","April","May","June","July","August","September","October","November","December"].map(m=>"m:"+m)];
+const keysFor = a => a.keyMode === "full" ? FULL_KEYS : QKEYS;
+const KEY_VERSION = 2; // accounts made with the old questions have to redo their color key
+// "m:" (months) only exists on old accounts, for the one check before they redo it
+const qText = k => { const [t,v] = k.split(":"); return t==="n" ? `What color is the number ${v}?` : `What color is ${v}?`; };
+const qGroup = k => ({s:"School subjects",m:"Months",n:"Numbers",w:"Seasons"})[k[0]];
+
+// avatar items: type face | bg | hat | badge. pack items only come from packs; price items from the shop.
+const ITEMS = {};
+function addItems(list, extra){ list.forEach(([id,type,v,name]) => ITEMS[id] = {id,type,v,name,...extra}); }
+addItems([["f-frog","face","🐸","Frog"],["f-cat","face","🐱","Cat"],["f-dog","face","🐶","Dog"],["f-fox","face","🦊","Fox"],
+  ["f-panda","face","🐼","Panda"],["f-monkey","face","🐵","Monkey"],["f-lizard","face","🦎","Lizard"],["f-octo","face","🐙","Octopus"],
+  ["bg-sky","bg","#4fa3e0","Sky"],["bg-grass","bg","#4caf6a","Grass"],["bg-sun","bg","#f2b134","Sun"],["bg-rose","bg","#e0607e","Rose"],["bg-slate","bg","#5d6d7e","Slate"]], {free:true});
+// Item shop catalog. Gbucks are rare, so prices are high; a few items rotate in each day.
+const RARITY = {
+  common:{label:"Common", price:150, color:"#6b8796"},
+  rare:{label:"Rare", price:300, color:"#2f80ed"},
+  epic:{label:"Epic", price:600, color:"#9b51e0"},
+  legendary:{label:"Legendary", price:1200, color:"#f2994a"}
+};
+const SHOP = {
+  common:[["f-tiger","face","🐯","Tiger"],["f-bear","face","🐻","Bear"],["f-pig","face","🐷","Pig"],["f-penguin","face","🐧","Penguin"],
+    ["h-cap","hat","🧢","Cap"],["b-star","badge","⭐","Star"],["b-bolt","badge","⚡","Bolt"],["o-vest","outfit","🦺","Safety vest"],
+    ["o-jersey","outfit","🎽","Jersey"],["bg-mint","bg","#3fc1a5","Mint"],["bg-ocean","bg","#0369a1","Deep Ocean"]],
+  rare:[["f-koala","face","🐨","Koala"],["f-owl","face","🦉","Owl"],["h-top","hat","🎩","Top hat"],["h-grad","hat","🎓","Grad cap"],
+    ["b-fire","badge","🔥","Fire"],["b-ball","badge","⚽","Soccer ball"],["b-skate","badge","🛹","Skateboard"],["o-suit","outfit","👔","Shirt and tie"],
+    ["o-lab","outfit","🥼","Lab coat"],["bg-candy","bg","#f472b6","Candy"],["bg-lava","bg","#c2410c","Lava"]],
+  epic:[["f-lion","face","🦁","Lion"],["f-trex","face","🦖","T-Rex"],["f-pumpkin","face","🎃","Pumpkin"],["h-helmet","hat","⛑️","Rescue helmet"],
+    ["h-party","hat","🥳","Party face"],["b-gem","badge","💎","Gem"],["b-guitar","badge","🎸","Guitar"],["b-unicorn","badge","🦄","Unicorn"],
+    ["o-kimono","outfit","👘","Kimono"],["o-dress","outfit","👗","Dress"],["bg-gold","bg","#d4a017","Gold"],["bg-midnight","bg","#111827","Midnight"]],
+  legendary:[["f-ufo","face","👽","Alien"],["f-skull","face","💀","Skull"],["h-crown","hat","👑","Crown"],["b-dragon","badge","🐉","Dragon"],
+    ["b-planet","badge","🪐","Planet"],["b-trophy","badge","🏆","Trophy"],["bg-rainbow","bg","linear-gradient(135deg,#ff5f6d,#ffc371,#47e891,#3fa7ff,#b06cff)","Rainbow"]]
+};
+Object.entries(SHOP).forEach(([rar,list]) => addItems(list, {rarity:rar, price:RARITY[rar].price}));
+// free outfits and items for reaching a level
+const LEVEL_REWARDS = {2:["o-tee","outfit","👕","T-shirt"],3:["b-clover","badge","🍀","Lucky clover"],5:["o-coat","outfit","🧥","Coat"],
+  7:["h-bow","hat","🎀","Bow"],10:["o-gi","outfit","🥋","Martial arts gi"],13:["b-rainbow","badge","🌈","Rainbow"],
+  15:["bg-galaxy","bg","linear-gradient(135deg,#1e1b4b,#6d28d9,#0f172a)","Galaxy"],20:["f-dragon","face","🐲","Dragon"],25:["o-swim","outfit","🩱","Swimsuit"],30:["h-wizard","hat","🧙","Wizard"]};
+Object.entries(LEVEL_REWARDS).forEach(([lvl,it]) => addItems([it], {level:+lvl}));
+
+const PACKS = {
+  pirate:{name:"Pirate Crew", css:"pk-pirate", blurb:"Straw hats, treasure maps, meat on the bone", items:[
+    ["p-straw","hat","👒","Straw hat"],["p-flag","badge","🏴‍☠️","Jolly Roger"],["p-meat","badge","🍖","Meat"],["p-anchor","badge","⚓","Anchor"],
+    ["p-map","badge","🗺️","Treasure map"],["p-parrot","face","🦜","Parrot"],["p-skull","face","☠️","Skull"],["p-sea","bg","#1f4e79","Grand Sea"]]},
+  idol:{name:"Demon Hunter Idols", css:"pk-idol", blurb:"Stage mics, sparkles and demon-slaying swords", items:[
+    ["i-mic","badge","🎤","Mic"],["i-spark","badge","✨","Sparkle"],["i-sword","badge","🗡️","Sword"],["i-demon","face","👹","Demon"],
+    ["i-imp","face","😈","Imp"],["i-head","hat","🎧","Headphones"],["i-heart","badge","💜","Purple heart"],["i-neon","bg","#d63384","Neon Stage"]]},
+  cursed:{name:"Cursed Sorcerers", css:"pk-cursed", blurb:"Cursed energy, blindfolds and domain swirls", items:[
+    ["c-eye","badge","👁️","Third eye"],["c-swirl","badge","🌀","Domain"],["c-hand","badge","🤞","Hand sign"],["c-shades","hat","🕶️","Blindfold shades"],
+    ["c-mask","face","👺","Curse mask"],["c-orb","badge","🔮","Cursed orb"],["c-ghost","face","👻","Spirit"],["c-void","bg","#2b1250","Cursed Void"]]},
+  glitch:{name:"Glitch Pack", css:"pk-glitch", blurb:"Pixels, robots and error messages", items:[
+    ["g-alien","face","👾","Pixel alien"],["g-robot","face","🤖","Robot"],["g-disk","badge","💾","Save disk"],["g-joy","badge","🕹️","Joystick"],
+    ["g-warn","badge","⚠️","Error"],["g-helmet","hat","🪖","Battle helmet"],["g-zap","badge","🌩️","Storm"],["g-green","bg","#118a4e","Glitch Green"]]}
+};
+Object.entries(PACKS).forEach(([pid,p]) => addItems(p.items, {pack:pid}));
+
+const POWERS = {
+  hint:{name:"Lizard Hint", icon:"🔍", price:75, text:"If you're the lizard, see a vague hint about the word."},
+  radio:{name:"Radio", icon:"📻", price:75, text:"Tsunami Meter: shows which quarter of the meter the target is in."},
+  scare:{name:"Jumpscare", icon:"👻", price:50, text:"Troll the next person: their secret screen opens with a jumpscare."}
+};
+const xpNeed = lvl => 40 + lvl*20;
+const PACK_EVERY = 2;
+// Gbucks are rare: you only get them from leveling up, the daily bonus, winning a Tsunami game and pack doubles.
+const GB = {levelUp:25, daily:20, champ:30, double:10, start:100};
+
+/* ================= storage: shared db, or this device as a fallback ================= */
+const DATA = { accounts:{}, daily:{} };
+let db = null, storeMode = "loading";
+const today = () => { const d = new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); };
+const writeQ = {};
+function queueWrite(path, body){
+  writeQ[path] = (writeQ[path]||Promise.resolve()).then(() => db.doc(path).set(body)).catch(e => console.warn("save failed", path, e && e.code));
+}
+function saveLocal(){ try { localStorage.setItem("glitch-game-night", JSON.stringify(DATA)); } catch(e){} }
+function saveAccount(a){
+  DATA.accounts[a.id] = a;
+  if (db) queueWrite("accounts/" + a.id, a); else saveLocal();
+}
+function dailyToday(){ const t = today(); DATA.daily[t] = DATA.daily[t] || {lizard:{}, tsunami:{}}; return DATA.daily[t]; }
+function addDaily(game, id, pts){
+  if (!pts) return;
+  const d = dailyToday(); d[game][id] = (d[game][id]||0) + pts;
+  if (db) queueWrite("daily/" + today(), d); else saveLocal();
+}
+async function initStore(){
+  const fallback = () => {
+    if (db) return;
+    storeMode = "local";
+    try { Object.assign(DATA, JSON.parse(localStorage.getItem("glitch-game-night")) || {}); } catch(e){}
+    rerenderIfCalm();
+  };
+  if (!window.claude || !window.claude.use){ fallback(); return; }
+  const t = setTimeout(fallback, 6000);
+  let got = null;
+  try { got = await window.claude.use("db"); } catch(e){}
+  if (storeMode === "local") return; // already fell back; don't mix the two stores
+  db = got;
+  if (!db){ clearTimeout(t); fallback(); return; }
+  clearTimeout(t);
+  storeMode = "shared";
+  db.collection("accounts").onSnapshot(snap => {
+    const acc = {};
+    snap.docs.forEach(d => { if (d.exists) acc[d.id] = JSON.parse(JSON.stringify(d.data())); });
+    DATA.accounts = acc; rerenderIfCalm();
+  }, e => { console.warn("accounts", e.code); });
+  db.doc("daily/" + today()).onSnapshot(snap => {
+    if (snap.exists) DATA.daily[today()] = JSON.parse(JSON.stringify(snap.data()));
+    rerenderIfCalm();
+  }, e => { console.warn("daily", e.code); });
+}
+
+/* ================= helpers ================= */
+const $ = s => document.querySelector(s);
+const esc = t => String(t).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const pick = a => a[Math.floor(Math.random()*a.length)];
+const rint = (a,b) => a + Math.floor(Math.random()*(b-a+1));
+const shuffle = a => { a = a.slice(); for (let i=a.length-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]] = [a[j],a[i]]; } return a; };
+let timer = null;
+const stopTimer = () => { if (timer){ clearInterval(timer); timer = null; } };
+
+function avatarHtml(av, size=""){
+  av = av || {};
+  const f = ITEMS[av.face] || ITEMS["f-frog"], bg = ITEMS[av.bg] || ITEMS["bg-sky"];
+  const h = ITEMS[av.hat], b = ITEMS[av.badge], o = ITEMS[av.outfit];
+  return `<span class="av ${size}" style="--avbg:${bg.v}" aria-hidden="true"><span class="f">${f.v}</span>${o?`<span class="o">${o.v}</span>`:""}${h?`<span class="h">${h.v}</span>`:""}${b?`<span class="b">${b.v}</span>`:""}</span>`;
+}
+const swatch = i => i.type==="bg" ? `<span class="chipc" style="background:${i.v}"></span>` : `<span class="e">${i.v}</span>`;
+const guestAv = {face:"f-monkey", bg:"bg-slate"};
+const loggedIn = id => S.verified.includes(id) && DATA.accounts[id] && DATA.accounts[id].keyVersion === KEY_VERSION;
+
+/* ================= app state ================= */
+let S = window.claude?.hot?.data?.S || {
+  view:"home", game:null,
+  lobby:{ lizard:{players:[], cat:"Random", lizards:1, look:10}, tsunami:{players:[], win:15, look:10, packs:null, rare:"rare", scoring:"wta"} },
+  verified:[], // account ids that passed the color check this visit
+  quiz:null, create:null, profile:null, add:null, lb:"lizard",
+  liz:null, tsu:null, toasts:[]
+};
+const calmViews = ["home","leaderboard","profile","pickAccount","lobby","shop"];
+function rerenderIfCalm(){ if (calmViews.includes(S.view)) render(); }
+
+function go(view, extra){ Object.assign(S, extra||{}); S.view = view; render(); window.scrollTo(0,0); }
+
+function render(){
+  stopTimer();
+  const app = $("#app");
+  app.className = "stage" + (S.game ? " " + S.game : "");
+  const views = {home:renderHome, leaderboard:renderLeaderboard, pickAccount:renderPickAccount, create:renderCreate, quiz:renderQuiz,
+    profile:renderProfile, shop:renderShop, lobby:renderLobby, liz:renderLizard, tsu:renderTsunami};
+  (views[S.view] || renderHome)(app);
+}
+
+/* ================= rewards ================= */
+function reward(acctId, {xp=0, gb=0}){
+  const a = DATA.accounts[acctId]; if (!a) return [];
+  const notes = [];
+  a.xp += xp; a.gbucks += gb;
+  if (a.lastBonus !== today()){ a.lastBonus = today(); a.gbucks += GB.daily; notes.push(`${a.name}: daily bonus +${GB.daily} Gbucks`); }
+  while (a.xp >= xpNeed(a.level)){
+    a.xp -= xpNeed(a.level); a.level++; a.gbucks += GB.levelUp;
+    notes.push(`${a.name} reached level ${a.level}! +${GB.levelUp} Gbucks`);
+    const lr = LEVEL_REWARDS[a.level];
+    if (lr && !a.items.includes(lr[0])){ a.items.push(lr[0]); notes.push(`${a.name} unlocked ${lr[2]} ${lr[3]}`); }
+    if (a.level % PACK_EVERY === 0){ a.packs++; notes.push(`${a.name} earned a free pack 🎁`); }
+  }
+  saveAccount(a);
+  return notes;
+}
+function newAccount(name, face, bg, colors, pin){
+  const id = "a" + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+  return {id, name, colors, keyVersion:KEY_VERSION, pin:pin||null,avatar:{face, bg, hat:null, badge:null, outfit:null}, xp:0, level:1, gbucks:GB.start, items:[],
+    power:{hint:1, radio:1, scare:1}, packs:1, wins:{lizard:0, tsunami:0}, created:today()};
+}
+const owns = (a, id) => ITEMS[id] && (ITEMS[id].free || a.items.includes(id));
+
+/* ================= home ================= */
+function renderHome(app){
+  S.game = null; app.className = "stage";
+  const accts = Object.values(DATA.accounts);
+  app.innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <div class="eyebrow">Pass-and-play · one device</div>
+      <h1>Glitch Game Night</h1>
+      <p class="small-print">Two games, one set of accounts. Play to earn XP, level up for Gbucks and free outfits, then spend Gbucks in the Item Shop.</p>
+    </div>
+    <button class="gamecard gc-liz" id="g-liz"><span class="ic">🦎</span><span><b>Lizard in the Room</b><span>3+ players. Everyone knows the word except the lizard.</span></span></button>
+    <button class="gamecard gc-tsu" id="g-tsu"><span class="ic">🌊</span><span><b>Tsunami Meter</b><span>2+ players. Clue a secret spot between two opposites.</span></span></button>
+    <div class="card">
+      <div class="spread"><h3>Accounts</h3><button class="small" id="new">+ New account</button></div>
+      ${accts.length ? `<div class="acct-grid">${accts.map(a => `<button data-acct="${a.id}">${avatarHtml(a.avatar,"md")}<span>${esc(a.name)}</span><small>Lv ${a.level}</small></button>`).join("")}</div>`
+        : `<p class="small-print">No accounts yet. Make one to start earning XP and Gbucks. Guests can still play without one.</p>`}
+    </div>
+    <button class="big" id="shop">🛒 Item Shop <span style="font-weight:400">· new items in ${untilMidnight()}</span></button>
+    <div class="card">
+      <div class="spread"><h3>🏆 Today's leaders</h3><span class="tag">resets at midnight</span></div>
+      <div class="mini">${["lizard","tsunami"].map(gm => {
+        const rows = Object.entries(dailyToday()[gm]||{}).filter(([id]) => DATA.accounts[id]).sort((x,y) => y[1]-x[1]).slice(0,3);
+        return `<div><div class="eyebrow">${gm==="lizard"?"🦎 Lizard":"🌊 Tsunami"}</div><div class="log">${rows.length
+          ? rows.map(([id,p],i) => `<div><span class="row" style="gap:6px;min-width:0">${["🥇","🥈","🥉"][i]} ${avatarHtml(DATA.accounts[id].avatar,"sm")}<span style="overflow:hidden;text-overflow:ellipsis">${esc(DATA.accounts[id].name)}</span></span><b>${p}</b></div>`).join("")
+          : `<p class="small-print">No points yet today</p>`}</div></div>`; }).join("")}</div>
+      <button class="ghost" id="lb">Full leaderboards</button>
+    </div>
+    <p class="status">${storeMode==="shared" ? "Accounts are saved with this page." : storeMode==="local" ? "Accounts are saved in this browser only." : "Loading accounts…"}</p>`;
+  $("#g-liz").onclick = () => go("lobby", {game:"lizard"});
+  $("#g-tsu").onclick = () => go("lobby", {game:"tsunami"});
+  $("#lb").onclick = () => go("leaderboard");
+  $("#shop").onclick = () => go("shop", {shop:{id:null, sel:null}});
+  $("#new").onclick = () => go("create", {create:{step:"name", name:"", face:"f-frog", bg:"bg-sky", qi:0, colors:{}, then:"home"}});
+  app.querySelectorAll("[data-acct]").forEach(b => b.onclick = () => openAccount(b.dataset.acct));
+}
+function openAccount(id){
+  if (loggedIn(id)) go("profile", {profile:{id, tab:"avatar"}});
+  else startQuiz(id, {view:"profile"});
+}
+
+/* ================= leaderboards ================= */
+function renderLeaderboard(app){
+  const accts = DATA.accounts, d = dailyToday();
+  let rows;
+  if (S.lb === "levels") rows = Object.values(accts).map(a => [a, `Lv ${a.level}`, a.level*10000 + a.xp]);
+  else rows = Object.entries(d[S.lb]||{}).filter(([id]) => accts[id]).map(([id,p]) => [accts[id], p + " pts", p]);
+  rows.sort((a,b) => b[2]-a[2]);
+  const medal = i => ["🥇","🥈","🥉"][i] || (i+1);
+  app.innerHTML = `
+    <div class="spread"><h2>🏆 Leaderboards</h2><button class="ghost small" id="back">Back</button></div>
+    <div class="tabs">
+      ${[["lizard","🦎 Lizard"],["tsunami","🌊 Tsunami"],["levels","⭐ Levels"]].map(([k,t]) => `<button class="small" data-lb="${k}" aria-pressed="${S.lb===k}">${t}</button>`).join("")}
+    </div>
+    <div class="card">
+      <div class="eyebrow">${S.lb==="levels" ? "All time" : "Today only · resets at midnight"}</div>
+      ${rows.length ? `<div class="log">${rows.map(([a,v],i) => `<div><span class="row" style="gap:10px"><b style="width:1.6em">${medal(i)}</b>${avatarHtml(a.avatar,"sm")} ${esc(a.name)}</span><b>${esc(v)}</b></div>`).join("")}</div>`
+        : `<p class="small-print">Nobody has scored ${S.lb==="levels"?"yet":"in this game today"}. Play a round with an account to get on the board.</p>`}
+    </div>`;
+  $("#back").onclick = () => go("home");
+  app.querySelectorAll("[data-lb]").forEach(b => b.onclick = () => { S.lb = b.dataset.lb; render(); });
+}
+
+/* ================= create account ================= */
+function renderCreate(app){
+  const c = S.create;
+  if (c.step === "name"){
+    app.innerHTML = `
+      <div class="spread"><h2>New account</h2><button class="ghost small" id="back">Cancel</button></div>
+      <div class="card">
+        <label for="nm">Your name</label>
+        <input type="text" id="nm" maxlength="16" value="${esc(c.name)}" placeholder="Kiara">
+        <p class="small-print" id="err"></p>
+        <button class="big" id="next">Next: make your avatar</button>
+      </div>`;
+    $("#back").onclick = () => go(c.then === "pickAccount" ? "pickAccount" : "home");
+    $("#next").onclick = () => {
+      const n = $("#nm").value.trim();
+      if (!n){ $("#err").textContent = "Type a name first."; return; }
+      if (Object.values(DATA.accounts).some(a => a.name.toLowerCase() === n.toLowerCase())){ $("#err").textContent = "That name is taken. Try another."; return; }
+      c.name = n; c.step = "avatar"; render();
+    };
+    return;
+  }
+  if (c.step === "avatar"){
+    const faces = Object.values(ITEMS).filter(i => i.free && i.type==="face");
+    const bgs = Object.values(ITEMS).filter(i => i.free && i.type==="bg");
+    app.innerHTML = `
+      <div class="card center">${avatarHtml({face:c.face,bg:c.bg},"lg")}<h2>${esc(c.name)}</h2></div>
+      <div class="card">
+        <label>Pick a face</label>
+        <div class="items">${faces.map(f => `<button class="item" data-face="${f.id}" aria-pressed="${c.face===f.id}"><span class="e">${f.v}</span>${esc(f.name)}</button>`).join("")}</div>
+        <label>Pick a background</label>
+        <div class="items">${bgs.map(b => `<button class="item" data-bg="${b.id}" aria-pressed="${c.bg===b.id}"><span class="chipc" style="background:${b.v}"></span>${esc(b.name)}</button>`).join("")}</div>
+      </div>
+      <div class="card">
+        <h3>Next: your color key</h3>
+        <p class="small-print">Instead of a password, you pick a color for each question. To log in later, you get 3 random ones and have to match what you picked. Go with your gut so you remember! You can also add a PIN after, and switch modes later in your account.</p>
+        <div class="tabs">
+          <button class="small" data-mode="simple" aria-pressed="${(c.mode||"simple")==="simple"}">Simplified · ${QKEYS.length} questions</button>
+          <button class="small" data-mode="full" aria-pressed="${c.mode==="full"}">Full · ${FULL_KEYS.length} questions</button>
+        </div>
+        <p class="small-print">${c.mode==="full" ? "Math, Science, English, History, Art, Music, Gym, the numbers 1 to 9, the four seasons and all 12 months." : "Math, Science, English, History, the numbers 1 to 3 and the four seasons."}</p>
+        <button class="big" id="next">Make my color key</button>
+      </div>`;
+    app.querySelectorAll("[data-face]").forEach(b => b.onclick = () => { c.face = b.dataset.face; render(); });
+    app.querySelectorAll("[data-bg]").forEach(b => b.onclick = () => { c.bg = b.dataset.bg; render(); });
+    app.querySelectorAll("[data-mode]").forEach(b => b.onclick = () => { c.mode = b.dataset.mode; render(); });
+    $("#next").onclick = () => { c.mode = c.mode || "simple"; c.keys = c.mode === "full" ? FULL_KEYS : QKEYS; c.step = "colors"; c.qi = 0; render(); };
+    return;
+  }
+  if (c.step === "colors"){
+    const K = c.keys || QKEYS, k = K[c.qi];
+    app.innerHTML = `
+      ${c.redo && !c.qi ? `<div class="toast">${c.upgrade ? `Full mode: ${K.length} more questions to answer, ${esc(c.name)}.` : `${esc(c.name)}, pick your colors again. Your stuff, levels and Gbucks are all safe.`}</div>` : ""}
+      <div class="spread"><span class="eyebrow">${esc(qGroup(k))} · ${c.qi+1} of ${K.length}</span>
+        <span class="row">${c.qi ? `<button class="ghost small" id="undo">Back one</button>` : ""}<button class="ghost small" id="cancel">Cancel</button></span></div>
+      <div class="progress"><i style="width:${(c.qi/K.length*100).toFixed(1)}%"></i></div>
+      <div class="card center">
+        <div class="qbig">${esc(qText(k))}</div>
+        <div class="swatches" style="width:100%">${COLORS.map(([n,h]) => `<button class="sw" data-c="${n}" style="background:${h};color:${["yellow","white"].includes(n)?"#111":"#fff"}" aria-label="${n}">${n}</button>`).join("")}</div>
+      </div>
+      <p class="small-print">Only ${esc(c.name)} should be looking.</p>`;
+    app.querySelectorAll("[data-c]").forEach(b => b.onclick = () => {
+      c.colors[k] = b.dataset.c;
+      if (c.qi < K.length-1){ c.qi++; render(); return; }
+      if (c.upgrade){ finishCreate(null); return; }
+      c.step = "pin"; c.pin = ""; c.pin1 = null; render();
+    });
+    const u = $("#undo"); if (u) u.onclick = () => { c.qi--; render(); };
+    $("#cancel").onclick = () => c.redo && loggedIn(c.redo) ? go("profile", {profile:{id:c.redo, tab:"avatar"}}) : go("home");
+    return;
+  }
+  if (c.step === "pin"){
+    const confirming = c.pin1 !== null;
+    app.innerHTML = `
+      <div class="card center">
+        <div class="eyebrow">${c.pinOnly ? "Change PIN" : "Optional"}</div>
+        <h2>${confirming ? "Type it again" : "Add a 4-digit PIN?"}</h2>
+        <p class="small-print">${confirming ? "Just to make sure." : "Then you can log in with either your colors or your PIN. Only " + esc(c.name) + " should be looking."}</p>
+        ${padHtml(c.pin)}
+        ${c.err ? `<p class="minus">${esc(c.err)}</p>` : ""}
+        <button class="ghost" id="skip">${c.pinOnly ? "Cancel" : "Skip, colors only"}</button>
+        ${c.pinOnly && DATA.accounts[c.redo]?.pin ? `<button class="ghost small" id="rmpin">Remove my PIN</button>` : ""}
+      </div>`;
+    bindPad(app, () => c.pin, v => { c.pin = v; c.err = ""; if (v.length < 4){ render(); return; }
+      if (!confirming){ c.pin1 = v; c.pin = ""; render(); return; }
+      if (v !== c.pin1){ c.pin1 = null; c.pin = ""; c.err = "Those didn't match. Start over."; render(); return; }
+      finishCreate(v);
+    });
+    $("#skip").onclick = () => c.pinOnly ? go("profile", {profile:{id:c.redo, tab:"avatar"}}) : finishCreate(null);
+    const rm = $("#rmpin"); if (rm) rm.onclick = () => { const a = DATA.accounts[c.redo]; a.pin = null; saveAccount(a); S.toasts = ["PIN removed. Log in with your colors."]; go("profile", {profile:{id:a.id, tab:"avatar"}}); };
+  }
+}
+function finishCreate(pin){
+  const c = S.create;
+  if (c.redo){
+    const a = DATA.accounts[c.redo];
+    if (!c.pinOnly){ a.colors = c.colors; a.keyVersion = KEY_VERSION; a.keyMode = c.mode || a.keyMode || "simple"; }
+    if (pin) a.pin = pin;
+    saveAccount(a);
+    if (!S.verified.includes(a.id)) S.verified.push(a.id);
+    S.toasts = [c.pinOnly ? "PIN saved." : c.upgrade ? "Full mode is on. Logins can ask any of your " + FULL_KEYS.length + " questions." : "Color key saved!" + (pin ? " PIN saved too." : "")];
+    afterLogin(a, c.next || {view:"profile"});
+    return;
+  }
+  const a = newAccount(c.name, c.face, c.bg, c.colors, pin);
+  a.keyMode = c.mode || "simple";
+  saveAccount(a);
+  S.verified.push(a.id);
+  S.toasts = [`Welcome ${a.name}! You start with ${GB.start} Gbucks, one of each power-up and a free pack.`];
+  if (c.then === "pickAccount"){ addPlayer({acct:a.id}); go("lobby"); }
+  else go("profile", {profile:{id:a.id, tab:"packs"}});
+}
+function padHtml(val){
+  return `<div class="dots" style="gap:12px">${[0,1,2,3].map(j => `<i class="${j<val.length?"on":""}" style="width:16px;height:16px"></i>`).join("")}</div>
+    <div class="pad">${["1","2","3","4","5","6","7","8","9","","0","⌫"].map(k => k ? `<button class="ghost" data-k="${k}" aria-label="${k==="⌫"?"Delete":k}">${k}</button>` : `<span></span>`).join("")}</div>`;
+}
+function bindPad(app, get, set){
+  app.querySelectorAll("[data-k]").forEach(b => b.onclick = () => {
+    const k = b.dataset.k, v = get();
+    if (k === "⌫") set(v.slice(0,-1)); else if (v.length < 4) set(v + k);
+  });
+}
+
+/* ================= color login ================= */
+function startQuiz(id, then){
+  const a = DATA.accounts[id];
+  // old accounts are checked once with their old questions, then have to redo the key
+  const pool = a && a.keyVersion === KEY_VERSION ? keysFor(a) : Object.keys((a && a.colors) || {});
+  S.quiz = {id, pool, qs:shuffle(pool).slice(0,3), i:0, ans:[], then, fails:0, mode:"colors", pin:"", pinFails:0};
+  go("quiz");
+}
+function afterLogin(a, then){
+  if (!S.verified.includes(a.id)) S.verified.push(a.id);
+  if (a.keyVersion !== KEY_VERSION){
+    S.verified = S.verified.filter(x => x !== a.id); // not fully logged in until the new key is made
+    go("create", {create:{step:"colors", redo:a.id, name:a.name, qi:0, colors:{}, then:"redo", next:then}});
+    return;
+  }
+  if (then.view === "lobby"){ addPlayer({acct:a.id}); go("lobby"); }
+  else if (then.view === "shop") go("shop", {shop:{id:a.id, sel:null}});
+  else go("profile", {profile:{id:a.id, tab:"avatar"}});
+}
+function renderQuiz(app){
+  const q = S.quiz, a = DATA.accounts[q.id];
+  if (!a){ go("home"); return; }
+  const head = `<div class="spread"><span class="row">${avatarHtml(a.avatar,"sm")}<b>${esc(a.name)}</b></span><button class="ghost small" id="back">Cancel</button></div>`;
+  if (q.mode === "pin"){
+    app.innerHTML = head + `
+      <div class="card center">
+        <div class="eyebrow">PIN login</div><h2>Type your PIN</h2>
+        ${padHtml(q.pin)}
+        ${q.pinFails ? `<p class="minus">Wrong PIN. Try again.</p>` : `<p class="small-print">Everyone else look away.</p>`}
+        <button class="ghost small" id="mode">Use my colors instead</button>
+      </div>`;
+    bindPad(app, () => q.pin, v => { q.pin = v;
+      if (v.length < 4){ render(); return; }
+      if (v === a.pin){ afterLogin(a, q.then); return; }
+      q.pinFails++; q.pin = ""; render();
+    });
+    $("#mode").onclick = () => { q.mode = "colors"; render(); };
+  } else {
+    const k = q.qs[q.i];
+    app.innerHTML = head + `
+      ${a.keyVersion !== KEY_VERSION ? `<div class="toast">The color questions changed! Answer 3 of your old ones one last time, then you'll pick colors for the new ones.</div>` : ""}
+      <div class="card center">
+        <div class="eyebrow">Color check · question ${q.i+1} of 3</div>
+        <div class="dots">${[0,1,2].map(j => `<i class="${j<q.i?"on":""}"></i>`).join("")}</div>
+        <div class="qbig">${esc(qText(k))}</div>
+        <div class="swatches" style="width:100%">${COLORS.map(([n,h]) => `<button class="sw" data-c="${n}" style="background:${h};color:${["yellow","white"].includes(n)?"#111":"#fff"}" aria-label="${n}">${n}</button>`).join("")}</div>
+        ${q.fails ? `<p class="minus">Nope, that didn't match. Here are 3 new ones.</p>` : `<p class="small-print">Everyone else look away.</p>`}
+        ${a.pin ? `<button class="ghost small" id="mode">Log in with my PIN instead</button>` : ""}
+      </div>`;
+    app.querySelectorAll("[data-c]").forEach(b => b.onclick = () => {
+      q.ans.push(b.dataset.c);
+      if (q.i < 2){ q.i++; render(); return; }
+      const ok = q.qs.every((key, j) => a.colors[key] === q.ans[j]);
+      if (!ok){ q.fails++; q.qs = shuffle(q.pool).slice(0,3); q.i = 0; q.ans = []; render(); return; }
+      afterLogin(a, q.then);
+    });
+    const m = $("#mode"); if (m) m.onclick = () => { q.mode = "pin"; q.pin = ""; render(); };
+  }
+  $("#back").onclick = () => go(q.then.view === "lobby" ? "pickAccount" : "home");
+}
+
+/* ================= profile: avatar, shop, packs ================= */
+function renderProfile(app){
+  const p = S.profile, a = DATA.accounts[p.id];
+  if (!a){ go("home"); return; }
+  const toast = S.toasts.length ? `<div class="toast">${S.toasts.map(esc).join("<br>")}</div>` : "";
+  S.toasts = [];
+  let body = "";
+  if (p.tab === "avatar"){
+    const slot = (type, label) => {
+      const list = Object.values(ITEMS).filter(i => i.type===type && owns(a, i.id));
+      const none = type!=="face"&&type!=="bg" ? `<button class="item" data-eq="${type}:" aria-pressed="${!a.avatar[type]}"><span class="e">∅</span>None</button>` : "";
+      return `<label>${label}</label><div class="items">${none}${list.map(i => `<button class="item" data-eq="${type}:${i.id}" aria-pressed="${a.avatar[type]===i.id}">${swatch(i)}${esc(i.name)}</button>`).join("")}</div>`;
+    };
+    body = `<div class="card">${slot("face","Face")}${slot("outfit","Outfit")}${slot("hat","Hat")}${slot("badge","Badge")}${slot("bg","Background")}
+      <p class="small-print">Most outfits and items are in the Item Shop. Some unlock for free when you level up, and packs have more.</p></div>
+      <div class="card"><h3>Login</h3>
+        <p class="small-print">${a.pin ? "You can log in with your colors or your PIN." : "You log in with your colors. Add a PIN for a faster option."}</p>
+        <label>Login questions</label>
+        <div class="tabs">
+          <button class="small" id="m-simple" aria-pressed="${a.keyMode!=="full"}">Simplified · ${QKEYS.length}</button>
+          <button class="small" id="m-full" aria-pressed="${a.keyMode==="full"}">Full · ${FULL_KEYS.length}</button>
+        </div>
+        <p class="small-print">${a.keyMode==="full" ? "Full: logins can ask any of your 32 questions, including Art, Music, Gym, numbers 4 to 9 and months." : "Simplified: Math, Science, English, History, 1, 2, 3, Winter, Spring, Summer, Fall."}</p>
+        <div class="row"><button class="small ghost" id="setpin">${a.pin ? "Change PIN" : "Add a PIN"}</button><button class="small ghost" id="redo">Redo my colors</button></div></div>`;
+  }
+  if (p.tab === "rewards"){
+    body = `<div class="card"><h3>Level rewards</h3><p class="small-print">Free stuff for leveling up. Every level also gives +${GB.levelUp} Gbucks, and every ${PACK_EVERY} levels gives a free pack.</p>
+      <div>${Object.entries(LEVEL_REWARDS).map(([lvl,[id]]) => { const i = ITEMS[id], got = a.level >= +lvl;
+        return `<div class="rewardrow ${got?"":"locked"}"><span class="lv">Lv ${lvl}</span>${swatch(i)}<span style="flex:1">${esc(i.name)}</span><span class="tag">${got ? "Unlocked" : "🔒"}</span></div>`; }).join("")}</div></div>`;
+  }
+  if (p.tab === "packs"){
+    const opened = p.opened;
+    body = opened ? `<div class="card center"><div class="eyebrow">${esc(PACKS[opened.pack].name)} opened!</div>
+        ${opened.got.length ? `<div class="items" style="width:100%">${opened.got.map(id => { const i = ITEMS[id]; return `<div class="item">${swatch(i)}${esc(i.name)}</div>`; }).join("")}</div>` : ""}
+        ${opened.bonus ? `<p class="gb">+${opened.bonus} Gbucks for doubles</p>` : ""}
+        <button class="big" id="ok">Nice!</button></div>`
+      : `<div class="card">
+        <h3>${a.packs ? `You have ${a.packs} free pack${a.packs>1?"s":""} 🎁` : "No free packs right now"}</h3>
+        <p class="small-print">You get a free pack every ${PACK_EVERY} levels. Each pack has 3 random items. Doubles turn into ${GB.double} Gbucks each.</p>
+        <div class="packs4">${Object.entries(PACKS).map(([pid,pk]) => {
+          const left = pk.items.filter(([id]) => !a.items.includes(id)).length;
+          return `<button class="pack ${pk.css}" data-pack="${pid}" ${a.packs?"":"disabled"}><b>${esc(pk.name)}</b><span>${esc(pk.blurb)}</span><span>${left} of ${pk.items.length} left to find</span></button>`; }).join("")}</div>
+      </div>`;
+  }
+  app.innerHTML = `
+    <div class="spread"><button class="ghost small" id="back">← Hub</button><button class="ghost small" id="out">Log out</button></div>
+    ${toast}
+    <div class="card center">${avatarHtml(a.avatar,"lg")}<h2>${esc(a.name)}</h2>
+      <div class="stats" style="width:100%"><div><b>${a.level}</b>Level</div><div><b class="gb">${a.gbucks}</b>Gbucks</div><div><b>${a.wins.lizard + a.wins.tsunami}</b>Wins</div></div>
+      <div style="width:100%"><div class="progress"><i style="width:${(a.xp/xpNeed(a.level)*100).toFixed(1)}%"></i></div>
+      <p class="small-print">${a.xp} / ${xpNeed(a.level)} XP to level ${a.level+1}</p></div>
+    </div>
+    <button class="big" id="toshop">🛒 Item Shop</button>
+    <div class="tabs">${[["avatar","Avatar"],["packs","Packs"+(a.packs?" ("+a.packs+")":"")],["rewards","Level rewards"]].map(([k,t]) => `<button class="small" data-tab="${k}" aria-pressed="${p.tab===k}">${t}</button>`).join("")}</div>
+    ${body}`;
+  $("#toshop").onclick = () => go("shop", {shop:{id:a.id, sel:null}});
+  const sp = $("#setpin"); if (sp) sp.onclick = () => go("create", {create:{step:"pin", redo:a.id, name:a.name, pinOnly:true, pin:"", pin1:null, next:{view:"profile"}}});
+  const rd = $("#redo"); if (rd) rd.onclick = () => go("create", {create:{step:"colors", redo:a.id, name:a.name, qi:0, colors:{}, keys:keysFor(a), mode:a.keyMode||"simple", then:"redo", next:{view:"profile"}}});
+  const ms = $("#m-simple"); if (ms) ms.onclick = () => { if (a.keyMode === "full"){ a.keyMode = "simple"; saveAccount(a); S.toasts = ["Simplified mode is on. Logins only ask the 11 simple questions."]; } render(); };
+  const mf = $("#m-full"); if (mf) mf.onclick = () => {
+    if (a.keyMode === "full"){ render(); return; }
+    const missing = FULL_KEYS.filter(k => !a.colors[k]);
+    if (!missing.length){ a.keyMode = "full"; saveAccount(a); S.toasts = ["Full mode is on."]; render(); return; }
+    go("create", {create:{step:"colors", redo:a.id, name:a.name, qi:0, colors:{...a.colors}, keys:missing, mode:"full", upgrade:true, then:"redo", next:{view:"profile"}}});
+  };
+  $("#back").onclick = () => go("home");
+  $("#out").onclick = () => { S.verified = S.verified.filter(x => x !== a.id); go("home"); };
+  app.querySelectorAll("[data-tab]").forEach(b => b.onclick = () => { p.tab = b.dataset.tab; p.opened = null; render(); });
+  app.querySelectorAll("[data-eq]").forEach(b => b.onclick = () => { const [t,id] = b.dataset.eq.split(":"); a.avatar[t] = id || null; saveAccount(a); render(); });
+  app.querySelectorAll("[data-pack]").forEach(b => b.onclick = () => {
+    if (!a.packs) return;
+    const pid = b.dataset.pack, all = PACKS[pid].items.map(x => x[0]);
+    const rolls = [pick(all), pick(all), pick(all)];
+    const got = [], seen = new Set(); let bonus = 0;
+    rolls.forEach(id => { if (a.items.includes(id) || seen.has(id)) bonus += GB.double; else { got.push(id); seen.add(id); a.items.push(id); } });
+    a.packs--; a.gbucks += bonus; saveAccount(a);
+    p.opened = {pack:pid, got, bonus}; render();
+  });
+  const ok = $("#ok"); if (ok) ok.onclick = () => { p.opened = null; p.tab = "avatar"; render(); };
+}
+
+/* ================= item shop (rotates daily) ================= */
+function seeded(seed){
+  let h = 2166136261; for (const c of seed) h = Math.imul(h ^ c.charCodeAt(0), 16777619);
+  return () => { h += 0x6D2B79F5; let t = h; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+}
+function shopToday(){
+  const rnd = seeded("shop-" + today());
+  const take = (list, n) => { const a = list.slice(), out = []; while (out.length < n && a.length) out.push(a.splice(Math.floor(rnd()*a.length), 1)[0][0]); return out; };
+  return [...take(SHOP.legendary,1), ...take(SHOP.epic,2), ...take(SHOP.rare,2), ...take(SHOP.common,3)];
+}
+function untilMidnight(){ const n = new Date(), m = new Date(n); m.setHours(24,0,0,0); const mins = Math.ceil((m-n)/60000); return `${Math.floor(mins/60)}h ${mins%60}m`; }
+function renderShop(app){
+  const sh = S.shop || (S.shop = {id:null, sel:null});
+  const a = sh.id && DATA.accounts[sh.id];
+  if (!a){
+    const accts = Object.values(DATA.accounts);
+    app.innerHTML = `
+      <div class="spread"><h2>🛒 Item Shop</h2><button class="ghost small" id="back">Back</button></div>
+      <div class="card"><h3>Who's shopping?</h3>
+        ${accts.length ? `<div class="acct-grid">${accts.map(x => `<button data-acct="${x.id}">${avatarHtml(x.avatar,"md")}<span>${esc(x.name)}</span><small class="gb">${x.gbucks} G</small></button>`).join("")}</div>`
+          : `<p class="small-print">Make an account first.</p>`}</div>`;
+    $("#back").onclick = () => go("home");
+    app.querySelectorAll("[data-acct]").forEach(b => b.onclick = () => {
+      const id = b.dataset.acct;
+      if (loggedIn(id)) go("shop", {shop:{id, sel:null}}); else startQuiz(id, {view:"shop"});
+    });
+    return;
+  }
+  const toast = S.toasts.length ? `<div class="toast">${S.toasts.map(esc).join("<br>")}</div>` : "";
+  S.toasts = [];
+  const card = id => { const i = ITEMS[id], r = RARITY[i.rarity], own = owns(a, id);
+    return `<button class="sitem ${own?"owned":""}" style="--rc:${r.color}" data-sel="${id}" aria-pressed="${sh.sel===id}">${swatch(i)}<b>${esc(i.name)}</b><small>${r.label} ${i.type}</small><span class="price">${own ? "Owned" : i.price + " G"}</span></button>`; };
+  let detail = "";
+  if (sh.sel){
+    const isPow = sh.sel.startsWith("pw:"), key = sh.sel.slice(3);
+    const price = isPow ? POWERS[key].price : ITEMS[sh.sel].price;
+    const label = isPow ? `${POWERS[key].icon} ${POWERS[key].name}` : ITEMS[sh.sel].name;
+    const own = !isPow && owns(a, sh.sel);
+    detail = `<div class="card center">
+      ${isPow ? `<div style="font-size:3rem">${POWERS[key].icon}</div>` : avatarHtml({...a.avatar, [ITEMS[sh.sel].type]: sh.sel}, "lg")}
+      <h3>${esc(label)}</h3>
+      ${isPow ? `<p class="small-print">${esc(POWERS[key].text)} You have ${a.power[key]||0}.</p>` : `<p class="small-print">Preview on your avatar</p>`}
+      ${own ? `<p class="small-print">You already own this.</p>` :
+        a.gbucks >= price ? `<button class="big" id="buy">Buy for ${price} Gbucks</button>` : `<p class="minus">You need ${price - a.gbucks} more Gbucks.</p>`}
+      <button class="ghost small" id="cancel">Close</button></div>`;
+  }
+  app.innerHTML = `
+    <div class="spread"><button class="ghost small" id="back">← Back</button><span class="row">${avatarHtml(a.avatar,"sm")}<b class="gb">${a.gbucks} Gbucks</b></span></div>
+    <h1>🛒 Item Shop</h1>
+    ${toast}${detail}
+    <div class="card">
+      <div class="spread"><h3>Today's items</h3><span class="tag">New items in ${untilMidnight()}</span></div>
+      <div class="shopgrid">${shopToday().map(card).join("")}</div>
+    </div>
+    <div class="card">
+      <h3>Power-ups · always in stock</h3>
+      <div class="shopgrid">${Object.entries(POWERS).map(([k,pw]) => `<button class="sitem" style="--rc:#0e7fa6" data-sel="pw:${k}" aria-pressed="${sh.sel==="pw:"+k}"><span class="e">${pw.icon}</span><b>${esc(pw.name)}</b><small>have ${a.power[k]||0}</small><span class="price">${pw.price} G</span></button>`).join("")}</div>
+    </div>
+    <p class="small-print">Gbucks are free to earn but rare: +${GB.daily} daily bonus for your first round each day, +${GB.levelUp} every level up, +${GB.champ} for winning Tsunami Meter, +${GB.double} for pack doubles.</p>`;
+  $("#back").onclick = () => S.verified.includes(a.id) ? go("profile", {profile:{id:a.id, tab:"avatar"}}) : go("home");
+  app.querySelectorAll("[data-sel]").forEach(b => b.onclick = () => { sh.sel = b.dataset.sel; render(); window.scrollTo(0,0); });
+  const c = $("#cancel"); if (c) c.onclick = () => { sh.sel = null; render(); };
+  const buy = $("#buy"); if (buy) buy.onclick = () => {
+    const sel = sh.sel;
+    if (sel.startsWith("pw:")){ const k = sel.slice(3), pw = POWERS[k]; if (a.gbucks < pw.price) return;
+      a.gbucks -= pw.price; a.power[k] = (a.power[k]||0) + 1; S.toasts = [`Bought ${pw.icon} ${pw.name}. You have ${a.power[k]}.`]; }
+    else { const i = ITEMS[sel]; if (a.gbucks < i.price || owns(a, sel)) return;
+      a.gbucks -= i.price; a.items.push(sel); a.avatar[i.type] = sel; S.toasts = [`Bought ${i.name} and put it on!`]; sh.sel = null; }
+    saveAccount(a); render();
+  };
+}
+
+/* ================= lobby (players + settings) ================= */
+const L = () => S.lobby[S.game];
+const playerName = pl => pl.acct ? (DATA.accounts[pl.acct]?.name || "Player") : pl.name;
+const playerAv = pl => pl.acct ? DATA.accounts[pl.acct]?.avatar : guestAv;
+function addPlayer(pl){ const l = L(); if (pl.acct && l.players.some(x => x.acct === pl.acct)) return; l.players.push(pl); }
+
+function renderPickAccount(app){
+  const l = L(), taken = l.players.filter(p => p.acct).map(p => p.acct);
+  const accts = Object.values(DATA.accounts).filter(a => !taken.includes(a.id));
+  app.innerHTML = `
+    <div class="spread"><h2>Add a player</h2><button class="ghost small" id="back">Back</button></div>
+    <div class="card">
+      <h3>Log in</h3>
+      ${accts.length ? `<div class="acct-grid">${accts.map(a => `<button data-acct="${a.id}">${avatarHtml(a.avatar,"md")}<span>${esc(a.name)}</span><small>Lv ${a.level}</small></button>`).join("")}</div>`
+        : `<p class="small-print">Every account is already in this game.</p>`}
+      <button class="ghost" id="new">+ Make a new account</button>
+    </div>
+    <div class="card">
+      <h3>Play as a guest</h3>
+      <p class="small-print">Guests can play, but don't earn XP, Gbucks or leaderboard points.</p>
+      <div class="row" style="flex-wrap:nowrap"><input type="text" id="gname" maxlength="16" placeholder="Guest name"><button id="guest">Add</button></div>
+    </div>`;
+  $("#back").onclick = () => go("lobby");
+  $("#new").onclick = () => go("create", {create:{step:"name", name:"", face:"f-frog", bg:"bg-sky", qi:0, colors:{}, then:"pickAccount"}});
+  $("#guest").onclick = () => { const n = $("#gname").value.trim() || "Guest " + (l.players.length+1); addPlayer({name:n}); go("lobby"); };
+  app.querySelectorAll("[data-acct]").forEach(b => b.onclick = () => {
+    const id = b.dataset.acct;
+    if (loggedIn(id)){ addPlayer({acct:id}); go("lobby"); } else startQuiz(id, {view:"lobby"});
+  });
+}
+
+function renderLobby(app){
+  const l = L(), liz = S.game === "lizard", min = liz ? 3 : 2;
+  const list = l.players.map((pl,i) => `<div class="player">${avatarHtml(playerAv(pl),"sm")}<span class="nm">${esc(playerName(pl))}</span>
+      ${pl.acct ? `<span class="tag">Lv ${DATA.accounts[pl.acct]?.level||1}</span>` : `<span class="tag">guest</span>`}
+      <button class="ghost small" data-up="${i}" aria-label="Move up" ${i?"":"disabled"}>↑</button><button class="ghost small" data-rm="${i}" aria-label="Remove">✕</button></div>`).join("");
+  let settings = "";
+  if (liz){
+    const opts = ["Random", ...Object.keys(CATS)].map(c => `<option ${c===l.cat?"selected":""}>${esc(c)}</option>`).join("");
+    settings = `
+      <label for="cat">Category</label><select id="cat">${opts}</select>
+      <label for="liz">Lizards</label>
+      <select id="liz">${[["1","1 lizard"],["2","2 lizards"],["3","3 lizards"],["R","Random (secret: usually 1, 1 in 5 for 2, 1 in 10 for 3)"]].map(([v,t]) => `<option value="${v}" ${String(l.lizards)===v?"selected":""}>${t}</option>`).join("")}</select>
+      <label for="look">Handoff timer</label><select id="look">${[5,10,15].map(t => `<option value="${t}" ${l.look==t?"selected":""}>${t} seconds</option>`).join("")}</select>`;
+  } else {
+    l.packs = l.packs || Object.keys(TPACKS);
+    const packs = Object.keys(TPACKS).map(p => `<label class="chip"><input type="checkbox" data-tp="${esc(p)}" ${l.packs.includes(p)?"checked":""}><span>${esc(p)}<small>${TPACKS[p].length} scales</small></span></label>`).join("");
+    settings = `
+      <label>Scale packs</label><div class="packs">${packs}</div>
+      <label for="rare">Rare modes</label>
+      <select id="rare">${[["off","Off"],["rare","Rare (1 in 6 rounds)"],["chaos","Chaos (every other round)"]].map(([v,t]) => `<option value="${v}" ${l.rare===v?"selected":""}>${t}</option>`).join("")}</select>
+      <label for="scoring">Scoring</label>
+      <select id="scoring"><option value="wta" ${l.scoring==="wta"?"selected":""}>Winner takes all (only the closest guesser scores)</option><option value="all" ${l.scoring==="all"?"selected":""}>Everyone scores (clue-giver gets the average)</option></select>
+      <label for="win">Play to</label><select id="win">${[10,15,20,30].map(v => `<option value="${v}" ${l.win==v?"selected":""}>${v} points</option>`).join("")}</select>
+      <label for="look">Handoff timer</label><select id="look">${[5,10,15].map(t => `<option value="${t}" ${l.look==t?"selected":""}>${t} seconds</option>`).join("")}</select>`;
+  }
+  app.innerHTML = `
+    <div class="spread"><button class="ghost small" id="back">← Hub</button><span class="eyebrow">${liz ? "Lizard in the Room" : "Tsunami Meter"}</span></div>
+    <h1>${liz ? "🦎 Lizard in the Room" : "🌊 Tsunami Meter"}</h1>
+    <div class="card">
+      <div class="spread"><h3>Players (${l.players.length})</h3><button class="small" id="add">+ Add player</button></div>
+      ${list || `<p class="small-print">Add at least ${min} players. Log in to earn XP and Gbucks, or add guests.</p>`}
+    </div>
+    <div class="card">${settings}</div>
+    <button class="big" id="start" ${l.players.length < min ? "disabled" : ""}>${l.players.length < min ? `Need ${min - l.players.length} more player${min-l.players.length>1?"s":""}` : "Start"}</button>
+    <p class="small-print">${liz ? "Points: lizard escapes +3 · caught lizard guesses the word +1 · team catches the lizard +1 each." : "Within 4 = 4 points, within 10 = 3, within 17 = 2. If everyone gets wiped out, the clue-giver loses 1."} Every round with an account earns XP, and scoring earns extra XP. Level up for Gbucks.</p>`;
+  $("#back").onclick = () => go("home");
+  $("#add").onclick = () => go("pickAccount");
+  app.querySelectorAll("[data-rm]").forEach(b => b.onclick = () => { l.players.splice(+b.dataset.rm,1); render(); });
+  app.querySelectorAll("[data-up]").forEach(b => b.onclick = () => { const i = +b.dataset.up; [l.players[i-1], l.players[i]] = [l.players[i], l.players[i-1]]; render(); });
+  $("#look").onchange = e => l.look = +e.target.value;
+  if (liz){
+    $("#cat").onchange = e => l.cat = e.target.value;
+    $("#liz").onchange = e => l.lizards = e.target.value === "R" ? "R" : +e.target.value;
+    $("#start").onclick = () => { S.liz = {scores:{}, round:null}; lizNewRound(); };
+  } else {
+    app.querySelectorAll("[data-tp]").forEach(c => c.onchange = () => { l.packs = [...app.querySelectorAll("[data-tp]:checked")].map(x => x.dataset.tp); });
+    $("#rare").onchange = e => l.rare = e.target.value;
+    $("#scoring").onchange = e => l.scoring = e.target.value;
+    $("#win").onchange = e => l.win = +e.target.value;
+    $("#start").onclick = () => { S.tsu = {scores:{}, giver:0, round:0, r:null}; tsuNewRound(); };
+  }
+}
+
+/* ================= power-up buttons + jumpscare ================= */
+function powerBtn(pl, kind, id, label){
+  if (!pl.acct) return "";
+  const a = DATA.accounts[pl.acct]; if (!a || !(a.power[kind] > 0)) return "";
+  return `<button class="power" id="${id}">${POWERS[kind].icon} ${label} <span class="tag">have ${a.power[kind]}</span></button>`;
+}
+function spendPower(pl, kind){ const a = DATA.accounts[pl.acct]; if (!a || !(a.power[kind] > 0)) return false; a.power[kind]--; saveAccount(a); return true; }
+function jumpscare(by, then){
+  const o = $("#overlay");
+  o.innerHTML = `<div class="scare" role="dialog" aria-label="Jumpscare"><div><div class="boo">👹</div><p>GET TROLLED BY ${esc(by).toUpperCase()}</p><p style="font-size:1rem;font-family:var(--body);opacity:.7">tap to continue</p></div></div>`;
+  try {
+    const ac = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ac.createOscillator(), g = ac.createGain();
+    osc.type = "sawtooth"; osc.frequency.setValueAtTime(900, ac.currentTime); osc.frequency.exponentialRampToValueAtTime(140, ac.currentTime + .7);
+    g.gain.setValueAtTime(.25, ac.currentTime); g.gain.exponentialRampToValueAtTime(.001, ac.currentTime + .8);
+    osc.connect(g).connect(ac.destination); osc.start(); osc.stop(ac.currentTime + .8);
+  } catch(e){}
+  o.firstChild.onclick = () => { o.innerHTML = ""; then(); };
+}
+function rewardLines(notes){ return notes.length ? `<div class="toast">${notes.map(esc).join("<br>")}</div>` : ""; }
+
+/* ================= LIZARD IN THE ROOM ================= */
+const CATS = {
+  "Food": ["Pizza","Sushi","Tacos","Pancakes","Spaghetti","Burger","Ice Cream","Popcorn","Burrito","Waffles","Hot Dog","Chicken Nuggets","Mac and Cheese","Donut","Salad","Cereal"],
+  "Animals": ["Elephant","Penguin","Giraffe","Shark","Kangaroo","Octopus","Owl","Snake","Panda","Dolphin","Bee","Crocodile","Horse","Bat","Flamingo","Sloth"],
+  "Sports": ["Soccer","Basketball","Tennis","Swimming","Baseball","Golf","Boxing","Skateboarding","Volleyball","Hockey","Bowling","Surfing","Karate","Gymnastics","Archery","Dodgeball"],
+  "Jobs": ["Doctor","Firefighter","Teacher","Chef","Pilot","Astronaut","Police Officer","Dentist","Farmer","YouTuber","Plumber","Lifeguard","Mail Carrier","Scientist","Clown","Barber"],
+  "Places": ["Beach","Library","Airport","Hospital","Zoo","Movie Theater","Grocery Store","School","Haunted House","Water Park","Gym","Bowling Alley","Camping Site","Mall","Museum","Space Station"],
+  "Things at School": ["Backpack","Pencil","Whiteboard","Lunchbox","Locker","Ruler","Calculator","Homework","Fire Drill","Recess","Glue Stick","Report Card","Cafeteria","Field Trip","Substitute Teacher","Spelling Test"],
+  "Video Game Stuff": ["Boss Fight","Respawn","Lag","Speedrun","Loot Box","Checkpoint","Power-Up","Leaderboard","Final Boss","Hitbox","NPC","Skin","Glitch","Tutorial","Health Bar","Rage Quit"],
+  "Superpowers": ["Flying","Invisibility","Super Strength","Teleporting","Mind Reading","Time Travel","Shapeshifting","Super Speed","Laser Eyes","Freezing Things","Talking to Animals","Healing","Shrinking","Fire Breath","X-Ray Vision","Stretching"],
+  "Weather & Nature": ["Tornado","Rainbow","Volcano","Snowstorm","Earthquake","Thunder","Waterfall","Fog","Hurricane","Desert","Glacier","Cave","Jungle","Meteor Shower","Tsunami","Hail"],
+  "In the House": ["Couch","Microwave","Toilet","Bathtub","Fridge","Lamp","Toaster","Bunk Bed","Vacuum","Washing Machine","Mirror","Ceiling Fan","Doorbell","Fireplace","Stairs","Remote Control"],
+  "Holidays": ["Halloween","Christmas","Birthday","Thanksgiving","Easter","New Year's Eve","Valentine's Day","Fourth of July","April Fools","Hanukkah","Diwali","Lunar New Year","St. Patrick's Day","Mother's Day","Last Day of School","Snow Day"],
+  "Transportation": ["Helicopter","Submarine","Skateboard","School Bus","Rocket","Train","Hot Air Balloon","Scooter","Monster Truck","Cruise Ship","Tractor","Ambulance","Canoe","Roller Coaster","Jet Ski","Unicycle"],
+  "Fantasy": ["Dragon","Wizard","Unicorn","Mermaid","Vampire","Zombie","Ghost","Werewolf","Fairy","Troll","Robot","Alien","Pirate","Ninja","Knight","Giant"],
+  "Music": ["Guitar","Drums","Piano","Violin","Trumpet","Microphone","Concert","DJ","Karaoke","Headphones","Rap","Lullaby","Marching Band","Choir","Opera","Kazoo"],
+  "Clothes": ["Hoodie","Sneakers","Pajamas","Sunglasses","Swimsuit","Tuxedo","Cowboy Hat","Socks","Rain Boots","Scarf","Crown","Backpack","Jersey","Flip Flops","Tie","Onesie"],
+  "Body Parts": ["Elbow","Eyebrow","Knee","Belly Button","Tongue","Ankle","Fingernail","Earlobe","Armpit","Shoulder","Chin","Toes","Nostril","Wrist","Heart","Brain"],
+  "Feelings": ["Bored","Excited","Nervous","Jealous","Proud","Embarrassed","Sleepy","Angry","Confused","Scared","Grumpy","Hyper","Lonely","Surprised","Hungry","Sus"],
+  "Snacks & Drinks": ["Lemonade","Hot Chocolate","Chips","Pretzels","Smoothie","Milkshake","Gummy Bears","Cookies","Soda","Popsicle","Cotton Candy","Nachos","Apple Juice","Granola Bar","Marshmallow","Pickle"],
+  "Movie Types": ["Horror","Comedy","Cartoon","Superhero","Western","Sci-Fi","Musical","Mystery","Documentary","Romance","Spy","Disaster","Monster","Sports Movie","Heist","Time Loop"],
+  "Inventions": ["Wheel","Light Bulb","Phone","Internet","Airplane","Camera","Telescope","Refrigerator","Bicycle","Calculator","Printer","Robot Vacuum","Microwave","Umbrella","Zipper","Elevator"],
+  "Toys & Games": ["Lego","Yo-Yo","Board Game","Puzzle","Kite","Teddy Bear","Water Gun","Slime","Frisbee","Trampoline","Jump Rope","Rubik's Cube","Hide and Seek","Tag","Card Game","Nerf Blaster"],
+  "Ocean": ["Whale","Jellyfish","Coral Reef","Seaweed","Starfish","Treasure Chest","Shipwreck","Lighthouse","Crab","Seahorse","Squid","Sandcastle","Wave","Pearl","Clownfish","Anchor"],
+  "Space": ["Moon","Black Hole","Mars","Comet","Satellite","Sun","Astronaut","UFO","Galaxy","Saturn's Rings","Rocket Launch","Space Suit","Asteroid","Star","Telescope","Gravity"],
+  "Internet Stuff": ["Meme","Emoji","Livestream","Password","Wi-Fi","Group Chat","Hashtag","Dance Trend","Unboxing Video","Comment Section","Download Bar","Captcha","Pop-up Ad","Buffering","Notification","Screenshot"],
+  "Kitchen Stuff": ["Spatula","Blender","Frying Pan","Oven Mitt","Whisk","Cutting Board","Fork","Ladle","Rolling Pin","Kettle","Measuring Cup","Can Opener","Tongs","Grater","Colander","Lunch Bag"],
+  "Hobbies": ["Painting","Fishing","Gardening","Baking","Camping","Knitting","Reading","Dancing","Hiking","Magic Tricks","Coding","Skating","Photography","Drawing","Collecting Cards","Origami"]
+};
+// Vague hint for a lizard who has to give the first clue (or uses a Lizard Hint). Word=hint, per category.
+const HINTS = {
+  "Food":"Pizza=slices|Sushi=Japan|Tacos=Mexico|Pancakes=breakfast|Spaghetti=noodles|Burger=grill|Ice Cream=frozen|Popcorn=movies|Burrito=wrapped|Waffles=breakfast|Hot Dog=ballpark|Chicken Nuggets=dipping|Mac and Cheese=cheesy|Donut=hole|Salad=green|Cereal=bowl",
+  "Animals":"Elephant=big ears|Penguin=cold|Giraffe=tall|Shark=fins|Kangaroo=Australia|Octopus=arms|Owl=night|Snake=slither|Panda=bamboo|Dolphin=smart|Bee=buzz|Crocodile=swamp|Horse=riding|Bat=cave|Flamingo=pink|Sloth=slow",
+  "Sports":"Soccer=goal|Basketball=hoop|Tennis=racket|Swimming=pool|Baseball=diamond|Golf=hole|Boxing=gloves|Skateboarding=tricks|Volleyball=net|Hockey=ice|Bowling=pins|Surfing=waves|Karate=belt|Gymnastics=flips|Archery=aim|Dodgeball=gym class",
+  "Jobs":"Doctor=checkups|Firefighter=emergency|Teacher=classroom|Chef=kitchen|Pilot=sky|Astronaut=floating|Police Officer=badge|Dentist=teeth|Farmer=fields|YouTuber=camera|Plumber=pipes|Lifeguard=whistle|Mail Carrier=letters|Scientist=lab|Clown=circus|Barber=haircut",
+  "Places":"Beach=sand|Library=quiet|Airport=travel|Hospital=sick|Zoo=animals|Movie Theater=big screen|Grocery Store=shopping|School=learning|Haunted House=spooky|Water Park=slides|Gym=workout|Bowling Alley=shoes|Camping Site=tent|Mall=stores|Museum=old stuff|Space Station=orbit",
+  "Things at School":"Backpack=carry|Pencil=writing|Whiteboard=markers|Lunchbox=food|Locker=hallway|Ruler=measure|Calculator=math|Homework=after school|Fire Drill=alarm|Recess=playground|Glue Stick=sticky|Report Card=grades|Cafeteria=lunch|Field Trip=bus|Substitute Teacher=not the usual|Spelling Test=letters",
+  "Video Game Stuff":"Boss Fight=big enemy|Respawn=come back|Lag=slow|Speedrun=fast|Loot Box=random|Checkpoint=save|Power-Up=boost|Leaderboard=ranking|Final Boss=the end|Hitbox=collision|NPC=background|Skin=look|Glitch=bug|Tutorial=learning|Health Bar=HP|Rage Quit=angry",
+  "Superpowers":"Flying=air|Invisibility=unseen|Super Strength=lifting|Teleporting=instant|Mind Reading=thoughts|Time Travel=the past|Shapeshifting=change|Super Speed=fast|Laser Eyes=beams|Freezing Things=cold|Talking to Animals=pets|Healing=wounds|Shrinking=tiny|Fire Breath=hot|X-Ray Vision=bones|Stretching=rubber",
+  "Weather & Nature":"Tornado=spinning|Rainbow=colors|Volcano=lava|Snowstorm=cold|Earthquake=shaking|Thunder=loud|Waterfall=falling|Fog=can't see|Hurricane=coast|Desert=dry|Glacier=ice|Cave=dark|Jungle=vines|Meteor Shower=night sky|Tsunami=ocean|Hail=ice",
+  "In the House":"Couch=sitting|Microwave=heating|Toilet=bathroom|Bathtub=bubbles|Fridge=cold|Lamp=light|Toaster=bread|Bunk Bed=sleep|Vacuum=cleaning|Washing Machine=laundry|Mirror=reflection|Ceiling Fan=spinning|Doorbell=visitors|Fireplace=warm|Stairs=up and down|Remote Control=TV",
+  "Holidays":"Halloween=costumes|Christmas=presents|Birthday=cake|Thanksgiving=turkey|Easter=eggs|New Year's Eve=countdown|Valentine's Day=hearts|Fourth of July=fireworks|April Fools=pranks|Hanukkah=candles|Diwali=lights|Lunar New Year=red|St. Patrick's Day=green|Mother's Day=family|Last Day of School=summer|Snow Day=no school",
+  "Transportation":"Helicopter=blades|Submarine=underwater|Skateboard=wheels|School Bus=yellow|Rocket=launch|Train=tracks|Hot Air Balloon=floating|Scooter=kick|Monster Truck=huge|Cruise Ship=vacation|Tractor=farm|Ambulance=siren|Canoe=paddle|Roller Coaster=loops|Jet Ski=water|Unicycle=balance",
+  "Fantasy":"Dragon=wings|Wizard=magic|Unicorn=horn|Mermaid=tail|Vampire=night|Zombie=undead|Ghost=boo|Werewolf=full moon|Fairy=tiny|Troll=bridge|Robot=metal|Alien=outer space|Pirate=ship|Ninja=stealth|Knight=armor|Giant=huge",
+  "Music":"Guitar=strings|Drums=beat|Piano=keys|Violin=bow|Trumpet=brass|Microphone=voice|Concert=crowd|DJ=party|Karaoke=singing|Headphones=ears|Rap=rhymes|Lullaby=sleep|Marching Band=parade|Choir=group|Opera=fancy|Kazoo=buzzy",
+  "Clothes":"Hoodie=cozy|Sneakers=feet|Pajamas=bedtime|Sunglasses=sunny|Swimsuit=pool|Tuxedo=fancy|Cowboy Hat=western|Socks=feet|Rain Boots=puddles|Scarf=neck|Crown=royal|Backpack=carry|Jersey=team|Flip Flops=summer|Tie=neck|Onesie=one piece",
+  "Body Parts":"Elbow=arm|Eyebrow=face|Knee=leg|Belly Button=middle|Tongue=taste|Ankle=foot|Fingernail=hand|Earlobe=side of head|Armpit=smelly|Shoulder=arm|Chin=face|Toes=feet|Nostril=breathing|Wrist=watch|Heart=beating|Brain=thinking",
+  "Feelings":"Bored=nothing to do|Excited=can't wait|Nervous=butterflies|Jealous=want theirs|Proud=did great|Embarrassed=red face|Sleepy=yawn|Angry=steaming|Confused=huh?|Scared=spooky|Grumpy=morning|Hyper=energy|Lonely=alone|Surprised=gasp|Hungry=stomach|Sus=suspicious",
+  "Snacks & Drinks":"Lemonade=sour|Hot Chocolate=warm|Chips=crunchy|Pretzels=twisted|Smoothie=blended|Milkshake=straw|Gummy Bears=chewy|Cookies=baked|Soda=fizzy|Popsicle=stick|Cotton Candy=fair|Nachos=cheesy|Apple Juice=fruit|Granola Bar=healthy-ish|Marshmallow=fluffy|Pickle=sour",
+  "Movie Types":"Horror=scary|Comedy=laughing|Cartoon=drawn|Superhero=capes|Western=cowboys|Sci-Fi=future|Musical=singing|Mystery=clues|Documentary=real life|Romance=love|Spy=secret|Disaster=destruction|Monster=creature|Sports Movie=team|Heist=stealing|Time Loop=repeat",
+  "Inventions":"Wheel=round|Light Bulb=idea|Phone=calling|Internet=online|Airplane=flying|Camera=pictures|Telescope=stars|Refrigerator=cold|Bicycle=pedals|Calculator=math|Printer=paper|Robot Vacuum=cleaning|Microwave=heating|Umbrella=rain|Zipper=jacket|Elevator=floors",
+  "Toys & Games":"Lego=building|Yo-Yo=string|Board Game=dice|Puzzle=pieces|Kite=wind|Teddy Bear=cuddly|Water Gun=splash|Slime=gooey|Frisbee=throwing|Trampoline=bouncing|Jump Rope=skipping|Rubik's Cube=colors|Hide and Seek=counting|Tag=chasing|Card Game=deck|Nerf Blaster=foam",
+  "Ocean":"Whale=huge|Jellyfish=sting|Coral Reef=colorful|Seaweed=green|Starfish=five|Treasure Chest=gold|Shipwreck=sunk|Lighthouse=light|Crab=claws|Seahorse=tiny|Squid=ink|Sandcastle=building|Wave=surf|Pearl=shiny|Clownfish=orange|Anchor=heavy",
+  "Space":"Moon=night sky|Black Hole=pull|Mars=red|Comet=tail|Satellite=orbit|Sun=hot|Astronaut=floating|UFO=mystery|Galaxy=huge|Saturn's Rings=planet|Rocket Launch=countdown|Space Suit=helmet|Asteroid=rock|Star=twinkle|Telescope=looking|Gravity=falling",
+  "Internet Stuff":"Meme=funny|Emoji=faces|Livestream=live|Password=secret|Wi-Fi=signal|Group Chat=friends|Hashtag=symbol|Dance Trend=moves|Unboxing Video=new stuff|Comment Section=opinions|Download Bar=waiting|Captcha=robot check|Pop-up Ad=annoying|Buffering=waiting|Notification=ding|Screenshot=capture",
+  "Kitchen Stuff":"Spatula=flipping|Blender=smoothies|Frying Pan=stove|Oven Mitt=hot|Whisk=mixing|Cutting Board=chopping|Fork=eating|Ladle=soup|Rolling Pin=dough|Kettle=boiling|Measuring Cup=baking|Can Opener=metal|Tongs=grabbing|Grater=cheese|Colander=draining|Lunch Bag=carry",
+  "Hobbies":"Painting=brush|Fishing=lake|Gardening=plants|Baking=oven|Camping=outdoors|Knitting=yarn|Reading=books|Dancing=moves|Hiking=trails|Magic Tricks=cards|Coding=computer|Skating=wheels|Photography=camera|Drawing=pencil|Collecting Cards=rare|Origami=paper"
+};
+function hintFor(cat, word){
+  const hit = (HINTS[cat]||"").split("|").map(p => p.split("=")).find(([w]) => w === word);
+  return hit ? hit[1] : "starts with " + word[0].toUpperCase();
+}
+const LIZ_MEMES = [["Me nodding","like I know the word"],["When they say \"you know,","the thing\" and you don't know"],["POV: everyone gave","a great clue and you said \"stuff\""],["Blending in","professionally since 2026"],["Trust me bro","I totally know the word"]];
+const LIZ_END = [["The lizard","when someone accidentally says the word"],["Nobody:","The lizard: \"it's like... a thing\""],["When you vote out","your own best friend"],["Me after","voting the wrong person"]];
+const memeHtml = (m, face) => `<div class="meme" aria-label="Meme: ${esc(m[0]+" "+m[1])}"><div class="t">${esc(m[0])}</div><div class="face">${face}</div><div class="t">${esc(m[1])}</div></div>`;
+
+function lizNewRound(){
+  const l = S.lobby.lizard, n = l.players.length;
+  const cat = l.cat === "Random" ? pick(Object.keys(CATS)) : l.cat;
+  let count = l.lizards;
+  if (count === "R"){ const roll = Math.random(); count = roll < .1 ? 3 : roll < .3 ? 2 : 1; }
+  const liz = shuffle([...Array(n).keys()]).slice(0, Math.min(+count, n));
+  const start = Math.floor(Math.random()*n);
+  S.liz.r = { cat, word:pick(CATS[cat]), liz, turn:0, phase:"blank", order:[...Array(n).keys()].map(k => (start+k)%n),
+    memeA:pick(LIZ_MEMES), memeB:pick(LIZ_END), outcome:null, hint:{}, scareBy:null, notes:[] };
+  go("liz");
+}
+function renderLizard(app){
+  const l = S.lobby.lizard, P = l.players, n = P.length, G = S.liz, r = G.r;
+  const nm = i => playerName(P[i]);
+  const bar = `<div class="public"><div><div class="eyebrow">Category · everyone knows</div><b>${esc(r.cat)}</b></div>
+    <div class="eyebrow" style="text-align:right">${n} players<br>${l.lizards==="R" ? "? lizards" : r.liz.length + " lizard" + (r.liz.length>1?"s":"")}</div></div>`;
+  const i = r.turn;
+
+  if (r.phase === "blank"){
+    app.innerHTML = bar + `<div class="card center" style="min-height:280px;justify-content:center">
+        <div class="eyebrow">Pass the device to</div>${avatarHtml(playerAv(P[i]),"md")}<div class="who">${esc(nm(i))}</div>
+        <p class="small-print">Everyone else look away.</p>
+        <button class="big" id="show">I'm ${esc(nm(i))}, show my role</button></div>
+        <button class="ghost" id="quit">Quit to hub</button>`;
+    $("#show").onclick = () => { r.phase = "role"; render(); };
+    $("#quit").onclick = () => go("home");
+    return;
+  }
+  if (r.phase === "role"){
+    if (r.scareBy){ const by = r.scareBy; r.scareBy = null; jumpscare(by, render); }
+    const isLiz = r.liz.includes(i), showHint = isLiz && (r.order[0] === i || r.hint[i]);
+    app.innerHTML = bar + `
+      <div class="card role ${isLiz?"liz":""}">
+        <div class="eyebrow">${esc(nm(i))}, you are</div>
+        ${isLiz ? `<div class="word">🦎 THE LIZARD</div><p>You don't know the word. Fake it. Blend in.</p>
+            ${showHint ? `<p class="hintbox"><b>${r.order[0]===i ? "You're giving the first clue, so here's a hint:" : "🔍 Lizard Hint:"}</b><br>"${esc(hintFor(r.cat, r.word))}"</p>` : ""}`
+          : `<p>In on it. The secret word is</p><div class="word">${esc(r.word)}</div>`}
+      </div>
+      ${isLiz && !showHint ? powerBtn(P[i], "hint", "usehint", "Use Lizard Hint") : ""}
+      ${i < n-1 && !r.scareSet ? powerBtn(P[i], "scare", "usescare", "Jumpscare " + esc(nm(i+1))) : ""}
+      ${isLiz ? memeHtml(r.memeA, "🦎") : ""}
+      <button class="big" id="hide">I'm done, hide it</button>`;
+    const uh = $("#usehint"); if (uh) uh.onclick = () => { if (spendPower(P[i], "hint")){ r.hint[i] = true; render(); } };
+    const us = $("#usescare"); if (us) us.onclick = () => { if (spendPower(P[i], "scare")){ r.scareSet = nm(i); us.outerHTML = `<p class="small-print">👻 Set! ${esc(nm(i+1))} is getting jumpscared.</p>`; } };
+    $("#hide").onclick = () => { r.phase = "after"; r.hiddenAt = Date.now(); render(); };
+    return;
+  }
+  if (r.phase === "after"){
+    const last = i === n-1;
+    const leftNow = () => Math.max(0, l.look - Math.floor((Date.now() - r.hiddenAt)/1000));
+    let left = leftNow();
+    const arc = v => (226.2*(1-v/l.look)).toFixed(1);
+    app.innerHTML = bar + `
+      <div class="card center">
+        <div class="eyebrow">Hidden ${last ? "" : "· " + esc(nm(i+1)) + ", check the timer"}</div>
+        <h2>${esc(nm(i))} hid their role</h2>
+        <div class="ring"><svg width="84" height="84"><circle cx="42" cy="42" r="36" fill="none" stroke="currentColor" stroke-opacity=".15" stroke-width="8"/>
+          <circle id="arc" cx="42" cy="42" r="36" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-dasharray="226.2" stroke-dashoffset="${arc(left)}"/></svg><span id="sec">${left}</span></div>
+        <p class="small-print">${last ? "That was everyone." : "When you get the device, this timer should still be running. If it's already at 0, " + esc(nm(i)) + " sat on the screen too long."}</p>
+        <button class="big" id="next">${last ? "Everyone's seen it, start" : "I'm " + esc(nm(i+1)) + ", next"}</button>
+      </div>`;
+    $("#next").onclick = () => {
+      if (last){ r.phase = "clues"; }
+      else { r.turn++; r.phase = "role"; if (r.scareSet){ r.scareBy = r.scareSet; r.scareSet = null; } }
+      render();
+    };
+    if (left > 0) timer = setInterval(() => { left = leftNow(); $("#sec").textContent = left; $("#arc").setAttribute("stroke-dashoffset", arc(left)); if (left <= 0) stopTimer(); }, 250);
+    return;
+  }
+  if (r.phase === "clues"){
+    app.innerHTML = bar + `
+      <div class="card">
+        <div class="eyebrow">Round on</div>
+        <h2>Everyone says one word about it</h2>
+        <p>Go in this order. Be vague enough that the lizard can't guess the word, but clear enough that your team trusts you. Then point at who you think the lizard is on 3.</p>
+        <div class="order">${r.order.map(k => `<span>${esc(nm(k))}</span>`).join("")}</div>
+        <p class="small-print">${esc(nm(r.order[0]))} starts.</p>
+      </div>
+      <button class="big" id="reveal">Reveal the lizard</button>`;
+    $("#reveal").onclick = () => { r.phase = "reveal"; render(); };
+    return;
+  }
+  if (r.phase === "reveal"){
+    const lizNames = r.liz.map(nm).join(" & ");
+    const scores = [...Array(n).keys()].map(k => [k, G.scores[k]||0]).sort((a,b) => b[1]-a[1]);
+    app.innerHTML = bar + `
+      <div class="card role liz">
+        <div class="eyebrow">${r.liz.length>1 ? r.liz.length + " lizards! They were" : "The lizard was"}</div>
+        <div class="word">${esc(lizNames)}</div>
+        <p>The word was <b>${esc(r.word)}</b></p>
+      </div>
+      <div class="card">
+        <div class="eyebrow">Who won?</div>
+        <p class="small-print">If the group caught the lizard, the lizard gets one guess at the word to steal the win.</p>
+        ${r.outcome ? `<p><b>${{team:"Team wins! +1 to everyone in on it.", steal:"Lizard stole it! +1 to each lizard.", lizard:"Lizard escaped! +3 to each lizard."}[r.outcome]}</b></p>`
+          : `<div class="row"><button class="small" data-o="team">Team caught it</button><button class="small" data-o="steal">Caught, but lizard guessed the word</button><button class="small" data-o="lizard">Lizard escaped</button></div>`}
+      </div>
+      ${rewardLines(r.notes)}
+      ${memeHtml(r.memeB, "🦎")}
+      <div class="card"><div class="eyebrow">This game</div><div class="log">${scores.map(([k,s]) => `<div><span class="row">${avatarHtml(playerAv(P[k]),"sm")} ${esc(nm(k))}</span><b>${s}</b></div>`).join("")}</div></div>
+      <button class="big" id="again" ${r.outcome?"":"disabled"}>Next round</button>
+      <button class="ghost" id="lobby">Back to the lobby</button>`;
+    app.querySelectorAll("[data-o]").forEach(b => b.onclick = () => {
+      if (r.outcome) return;
+      r.outcome = b.dataset.o;
+      for (let k=0;k<n;k++){
+        const isLiz = r.liz.includes(k);
+        const p = r.outcome==="team" ? (isLiz?0:1) : r.outcome==="steal" ? (isLiz?1:0) : (isLiz?3:0);
+        G.scores[k] = (G.scores[k]||0) + p;
+        const pl = P[k];
+        if (pl.acct && DATA.accounts[pl.acct]){
+          const a = DATA.accounts[pl.acct];
+          if (p > 0){ a.wins.lizard++; addDaily("lizard", pl.acct, p); }
+          r.notes.push(`${a.name}: +${p > 0 ? 25 : 10} XP`);
+          r.notes.push(...reward(pl.acct, {xp: p > 0 ? 25 : 10}));
+        }
+      }
+      render();
+    });
+    $("#again").onclick = lizNewRound;
+    $("#lobby").onclick = () => go("lobby", {game:"lizard"});
+  }
+}
+
+/* ================= TSUNAMI METER ================= */
+const TPACKS = {
+  "Everyday":[["Cold","Hot"],["Tiny","Huge"],["Cheap","Expensive"],["Quiet","Loud"],["Slow","Fast"],["Light","Heavy"],["Soft","Hard"],["Wet","Dry"],["Clean","Messy"],["Rare","Common"],["Fragile","Unbreakable"],["Easy","Impossible"],["Short-lived","Lasts forever"],["Old-fashioned","Modern"]],
+  "Food":[["Gross food","Tasty food"],["Mild","Spicy"],["Healthy","Unhealthy"],["Breakfast food","Dinner food"],["Bad movie snack","Good movie snack"],["Snack","Full meal"],["Sweet","Salty"],["Crunchy","Mushy"],["Kid food","Fancy food"],["Smells bad","Smells great"],["Bad pizza topping","Good pizza topping"],["Would never eat","Would eat every day"]],
+  "Gaming":[["Noob","Pro"],["Useless","Overpowered"],["Worst video game","Best video game"],["Easy boss","Impossible boss"],["Bad superpower","Good superpower"],["Trash loot","Legendary loot"],["Casual","Sweaty"],["Bad weapon","Good weapon"],["Laggy","Smooth"],["Worst game mode","Best game mode"],["Boring map","Amazing map"],["Fair","Totally unfair"]],
+  "Internet & Memes":[["Cringe","Cool"],["Sus","Trustworthy"],["Low-key","Extra"],["Dead meme","Fresh meme"],["Basic","Unique"],["Sounds fake","Sounds real"],["Unknown","Famous"],["Bad username","Good username"],["Mid","Fire"],["NPC energy","Main character energy"],["Boomer","Gen Alpha"],["Would go viral","Would get zero views"]],
+  "School":[["Easiest class","Hardest class"],["Boring","Exciting"],["Worst school lunch","Best school lunch"],["Teacher's pet","Class clown"],["Bad excuse","Good excuse"],["Small problem","Big problem"],["Lazy","Hardworking"],["Quiet kid","Loud kid"],["Worst field trip","Best field trip"],["Short homework","Endless homework"]],
+  "Animals":[["Worst pet","Best pet"],["Not scary","Terrifying"],["Weak","Strong"],["Ugly","Cute"],["Slowest","Fastest"],["Bad at hiding","Pro at hiding"],["Friendly","Grumpy"],["Lives on land","Lives in water"],["Tiny animal","Gigantic animal"],["Not smart","Genius"]],
+  "Family":[["Mom would hate it","Mom would love it"],["Worst chore","Best chore"],["Nap time","Party time"],["Bad gift","Great gift"],["Worst holiday","Best holiday"],["Kid thing","Grown-up thing"],["Calm","Chaotic"],["Worst road trip snack","Best road trip snack"],["Bad name for a dog","Good name for a dog"],["Dad joke","Actually funny"],["Bedtime","Way past bedtime"]],
+  "Movies & Stories":[["Villain","Hero"],["Sad song","Happy song"],["Worst movie","Best movie"],["Real","Fake"],["Ancient","Futuristic"],["Scary","Funny"],["Side character","Main character"],["Weak villain","Ultimate villain"],["Bad sequel","Better than the original"],["Normal","Weird"]],
+  "Hot Takes":[["Underrated","Overrated"],["Worst smell","Best smell"],["Worst sound","Best sound"],["Worst job","Best job"],["Shy","Show-off"],["Safe","Dangerous"],["Bad date spot","Good date spot"],["Easy to draw","Hard to draw"],["Totally fine","Should be illegal"],["Would do it for free","Not for a million dollars"],["Pointless invention","Life-changing invention"]],
+  "Ocean":[["Shallow","Deep"],["Calm sea","Tsunami"],["Snack for a shark","Scares a shark"],["Ruins a beach day","Makes a beach day"],["Tiny wave","Giant wave"],["Would swim with it","Would never swim with it"],["Sinks","Floats"],["Boring fish","Legendary sea monster"]]
+};
+const MODES = [
+  {id:"double", name:"Double Wave", icon:"🌊🌊", text:"Every point this round is doubled.", mult:2},
+  {id:"needle", name:"Needle Point", icon:"🎯", text:"The target is half as wide, but points are tripled.", mult:3, band:.5},
+  {id:"reverse", name:"Reverse Tide", icon:"🔄", text:"The clue-giver gives a clue for the MIRROR spot. Guessers flip it in their heads and pin the real target."},
+  {id:"silent", name:"Silent Sea", icon:"🤐", text:"No words. The clue-giver has to act the clue out."},
+  {id:"sound", name:"Sound Wave", icon:"🔊", text:"The clue has to be a sound. No real words allowed."},
+  {id:"whirlpool", name:"Whirlpool", icon:"🌀", text:"The two ends come from different scales. Good luck."},
+  {id:"speed", name:"Speed Surf", icon:"⏱", text:"Guessers get 10 seconds each to place their pin, then it locks."},
+  {id:"shark", name:"Shark Bite", icon:"🦈", text:"Whoever scores this round also steals 2 points from the leader."}
+];
+const TSU_MEMES = [["The clue: \"lukewarm soup\"","Me: full send to HOT"],["Me landing it","right on the 4"],["Family game night","becomes family war night"],["When everyone","gets wiped out"]];
+const tpts = (d, k=1) => d<=4*k ? 4 : d<=10*k ? 3 : d<=17*k ? 2 : 0;
+const tpool = () => { const l = S.lobby.tsunami; return (l.packs && l.packs.length ? l.packs : Object.keys(TPACKS)).flatMap(p => TPACKS[p]); };
+
+function tsuNewRound(){
+  const l = S.lobby.tsunami, G = S.tsu, n = l.players.length;
+  const chance = {off:0, rare:1/6, chaos:1/2}[l.rare];
+  const mode = Math.random() < chance ? pick(MODES) : null;
+  const scale = mode && mode.id === "whirlpool" ? [pick(tpool())[0], pick(tpool())[1]] : pick(tpool());
+  G.giver = G.giver % n;
+  const guessers = [...Array(n).keys()].filter(i => i !== G.giver);
+  G.r = { scale, target:rint(3,97), mode, guessers, gi:0, pins:{}, radio:{}, phase:"pass", meme:pick(TSU_MEMES), scored:false, scareSet:null, scareBy:null, notes:[] };
+  G.round++;
+  go("tsu");
+}
+function meterHtml({target=null, k=1, pins=[], zone=null}){
+  let inner = `<div class="water" id="water"></div>`;
+  if (zone !== null) inner += `<div class="zone" style="left:${zone*25}%;width:25%"></div>`;
+  if (target !== null){
+    inner += `<div class="band b2" style="left:${target}%;width:${34*k}%"></div><div class="band b3" style="left:${target}%;width:${20*k}%"></div>
+      <div class="band b4" style="left:${target}%;width:${8*k}%"><span>${k<1?"":"4"}</span></div>`;
+  }
+  pins.forEach(p => inner += `<div class="pin ${p.v>70?"right":""}" style="left:${p.v}%"><b>${esc(p.label)}</b></div>`);
+  return `<div class="meter" role="img" aria-label="Meter">${inner}</div><div class="ticks"><span>0</span><span>25</span><span>50</span><span>75</span><span>100</span></div>`;
+}
+const endsHtml = sc => `<div class="ends"><span>← ${esc(sc[0])}</span><span>${esc(sc[1])} →</span></div>`;
+const modeHtml = m => m ? `<div class="rare"><div class="eyebrow">Rare mode!</div><b>${m.icon} ${esc(m.name)}</b><p>${esc(m.text)}</p></div>` : "";
+
+function renderTsunami(app){
+  const l = S.lobby.tsunami, P = l.players, n = P.length, G = S.tsu, r = G.r, m = r.mode, k = (m && m.band) || 1;
+  const nm = i => playerName(P[i]), g = nm(G.giver);
+  const scoreCard = () => { const rows = [...Array(n).keys()].map(i => [i, G.scores[i]||0]).sort((a,b) => b[1]-a[1]);
+    return `<div class="card"><div class="eyebrow">Scores · first to ${l.win}</div><div class="log">${rows.map(([i,s]) => `<div><span class="row">${avatarHtml(playerAv(P[i]),"sm")} ${esc(nm(i))}</span><b>${s}</b></div>`).join("")}</div></div>`; };
+  const nextPrivate = () => r.phase === "secret" ? r.guessers[0] : r.guessers[r.gi+1];
+
+  if (r.phase === "pass"){
+    app.innerHTML = `<div class="eyebrow">Round ${G.round}</div>${modeHtml(m)}
+      <div class="card center" style="min-height:260px;justify-content:center">
+        <div class="eyebrow">Clue-giver this round</div>${avatarHtml(playerAv(P[G.giver]),"md")}<div class="who">${esc(g)}</div>
+        <p class="small-print">Everyone else look away.</p>
+        <button class="big" id="go">I'm ${esc(g)}, show the target</button></div>` + scoreCard() + `<button class="ghost" id="quit">Quit to hub</button>`;
+    $("#go").onclick = () => { r.phase = "secret"; render(); };
+    $("#quit").onclick = () => go("home");
+    return;
+  }
+  if (r.phase === "secret"){
+    const rev = m && m.id === "reverse", nx = nextPrivate();
+    app.innerHTML = `
+      <div class="card">
+        <div class="eyebrow">${esc(g)} only · secret</div>
+        ${endsHtml(r.scale)}${meterHtml({target:r.target, k})}
+        <p>The target is at <b>${r.target}</b>. ${rev ? `<b>Reverse Tide:</b> give a clue for <b>${100-r.target}</b> instead, the mirror spot.` : `Think of one thing that sits right there between <b>${esc(r.scale[0])}</b> and <b>${esc(r.scale[1])}</b>.`}</p>
+        ${m && (m.id==="silent"||m.id==="sound") ? `<p><b>${esc(m.name)}:</b> ${esc(m.text)}</p>` : ""}
+      </div>
+      ${nx !== undefined && !r.scareSet ? powerBtn(P[G.giver], "scare", "usescare", "Jumpscare " + esc(nm(nx))) : ""}
+      <button class="big" id="hide">I'm done, hide it</button>`;
+    const us = $("#usescare"); if (us) us.onclick = () => { if (spendPower(P[G.giver], "scare")){ r.scareSet = g; us.outerHTML = `<p class="small-print">👻 Set! ${esc(nm(nx))} is getting jumpscared.</p>`; } };
+    $("#hide").onclick = () => { r.phase = "after"; r.hiddenAt = Date.now(); render(); };
+    return;
+  }
+  if (r.phase === "after"){
+    const leftNow = () => Math.max(0, l.look - Math.floor((Date.now() - r.hiddenAt)/1000));
+    let left = leftNow();
+    const arc = v => (226.2*(1-v/l.look)).toFixed(1);
+    const how = !m ? "say your clue out loud now. One word or a short phrase." : m.id==="silent" ? "act your clue out. No talking!" :
+      m.id==="sound" ? "make your clue as a sound. No real words!" : m.id==="reverse" ? "say your clue for the mirror spot. Guessers, flip it!" : "say your clue out loud now.";
+    app.innerHTML = `
+      <div class="card center">
+        <div class="eyebrow">Hidden · check the timer</div><h2>${esc(g)} hid the target</h2>
+        <div class="ring"><svg width="84" height="84"><circle cx="42" cy="42" r="36" fill="none" stroke="currentColor" stroke-opacity=".15" stroke-width="8"/>
+          <circle id="arc" cx="42" cy="42" r="36" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-dasharray="226.2" stroke-dashoffset="${arc(left)}"/></svg><span id="sec">${left}</span></div>
+        <p class="small-print">This should still be counting down when the screen gets turned around. If it's already at 0, ${esc(g)} stared at it too long.</p>
+      </div>
+      ${modeHtml(m)}
+      <div class="card">${endsHtml(r.scale)}<p><b>${esc(g)}, ${how}</b></p></div>
+      <button class="big" id="next">Clue's done, start guessing</button>`;
+    $("#next").onclick = () => { r.phase = "guess"; r.gi = 0; if (r.scareSet){ r.scareBy = r.scareSet; r.scareSet = null; } render(); };
+    if (left > 0) timer = setInterval(() => { left = leftNow(); $("#sec").textContent = left; $("#arc").setAttribute("stroke-dashoffset", arc(left)); if (left <= 0) stopTimer(); }, 250);
+    return;
+  }
+  if (r.phase === "guess"){
+    if (r.scareBy){ const by = r.scareBy; r.scareBy = null; jumpscare(by, render); }
+    const who = r.guessers[r.gi], wn = nm(who), solo = r.guessers.length === 1, speed = m && m.id === "speed";
+    const zone = r.radio[who] ? Math.min(3, Math.floor(r.target/25)) : null;
+    const nx = nextPrivate();
+    const cur = r.cur ?? 50;
+    app.innerHTML = `
+      <div class="card">
+        <div class="eyebrow">${solo ? "Guess" : esc(wn) + "'s secret guess"}${speed ? ` · <span id="spd">10</span>s left` : ""}</div>
+        <h2>${esc(wn)}, ${m && m.id==="reverse" ? "where is the REAL target?" : "where does the clue land?"}</h2>
+        ${endsHtml(r.scale)}${meterHtml({pins:[{v:cur,label:wn}], zone})}
+        ${zone !== null ? `<p class="small-print">📻 Radio says the target is somewhere between <b>${zone*25}</b> and <b>${zone*25+25}</b>.</p>` : ""}
+        <label for="pin" class="small-print">Drag to place your pin</label>
+        <input type="range" id="pin" min="0" max="100" value="${cur}">
+        <div class="readout" id="ro">${cur}</div>
+      </div>
+      ${zone === null ? powerBtn(P[who], "radio", "useradio", "Use Radio") : ""}
+      ${nx !== undefined && !r.scareSet ? powerBtn(P[who], "scare", "usescare", "Jumpscare " + esc(nm(nx))) : ""}
+      <button class="big" id="lock">Lock in${r.gi < r.guessers.length-1 ? ", next guesser" : ", reveal"}</button>
+      ${solo ? "" : `<p class="small-print">Other guessers: don't look at the pin. Pass the device after locking in.</p>`}`;
+    const pin = $("#pin"), pinEl = app.querySelector(".pin");
+    pin.oninput = () => { r.cur = +pin.value; $("#ro").textContent = pin.value; pinEl.style.left = pin.value + "%"; pinEl.classList.toggle("right", pin.value>70); };
+    const ur = $("#useradio"); if (ur) ur.onclick = () => { if (spendPower(P[who], "radio")){ r.radio[who] = true; r.cur = +pin.value; render(); } };
+    const us = $("#usescare"); if (us) us.onclick = () => { if (spendPower(P[who], "scare")){ r.scareSet = wn; us.outerHTML = `<p class="small-print">👻 Set! ${esc(nm(nx))} is getting jumpscared.</p>`; } };
+    const lock = () => {
+      r.pins[who] = +pin.value; r.cur = null;
+      if (r.gi < r.guessers.length-1){ r.gi++; r.phase = "handoff"; } else r.phase = "reveal";
+      render();
+    };
+    $("#lock").onclick = lock;
+    if (speed){ let s = 10; timer = setInterval(() => { s--; $("#spd").textContent = s; if (s <= 0) lock(); }, 1000); }
+    return;
+  }
+  if (r.phase === "handoff"){
+    const who = r.guessers[r.gi], wn = nm(who);
+    app.innerHTML = `<div class="card center" style="min-height:260px;justify-content:center">
+        <div class="eyebrow">Pin locked and hidden</div>${avatarHtml(playerAv(P[who]),"md")}<div class="who">Pass to ${esc(wn)}</div>
+        <button class="big" id="go">I'm ${esc(wn)}, let me guess</button></div>`;
+    $("#go").onclick = () => { r.phase = "guess"; if (r.scareSet){ r.scareBy = r.scareSet; r.scareSet = null; } render(); };
+    return;
+  }
+  if (r.phase === "reveal"){
+    if (!r.scored) tsuScore();
+    const pins = r.res.map(x => ({v:x.pin, label:nm(x.i)}));
+    app.innerHTML = `
+      ${modeHtml(m)}
+      <div class="card">
+        <div class="eyebrow">The wave hits ${r.target}</div>
+        ${endsHtml(r.scale)}${meterHtml({target:r.target, k, pins})}
+        <div class="log">${r.lines.map(([who,txt,cls]) => `<div><span>${esc(who)}</span><span class="${cls||""}">${esc(txt)}</span></div>`).join("")}</div>
+        <p class="small-print">${l.scoring==="wta" ? "Winner takes all: only the closest guesser scores." : "Everyone scores."} Dark band = 4, middle = 3, light = 2.</p>
+      </div>
+      ${rewardLines(r.notes)}
+      ${r.allMiss ? memeHtml(r.meme, "🌊") : ""}
+      ${scoreCard()}
+      <button class="big" id="next">${r.champ !== null ? "See the champion" : "Next round"}</button>
+      <button class="ghost" id="lobby">Back to the lobby</button>`;
+    requestAnimationFrame(() => requestAnimationFrame(() => { const w = $("#water"); if (w) w.style.width = r.target + "%"; }));
+    $("#next").onclick = () => { if (r.champ !== null){ r.phase = "champ"; render(); } else { G.giver = (G.giver + 1) % n; tsuNewRound(); } };
+    $("#lobby").onclick = () => go("lobby", {game:"tsunami"});
+    return;
+  }
+  if (r.phase === "champ"){
+    const c = r.champ;
+    app.innerHTML = `
+      <div class="card center"><div class="eyebrow">Tsunami champion</div>${avatarHtml(playerAv(P[c]),"lg")}<div class="who">🏄 ${esc(nm(c))}</div>
+        <p>rode the wave to ${G.scores[c]} points.</p>${P[c].acct ? `<p class="gb">+50 XP and +30 Gbucks for the win</p>` : ""}</div>
+      ${rewardLines(r.champNotes||[])}
+      ${memeHtml(["Everyone else","after getting wiped out"], "🌊")}
+      ${scoreCard()}
+      <button class="big" id="again">Play again</button>
+      <button class="ghost" id="hub">Back to the hub</button>`;
+    $("#again").onclick = () => { S.tsu = {scores:{}, giver:0, round:0, r:null}; tsuNewRound(); };
+    $("#hub").onclick = () => go("home");
+  }
+}
+function tsuScore(){
+  const l = S.lobby.tsunami, P = l.players, n = P.length, G = S.tsu, r = G.r, m = r.mode;
+  const k = (m && m.band) || 1, mult = (m && m.mult) || 1, nm = i => playerName(P[i]);
+  const add = (i, v) => { G.scores[i] = Math.max(0, (G.scores[i]||0) + v); };
+  const leaderBefore = [...Array(n).keys()].sort((a,b) => (G.scores[b]||0) - (G.scores[a]||0))[0];
+  const gained = {};
+  r.res = r.guessers.map(i => ({i, pin:r.pins[i], d:Math.abs(r.pins[i]-r.target)})).map(x => ({...x, p:tpts(x.d,k)*mult}));
+  r.lines = [];
+  const best = Math.min(...r.res.map(x => x.d));
+  r.allMiss = r.res.every(x => x.p === 0);
+  const winners = [];
+  r.res.forEach(x => {
+    const scores = l.scoring === "wta" ? (x.d === best && x.p > 0) : x.p > 0;
+    if (scores){ add(x.i, x.p); gained[x.i] = (gained[x.i]||0) + x.p; winners.push(x.i); r.lines.push([nm(x.i), `+${x.p}${l.scoring==="wta"?" (closest)":""}`, "plus"]); }
+    else r.lines.push([nm(x.i), x.p ? `${x.d} away, beaten` : "wiped out 🌊"]);
+  });
+  const g = G.giver;
+  if (r.allMiss){ add(g, -1); r.lines.push([nm(g) + " (clue-giver)", "−1, nobody landed it", "minus"]); }
+  else if (l.scoring === "all"){ const avg = Math.round(r.res.reduce((a,x) => a+x.p, 0) / r.res.length); add(g, avg); gained[g] = (gained[g]||0) + avg; r.lines.push([nm(g) + " (clue-giver)", "+" + avg, "plus"]); }
+  else r.lines.push([nm(g) + " (clue-giver)", "safe"]);
+  if (m && m.id === "shark" && winners.length){
+    const thief = winners[0];
+    if (leaderBefore !== thief && (G.scores[leaderBefore]||0) > 0){
+      const take = Math.min(2, G.scores[leaderBefore]);
+      add(leaderBefore, -take); add(thief, take); gained[thief] = (gained[thief]||0) + take;
+      r.lines.push(["🦈 Shark Bite", `${nm(thief)} steals ${take} from ${nm(leaderBefore)}`, "minus"]);
+    }
+  }
+  // account rewards: everyone with an account gets play XP, scorers get Gbucks + daily points
+  for (let i=0;i<n;i++){
+    const pl = P[i]; if (!pl.acct || !DATA.accounts[pl.acct]) continue;
+    const p = gained[i] || 0;
+    r.notes.push(`${DATA.accounts[pl.acct].name}: +${10+p*2} XP`);
+    r.notes.push(...reward(pl.acct, {xp: 10 + p*2}));
+    if (p) addDaily("tsunami", pl.acct, p);
+  }
+  const top = [...Array(n).keys()].filter(i => (G.scores[i]||0) >= l.win).sort((a,b) => G.scores[b]-G.scores[a]);
+  r.champ = top.length ? top[0] : null;
+  if (r.champ !== null && P[r.champ].acct && DATA.accounts[P[r.champ].acct]){
+    const a = DATA.accounts[P[r.champ].acct]; a.wins.tsunami++;
+    r.champNotes = reward(a.id, {xp:50, gb:GB.champ});
+  }
+  r.scored = true;
+}
+
+/* ================= boot ================= */
+window.claude?.hot?.snapshot?.(() => ({S}));
+const start = () => { render(); initStore(); };
+window.claude?.hot?.ready ? window.claude.hot.ready(start) : start();
+</script>
+
+</body></html>
