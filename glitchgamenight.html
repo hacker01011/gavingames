@@ -1,5 +1,4 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-<title>Glitch Game Night</title>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><title>Glitch Game Night</title></head><body>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Lilita+One&family=Figtree:wght@400;600;700&display=swap">
@@ -192,6 +191,8 @@ input[type=range]{width:100%;accent-color:var(--sea);height:36px}
 <div class="stage" id="app"></div>
 <div id="overlay"></div>
 
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script>
 /* ================= shared data ================= */
 const COLORS = [["red","#e5484d"],["orange","#f76b15"],["yellow","#ffc53d"],["green","#30a46c"],["blue","#0090ff"],
@@ -268,50 +269,56 @@ const PACK_EVERY = 2;
 // Gbucks are rare: you only get them from leveling up, the daily bonus, winning a Tsunami game and pack doubles.
 const GB = {levelUp:25, daily:20, champ:30, double:10, start:100};
 
-/* ================= storage: shared db, or this device as a fallback ================= */
+/* ================= storage: global Firebase database, or this browser as a fallback ================= */
 const DATA = { accounts:{}, daily:{} };
-let db = null, storeMode = "loading";
+let fdb = null, storeMode = "loading";
+const FB_CONFIG = {
+  apiKey:"AIzaSyB37QAsv1bRN1sgibjm1Wt2NY2bqF0lDA8", authDomain:"gavingames-cra-7e129.firebaseapp.com",
+  databaseURL:"https://gavingames-cra-7e129-default-rtdb.firebaseio.com", projectId:"gavingames-cra-7e129"
+};
+const ROOT = "ggn"; // everything for this game lives under /ggn
 const today = () => { const d = new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); };
-const writeQ = {};
-function queueWrite(path, body){
-  writeQ[path] = (writeQ[path]||Promise.resolve()).then(() => db.doc(path).set(body)).catch(e => console.warn("save failed", path, e && e.code));
+const ref = path => fdb.ref(ROOT + "/" + path);
+// Firebase drops empty arrays/objects, so fill them back in when an account loads
+function fixAccount(a){
+  a.items = a.items || []; a.power = Object.assign({hint:0, radio:0, scare:0}, a.power || {});
+  a.wins = Object.assign({lizard:0, tsunami:0}, a.wins || {}); a.colors = a.colors || {};
+  a.avatar = Object.assign({face:"f-frog", bg:"bg-sky", hat:null, badge:null, outfit:null}, a.avatar || {});
+  a.xp = a.xp || 0; a.level = a.level || 1; a.gbucks = a.gbucks || 0; a.packs = a.packs || 0;
+  return a;
 }
+const clean = o => JSON.parse(JSON.stringify(o)); // strips undefined, which Firebase rejects
 function saveLocal(){ try { localStorage.setItem("glitch-game-night", JSON.stringify(DATA)); } catch(e){} }
 function saveAccount(a){
   DATA.accounts[a.id] = a;
-  if (db) queueWrite("accounts/" + a.id, a); else saveLocal();
+  if (fdb) ref("accounts/" + a.id).set(clean(a)).catch(e => console.warn("save failed", e)); else saveLocal();
 }
-function dailyToday(){ const t = today(); DATA.daily[t] = DATA.daily[t] || {lizard:{}, tsunami:{}}; return DATA.daily[t]; }
+function dailyToday(){ const t = today(); DATA.daily[t] = DATA.daily[t] || {lizard:{}, tsunami:{}}; DATA.daily[t].lizard = DATA.daily[t].lizard || {}; DATA.daily[t].tsunami = DATA.daily[t].tsunami || {}; return DATA.daily[t]; }
 function addDaily(game, id, pts){
   if (!pts) return;
   const d = dailyToday(); d[game][id] = (d[game][id]||0) + pts;
-  if (db) queueWrite("daily/" + today(), d); else saveLocal();
+  // increment on the server so two devices scoring at once don't overwrite each other
+  if (fdb) ref(`daily/${today()}/${game}/${id}`).set(firebase.database.ServerValue.increment(pts)); else saveLocal();
 }
-async function initStore(){
+function initStore(){
   const fallback = () => {
-    if (db) return;
     storeMode = "local";
     try { Object.assign(DATA, JSON.parse(localStorage.getItem("glitch-game-night")) || {}); } catch(e){}
+    Object.values(DATA.accounts).forEach(fixAccount);
     rerenderIfCalm();
   };
-  if (!window.claude || !window.claude.use){ fallback(); return; }
-  const t = setTimeout(fallback, 6000);
-  let got = null;
-  try { got = await window.claude.use("db"); } catch(e){}
-  if (storeMode === "local") return; // already fell back; don't mix the two stores
-  db = got;
-  if (!db){ clearTimeout(t); fallback(); return; }
-  clearTimeout(t);
-  storeMode = "shared";
-  db.collection("accounts").onSnapshot(snap => {
-    const acc = {};
-    snap.docs.forEach(d => { if (d.exists) acc[d.id] = JSON.parse(JSON.stringify(d.data())); });
+  if (!window.firebase){ fallback(); return; }
+  try {
+    const app = firebase.apps.find(x => x.name === "ggn") || firebase.initializeApp(FB_CONFIG, "ggn");
+    fdb = app.database();
+  } catch(e){ console.warn("Firebase failed", e); fdb = null; fallback(); return; }
+  storeMode = "online";
+  ref("accounts").on("value", snap => {
+    const acc = snap.val() || {};
+    Object.values(acc).forEach(fixAccount);
     DATA.accounts = acc; rerenderIfCalm();
-  }, e => { console.warn("accounts", e.code); });
-  db.doc("daily/" + today()).onSnapshot(snap => {
-    if (snap.exists) DATA.daily[today()] = JSON.parse(JSON.stringify(snap.data()));
-    rerenderIfCalm();
-  }, e => { console.warn("daily", e.code); });
+  }, e => console.warn("accounts", e));
+  ref("daily/" + today()).on("value", snap => { DATA.daily[today()] = snap.val() || {lizard:{}, tsunami:{}}; rerenderIfCalm(); });
 }
 
 /* ================= helpers ================= */
@@ -341,7 +348,7 @@ let S = window.claude?.hot?.data?.S || {
   quiz:null, create:null, profile:null, add:null, lb:"lizard",
   liz:null, tsu:null, toasts:[]
 };
-const calmViews = ["home","leaderboard","profile","pickAccount","lobby","shop"];
+const calmViews = ["home","leaderboard","profile","pickAccount","lobby","shop","online"];
 function rerenderIfCalm(){ if (calmViews.includes(S.view)) render(); }
 
 function go(view, extra){ Object.assign(S, extra||{}); S.view = view; render(); window.scrollTo(0,0); }
@@ -351,7 +358,7 @@ function render(){
   const app = $("#app");
   app.className = "stage" + (S.game ? " " + S.game : "");
   const views = {home:renderHome, leaderboard:renderLeaderboard, pickAccount:renderPickAccount, create:renderCreate, quiz:renderQuiz,
-    profile:renderProfile, shop:renderShop, lobby:renderLobby, liz:renderLizard, tsu:renderTsunami};
+    profile:renderProfile, shop:renderShop, lobby:renderLobby, online:renderOnline, liz:renderLizard, tsu:renderTsunami};
   (views[S.view] || renderHome)(app);
 }
 
@@ -390,6 +397,7 @@ function renderHome(app){
     </div>
     <button class="gamecard gc-liz" id="g-liz"><span class="ic">🦎</span><span><b>Lizard in the Room</b><span>3+ players. Everyone knows the word except the lizard.</span></span></button>
     <button class="gamecard gc-tsu" id="g-tsu"><span class="ic">🌊</span><span><b>Tsunami Meter</b><span>2+ players. Clue a secret spot between two opposites.</span></span></button>
+    <button class="big" id="g-online">🌐 Play online <span style="font-weight:400">· everyone on their own device</span></button>
     <div class="card">
       <div class="spread"><h3>Accounts</h3><button class="small" id="new">+ New account</button></div>
       ${accts.length ? `<div class="acct-grid">${accts.map(a => `<button data-acct="${a.id}">${avatarHtml(a.avatar,"md")}<span>${esc(a.name)}</span><small>Lv ${a.level}</small></button>`).join("")}</div>`
@@ -405,9 +413,10 @@ function renderHome(app){
           : `<p class="small-print">No points yet today</p>`}</div></div>`; }).join("")}</div>
       <button class="ghost" id="lb">Full leaderboards</button>
     </div>
-    <p class="status">${storeMode==="shared" ? "Accounts are saved with this page." : storeMode==="local" ? "Accounts are saved in this browser only." : "Loading accounts…"}</p>`;
+    <p class="status">${storeMode==="online" ? "Accounts are global: log in from any computer." : storeMode==="local" ? "Offline: accounts are saved in this browser only." : "Loading accounts…"}</p>`;
   $("#g-liz").onclick = () => go("lobby", {game:"lizard"});
   $("#g-tsu").onclick = () => go("lobby", {game:"tsunami"});
+  $("#g-online").onclick = () => { const o = O(); if (o.code && ROOM) o.step = "room"; else o.step = (o.acct && DATA.accounts[o.acct]) || o.guest ? "menu" : "who"; go("online"); };
   $("#lb").onclick = () => go("leaderboard");
   $("#shop").onclick = () => go("shop", {shop:{id:null, sel:null}});
   $("#new").onclick = () => go("create", {create:{step:"name", name:"", face:"f-frog", bg:"bg-sky", qi:0, colors:{}, then:"home"}});
@@ -579,6 +588,7 @@ function afterLogin(a, then){
   }
   if (then.view === "lobby"){ addPlayer({acct:a.id}); go("lobby"); }
   else if (then.view === "shop") go("shop", {shop:{id:a.id, sel:null}});
+  else if (then.view === "online"){ const o = O(); o.acct = a.id; o.guest = null; o.step = "menu"; go("online"); }
   else go("profile", {profile:{id:a.id, tab:"avatar"}});
 }
 function renderQuiz(app){
@@ -620,7 +630,7 @@ function renderQuiz(app){
     });
     const m = $("#mode"); if (m) m.onclick = () => { q.mode = "pin"; q.pin = ""; render(); };
   }
-  $("#back").onclick = () => go(q.then.view === "lobby" ? "pickAccount" : "home");
+  $("#back").onclick = () => go(q.then.view === "lobby" ? "pickAccount" : q.then.view === "online" ? "online" : "home");
 }
 
 /* ================= profile: avatar, shop, packs ================= */
@@ -1293,6 +1303,426 @@ function tsuScore(){
     r.champNotes = reward(a.id, {xp:50, gb:GB.champ});
   }
   r.scored = true;
+}
+
+/* ================= ONLINE ROOMS: every player on their own device ================= */
+const DEVICE = (() => { const make = () => "d" + Math.random().toString(36).slice(2,10);
+  try { let d = localStorage.getItem("ggn-device"); if (!d){ d = make(); localStorage.setItem("ggn-device", d); } return d; } catch(e){ return make(); } })();
+let ROOM = null, roomOff = null;
+const O = () => S.online || (S.online = {step:"who"});
+const roomRef = (path="") => ref("rooms/" + O().code + (path ? "/" + path : ""));
+const lastRewarded = () => { try { return localStorage.getItem("ggn-rewarded"); } catch(e){ return O().rewarded; } };
+const markRewarded = id => { O().rewarded = String(id); try { localStorage.setItem("ggn-rewarded", String(id)); } catch(e){} };
+
+function onlineMe(){ const o = O(); return o.acct && DATA.accounts[o.acct] ? {name:DATA.accounts[o.acct].name, acct:o.acct} : {name:o.guest || "Guest", acct:null}; }
+const rPlayers = () => ROOM && ROOM.players ? Object.entries(ROOM.players).sort((a,b) => a[1].order - b[1].order).map(([dev,p]) => ({dev, ...p})) : [];
+const rName = dev => { const p = ROOM && ROOM.players && ROOM.players[dev]; if (!p) return "Someone"; return p.acct && DATA.accounts[p.acct] ? DATA.accounts[p.acct].name : p.name; };
+const rAv = dev => { const p = ROOM && ROOM.players && ROOM.players[dev]; return p && p.acct && DATA.accounts[p.acct] ? DATA.accounts[p.acct].avatar : guestAv; };
+const isHost = () => ROOM && ROOM.host === DEVICE;
+const makeCode = () => { const L = "ABCDEFGHJKLMNPQRSTUVWXYZ"; return Array.from({length:4}, () => L[Math.floor(Math.random()*L.length)]).join(""); };
+
+async function hostRoom(game){
+  const o = O();
+  if (!fdb){ o.err = "Online rooms need an internet connection."; render(); return; }
+  // tidy up rooms nobody has used for a day
+  ref("rooms").orderByChild("created").endAt(Date.now() - 864e5).once("value", s => s.forEach(c => { c.ref.remove(); }));
+  let code;
+  for (let t = 0; t < 6; t++){ code = makeCode(); if (!(await ref("rooms/" + code).get()).exists()) break; }
+  const l = S.lobby[game];
+  const settings = game === "lizard" ? {cat:l.cat, lizards:l.lizards} : {packs:l.packs || Object.keys(TPACKS), rare:l.rare, scoring:l.scoring, win:l.win};
+  await ref("rooms/" + code).set(clean({game, host:DEVICE, created:Date.now(), settings}));
+  joinRoom(code);
+}
+async function joinRoom(code){
+  const o = O(); code = (code || "").toUpperCase().trim();
+  if (!fdb){ o.err = "Online rooms need an internet connection."; render(); return; }
+  if (!/^[A-Z]{4}$/.test(code)){ o.err = "Room codes are 4 letters."; render(); return; }
+  const snap = await ref("rooms/" + code).get();
+  if (!snap.exists()){ o.err = `There's no room called ${code}. Check the code.`; render(); return; }
+  const me = onlineMe();
+  const pref = ref(`rooms/${code}/players/${DEVICE}`);
+  await pref.set(clean({name:me.name, acct:me.acct, order:Date.now()}));
+  pref.onDisconnect().remove();
+  o.code = code; o.err = ""; o.step = "room";
+  if (roomOff) roomOff();
+  const rr = ref("rooms/" + code);
+  const cb = rr.on("value", s => { ROOM = s.val(); onRoomChange(); });
+  roomOff = () => rr.off("value", cb);
+  go("online");
+}
+function leaveRoom(){
+  const o = O();
+  if (o.code) ref(`rooms/${o.code}/players/${DEVICE}`).remove();
+  if (roomOff) roomOff();
+  roomOff = null; ROOM = null; o.code = null; o.step = "menu"; go("online");
+}
+function onRoomChange(){
+  const o = O();
+  if (!ROOM || !ROOM.players || !ROOM.players[DEVICE]){
+    if (o.step === "room"){ if (roomOff) roomOff(); roomOff = null; ROOM = null; o.code = null; o.step = "menu"; o.err = "You're no longer in that room."; }
+    if (S.view === "online") render();
+    return;
+  }
+  // the host left: the next player in line takes over
+  const ps = rPlayers();
+  if (!ROOM.players[ROOM.host] && ps[0].dev === DEVICE) roomRef("host").set(DEVICE);
+  // someone trolled me
+  const by = ROOM.scares && ROOM.scares[DEVICE];
+  if (by){ roomRef("scares/" + DEVICE).remove(); jumpscare(by, () => { if (S.view === "online") render(); }); }
+  applyOnlineRewards();
+  if (isHost()) hostAutomation();
+  if (S.view === "online") render();
+}
+
+/* each device rewards its own account, once per round */
+function applyOnlineRewards(){
+  const o = O(), r = ROOM.round;
+  if (!r || !r.players || !r.players.includes(DEVICE) || lastRewarded() === String(r.id)) return;
+  const a = o.acct && DATA.accounts[o.acct];
+  if (ROOM.game === "lizard" && r.outcome){
+    markRewarded(r.id);
+    if (!a) return;
+    const isLiz = r.liz.includes(DEVICE);
+    const p = r.outcome === "team" ? (isLiz?0:1) : r.outcome === "steal" ? (isLiz?1:0) : (isLiz?3:0);
+    if (p > 0){ a.wins.lizard++; addDaily("lizard", a.id, p); }
+    o.notes = [`${a.name}: +${p>0?25:10} XP`, ...reward(a.id, {xp: p>0 ? 25 : 10})]; o.notesRound = r.id;
+  }
+  if (ROOM.game === "tsunami" && r.gained){
+    markRewarded(r.id);
+    if (!a) return;
+    const p = r.gained[DEVICE] || 0;
+    o.notes = [`${a.name}: +${10+p*2} XP`, ...reward(a.id, {xp: 10 + p*2})]; o.notesRound = r.id;
+    if (p) addDaily("tsunami", a.id, p);
+    if (r.champ === DEVICE){ a.wins.tsunami++; o.notes.push(`Tsunami champion! +50 XP, +${GB.champ} Gbucks`, ...reward(a.id, {xp:50, gb:GB.champ})); }
+  }
+}
+
+/* host-only game logic */
+function hostAutomation(){
+  const r = ROOM.round, o = O();
+  if (!r || ROOM.game !== "tsunami" || r.phase !== "guess") return;
+  const guessers = r.players.filter(d => d !== r.giver && ROOM.players[d]); // skip anyone who left
+  const pins = ROOM.pins || {};
+  if (guessers.length && guessers.every(d => pins[d] !== undefined) && o.scored !== r.id){ o.scored = r.id; tsuScoreOnline(guessers, pins); }
+}
+function lizStartOnline(){
+  const ps = rPlayers().map(p => p.dev), st = ROOM.settings || {};
+  if (ps.length < 3) return;
+  const cat = !st.cat || st.cat === "Random" ? pick(Object.keys(CATS)) : st.cat;
+  let count = st.lizards || 1;
+  if (count === "R"){ const roll = Math.random(); count = roll < .1 ? 3 : roll < .3 ? 2 : 1; }
+  const liz = shuffle(ps).slice(0, Math.min(+count, ps.length));
+  const start = Math.floor(Math.random()*ps.length);
+  roomRef().update({round:{id:Date.now(), cat, word:pick(CATS[cat]), liz, order:ps.map((_,k) => ps[(start+k)%ps.length]), players:ps,
+    phase:"roles", memeA:pick(LIZ_MEMES), memeB:pick(LIZ_END)}, ready:null, scares:null});
+}
+function lizOutcomeOnline(outcome){
+  const r = ROOM.round, sc = Object.assign({}, ROOM.scores || {});
+  r.players.forEach(d => { const isLiz = r.liz.includes(d);
+    sc[d] = (sc[d]||0) + (outcome === "team" ? (isLiz?0:1) : outcome === "steal" ? (isLiz?1:0) : (isLiz?3:0)); });
+  roomRef().update({"round/outcome":outcome, scores:sc});
+}
+function tsuStartOnline(resetScores){
+  const ps = rPlayers().map(p => p.dev), st = ROOM.settings || {};
+  if (ps.length < 2) return;
+  const prev = ROOM.round && ROOM.round.giver;
+  const giver = ps[prev && ps.includes(prev) ? (ps.indexOf(prev)+1) % ps.length : 0];
+  const chance = {off:0, rare:1/6, chaos:1/2}[st.rare || "rare"];
+  const mode = Math.random() < chance ? pick(MODES) : null;
+  const pool = (st.packs && st.packs.length ? st.packs : Object.keys(TPACKS)).flatMap(p => TPACKS[p] || []);
+  const scale = mode && mode.id === "whirlpool" ? [pick(pool)[0], pick(pool)[1]] : pick(pool);
+  const upd = {round:{id:Date.now(), n:((ROOM.round && ROOM.round.n) || 0) + 1, scale, target:rint(3,97), mode:mode ? mode.id : null, giver, players:ps, phase:"clue"}, pins:null, scares:null};
+  if (resetScores){ upd.scores = null; upd.round.n = 1; }
+  roomRef().update(clean(upd));
+}
+function tsuScoreOnline(guessers, pins){
+  const r = ROOM.round, st = ROOM.settings || {}, m = MODES.find(x => x.id === r.mode) || null;
+  const k = (m && m.band) || 1, mult = (m && m.mult) || 1, scoring = st.scoring || "wta";
+  const sc = Object.assign({}, ROOM.scores || {});
+  const add = (d, v) => { sc[d] = Math.max(0, (sc[d]||0) + v); };
+  const leaderBefore = r.players.slice().sort((a,b) => (sc[b]||0) - (sc[a]||0))[0];
+  const gained = {_:0};
+  const res = guessers.map(d => ({d, pin:pins[d], dist:Math.abs(pins[d] - r.target)})).map(x => ({...x, p:tpts(x.dist, k) * mult}));
+  const best = Math.min(...res.map(x => x.dist)), allMiss = res.every(x => x.p === 0);
+  const lines = [], winners = [];
+  res.forEach(x => {
+    const scores = scoring === "wta" ? (x.dist === best && x.p > 0) : x.p > 0;
+    if (scores){ add(x.d, x.p); gained[x.d] = (gained[x.d]||0) + x.p; winners.push(x.d); lines.push([rName(x.d), `+${x.p}${scoring==="wta" ? " (closest)" : ""}`, "plus"]); }
+    else lines.push([rName(x.d), x.p ? `${x.dist} away, beaten` : "wiped out 🌊", "-"]);
+  });
+  const g = r.giver;
+  if (allMiss){ add(g, -1); lines.push([rName(g) + " (clue-giver)", "−1, nobody landed it", "minus"]); }
+  else if (scoring === "all"){ const avg = Math.round(res.reduce((s,x) => s + x.p, 0) / res.length); add(g, avg); gained[g] = (gained[g]||0) + avg; lines.push([rName(g) + " (clue-giver)", "+" + avg, "plus"]); }
+  else lines.push([rName(g) + " (clue-giver)", "safe", "-"]);
+  if (m && m.id === "shark" && winners.length){
+    const thief = winners[0];
+    if (leaderBefore !== thief && (sc[leaderBefore]||0) > 0){
+      const take = Math.min(2, sc[leaderBefore]);
+      add(leaderBefore, -take); add(thief, take); gained[thief] = (gained[thief]||0) + take;
+      lines.push(["🦈 Shark Bite", `${rName(thief)} steals ${take} from ${rName(leaderBefore)}`, "minus"]);
+    }
+  }
+  const top = r.players.filter(d => (sc[d]||0) >= (st.win || 15)).sort((a,b) => sc[b] - sc[a]);
+  roomRef().update(clean({"round/phase":"reveal", "round/res":res.map(x => ({d:x.d, pin:x.pin})), "round/lines":lines, "round/gained":gained,
+    "round/allMiss":allMiss, "round/champ":top.length ? top[0] : null, scores:sc}));
+}
+
+/* ================= online screens ================= */
+function renderOnline(app){
+  const o = O();
+  S.game = ROOM && o.step === "room" ? ROOM.game : null;
+  app.className = "stage" + (S.game ? " " + S.game : "");
+  if (o.step === "who") return renderOnlineWho(app);
+  if (o.step !== "room" || !ROOM) return renderOnlineMenu(app);
+  if (!ROOM.round) return renderRoomLobby(app);
+  return ROOM.game === "lizard" ? renderLizOnline(app) : renderTsuOnline(app);
+}
+function renderOnlineWho(app){
+  const accts = Object.values(DATA.accounts);
+  app.innerHTML = `
+    <div class="spread"><h2>🌐 Play online</h2><button class="ghost small" id="back">← Hub</button></div>
+    <p class="small-print">Everyone plays on their own computer or phone. First, who's playing on this device?</p>
+    <div class="card"><h3>Log in</h3>
+      ${accts.length ? `<div class="acct-grid">${accts.map(a => `<button data-acct="${a.id}">${avatarHtml(a.avatar,"md")}<span>${esc(a.name)}</span><small>Lv ${a.level}</small></button>`).join("")}</div>` : `<p class="small-print">No accounts yet.</p>`}
+      <button class="ghost" id="new">+ Make a new account</button>
+    </div>
+    <div class="card"><h3>Play as a guest</h3>
+      <div class="row" style="flex-wrap:nowrap"><input type="text" id="gname" maxlength="16" placeholder="Your name"><button id="guest">Go</button></div></div>`;
+  $("#back").onclick = () => go("home");
+  $("#new").onclick = () => go("create", {create:{step:"name", name:"", face:"f-frog", bg:"bg-sky", qi:0, colors:{}, then:"home"}});
+  $("#guest").onclick = () => { const o = O(); o.guest = $("#gname").value.trim() || "Guest"; o.acct = null; o.step = "menu"; render(); };
+  app.querySelectorAll("[data-acct]").forEach(b => b.onclick = () => { const id = b.dataset.acct;
+    if (loggedIn(id)){ const o = O(); o.acct = id; o.step = "menu"; render(); } else startQuiz(id, {view:"online"}); });
+}
+function renderOnlineMenu(app){
+  const o = O(), me = onlineMe();
+  app.innerHTML = `
+    <div class="spread"><h2>🌐 Play online</h2><button class="ghost small" id="back">← Hub</button></div>
+    <div class="card"><div class="spread"><span class="row">${avatarHtml(o.acct ? DATA.accounts[o.acct]?.avatar : guestAv,"sm")}<b>${esc(me.name)}</b>${o.acct ? "" : `<span class="tag">guest</span>`}</span>
+      <button class="ghost small" id="switch">Switch</button></div></div>
+    ${o.err ? `<div class="toast">${esc(o.err)}</div>` : ""}
+    <div class="card"><h3>Join a room</h3>
+      <div class="row" style="flex-wrap:nowrap"><input type="text" id="code" maxlength="4" placeholder="ABCD" style="text-transform:uppercase;font:400 1.4rem var(--display);letter-spacing:.2em"><button id="join">Join</button></div></div>
+    <div class="card"><h3>Host a room</h3>
+      <button class="gamecard gc-liz" id="h-liz"><span class="ic">🦎</span><span><b>Lizard in the Room</b><span>3+ players</span></span></button>
+      <button class="gamecard gc-tsu" id="h-tsu"><span class="ic">🌊</span><span><b>Tsunami Meter</b><span>2+ players</span></span></button>
+      <p class="small-print">You get a 4-letter code. Everyone else opens Glitch Game Night, taps Play online and types it in.</p></div>`;
+  $("#back").onclick = () => go("home");
+  $("#switch").onclick = () => { o.step = "who"; o.err = ""; render(); };
+  $("#join").onclick = () => joinRoom($("#code").value);
+  $("#code").onkeydown = e => { if (e.key === "Enter") joinRoom(e.target.value); };
+  $("#h-liz").onclick = () => hostRoom("lizard");
+  $("#h-tsu").onclick = () => hostRoom("tsunami");
+}
+function roomScores(){
+  const ps = rPlayers(), sc = ROOM.scores || {};
+  if (!Object.keys(sc).length) return "";
+  const rows = ps.map(p => [p.dev, sc[p.dev]||0]).sort((a,b) => b[1]-a[1]);
+  return `<div class="card"><div class="eyebrow">Scores${ROOM.game==="tsunami" ? " · first to " + ((ROOM.settings||{}).win || 15) : ""}</div><div class="log">${rows.map(([d,s]) => `<div><span class="row">${avatarHtml(rAv(d),"sm")} ${esc(rName(d))}${d===DEVICE?" (you)":""}</span><b>${s}</b></div>`).join("")}</div></div>`;
+}
+const roomFoot = () => `<button class="ghost" id="leave">Leave room ${esc(O().code)}</button>`;
+function bindFoot(){ const l = $("#leave"); if (l) l.onclick = leaveRoom; }
+function renderRoomLobby(app){
+  const ps = rPlayers(), liz = ROOM.game === "lizard", min = liz ? 3 : 2, st = ROOM.settings || {}, host = isHost();
+  let settings = "";
+  if (host){
+    settings = liz ? `
+      <label for="cat">Category</label><select id="cat">${["Random", ...Object.keys(CATS)].map(c => `<option ${c===(st.cat||"Random")?"selected":""}>${esc(c)}</option>`).join("")}</select>
+      <label for="liz">Lizards</label><select id="liz">${[["1","1 lizard"],["2","2 lizards"],["3","3 lizards"],["R","Random (secret)"]].map(([v,t]) => `<option value="${v}" ${String(st.lizards||1)===v?"selected":""}>${t}</option>`).join("")}</select>`
+      : `<label for="rare">Rare modes</label><select id="rare">${[["off","Off"],["rare","Rare (1 in 6 rounds)"],["chaos","Chaos (every other round)"]].map(([v,t]) => `<option value="${v}" ${(st.rare||"rare")===v?"selected":""}>${t}</option>`).join("")}</select>
+      <label for="scoring">Scoring</label><select id="scoring"><option value="wta" ${(st.scoring||"wta")==="wta"?"selected":""}>Winner takes all</option><option value="all" ${st.scoring==="all"?"selected":""}>Everyone scores</option></select>
+      <label for="win">Play to</label><select id="win">${[10,15,20,30].map(v => `<option value="${v}" ${(st.win||15)==v?"selected":""}>${v} points</option>`).join("")}</select>`;
+  }
+  app.innerHTML = `
+    <div class="card center">
+      <div class="eyebrow">${liz ? "🦎 Lizard in the Room" : "🌊 Tsunami Meter"} · online room</div>
+      <div class="who" style="letter-spacing:.25em">${esc(O().code)}</div>
+      <p class="small-print">Everyone else: open Glitch Game Night, tap 🌐 Play online and type this code.</p>
+    </div>
+    <div class="card"><h3>Players (${ps.length})</h3>
+      ${ps.map(p => `<div class="player">${avatarHtml(rAv(p.dev),"sm")}<span class="nm">${esc(rName(p.dev))}${p.dev===DEVICE?" (you)":""}</span>${p.dev===ROOM.host?`<span class="tag">👑 host</span>`:""}${p.acct?"":`<span class="tag">guest</span>`}</div>`).join("")}
+    </div>
+    ${host ? `<div class="card">${settings}</div>
+      <button class="big" id="start" ${ps.length < min ? "disabled" : ""}>${ps.length < min ? `Waiting for ${min - ps.length} more player${min-ps.length>1?"s":""}` : "Start"}</button>`
+      : `<p class="small-print" style="text-align:center">Waiting for ${esc(rName(ROOM.host))} to start…</p>`}
+    ${roomScores()}${roomFoot()}`;
+  bindFoot();
+  if (!host) return;
+  const set = (k, v) => roomRef("settings/" + k).set(v);
+  if (liz){ $("#cat").onchange = e => set("cat", e.target.value); $("#liz").onchange = e => set("lizards", e.target.value === "R" ? "R" : +e.target.value); }
+  else { $("#rare").onchange = e => set("rare", e.target.value); $("#scoring").onchange = e => set("scoring", e.target.value); $("#win").onchange = e => set("win", +e.target.value); }
+  $("#start").onclick = () => liz ? lizStartOnline() : tsuStartOnline(true);
+}
+function scarePicker(r){
+  const o = O(); if (!o.acct || !DATA.accounts[o.acct] || !(DATA.accounts[o.acct].power.scare > 0)) return "";
+  const others = r.players.filter(d => d !== DEVICE && ROOM.players[d]);
+  if (!others.length) return "";
+  return `<div class="row" style="flex-wrap:nowrap"><select id="scareWho" aria-label="Who to jumpscare">${others.map(d => `<option value="${d}">${esc(rName(d))}</option>`).join("")}</select>
+    <button class="power" id="usescare">👻 Jumpscare <span class="tag">have ${DATA.accounts[o.acct].power.scare}</span></button></div>`;
+}
+function bindScare(){
+  const b = $("#usescare"); if (!b) return;
+  b.onclick = () => { const who = $("#scareWho").value, o = O();
+    if (spendPower({acct:o.acct}, "scare")){ roomRef("scares/" + who).set(onlineMe().name); S.toasts = []; b.parentElement.outerHTML = `<p class="small-print">👻 Sent! ${esc(rName(who))} is getting jumpscared.</p>`; } };
+}
+const notesHtml = r => { const o = O(); return o.notesRound === r.id ? rewardLines(o.notes || []) : ""; };
+
+function renderLizOnline(app){
+  const r = ROOM.round, o = O(), host = isHost(), me = DEVICE;
+  const bar = `<div class="public"><div><div class="eyebrow">Category · everyone knows</div><b>${esc(r.cat)}</b></div>
+    <div class="eyebrow" style="text-align:right">Room ${esc(o.code)}<br>${(ROOM.settings||{}).lizards==="R" ? "? lizards" : r.liz.length + " lizard" + (r.liz.length>1?"s":"")}</div></div>`;
+  if (!r.players.includes(me)){
+    app.innerHTML = bar + `<div class="card center"><h3>You joined mid-round</h3><p class="small-print">You'll get a role next round.</p></div>${roomScores()}${roomFoot()}`;
+    bindFoot(); return;
+  }
+  if (o.showRound !== r.id){ o.showRound = r.id; o.show = false; o.hint = false; }
+  if (r.phase === "roles"){
+    const ready = ROOM.ready || {}, isLiz = r.liz.includes(me), showHint = isLiz && (r.order[0] === me || o.hint);
+    const nReady = r.players.filter(d => ready[d]).length;
+    const role = o.show ? `
+      <div class="card role ${isLiz?"liz":""}">
+        <div class="eyebrow">${esc(rName(me))}, you are</div>
+        ${isLiz ? `<div class="word">🦎 THE LIZARD</div><p>You don't know the word. Fake it. Blend in.</p>
+            ${showHint ? `<p class="hintbox"><b>${r.order[0]===me ? "You're giving the first clue, so here's a hint:" : "🔍 Lizard Hint:"}</b><br>"${esc(hintFor(r.cat, r.word))}"</p>` : ""}`
+          : `<p>In on it. The secret word is</p><div class="word">${esc(r.word)}</div>`}
+      </div>
+      ${isLiz && !showHint ? powerBtn({acct:o.acct}, "hint", "usehint", "Use Lizard Hint") : ""}
+      <button class="ghost" id="hide">Hide my role</button>`
+      : `<div class="card center" style="min-height:200px;justify-content:center"><h3>Your role is hidden</h3><p class="small-print">Make sure nobody can see your screen.</p><button class="big" id="show">Show my role</button></div>`;
+    app.innerHTML = bar + role + scarePicker(r) + `
+      <div class="card"><div class="spread"><h3>Ready? ${nReady}/${r.players.length}</h3>${ready[me] ? `<span class="tag">✓ you're ready</span>` : `<button class="small" id="ready">I've seen it, I'm ready</button>`}</div>
+        <div class="order">${r.players.map(d => `<span>${ready[d] ? "✓ " : ""}${esc(rName(d))}</span>`).join("")}</div></div>
+      ${host ? `<button class="big" id="go">${nReady >= r.players.length ? "Everyone's ready, start clues" : "Start clues anyway"}</button>` : ""}
+      ${roomFoot()}`;
+    const sh = $("#show"); if (sh) sh.onclick = () => { o.show = true; render(); };
+    const hd = $("#hide"); if (hd) hd.onclick = () => { o.show = false; render(); };
+    const uh = $("#usehint"); if (uh) uh.onclick = () => { if (spendPower({acct:o.acct}, "hint")){ o.hint = true; render(); } };
+    const rd = $("#ready"); if (rd) rd.onclick = () => { o.show = false; roomRef("ready/" + me).set(true); };
+    const g = $("#go"); if (g) g.onclick = () => roomRef("round/phase").set("clues");
+    bindScare(); bindFoot(); return;
+  }
+  if (r.phase === "clues"){
+    app.innerHTML = bar + `
+      <div class="card"><div class="eyebrow">Round on</div><h2>Everyone says one word about it</h2>
+        <p>Go in this order. Be vague enough that the lizard can't guess the word, but clear enough that your team trusts you. Then vote on who the lizard is.</p>
+        <div class="order">${r.order.map(d => `<span>${esc(rName(d))}</span>`).join("")}</div>
+        <p class="small-print">${esc(rName(r.order[0]))} starts.</p></div>
+      <button class="ghost" id="peek">${o.show ? "Hide" : "Peek at"} my role</button>
+      ${o.show ? `<div class="card center"><b>${r.liz.includes(me) ? "🦎 You're the lizard" : "The word is " + esc(r.word)}</b></div>` : ""}
+      ${host ? `<button class="big" id="reveal">Reveal the lizard</button>` : `<p class="small-print" style="text-align:center">${esc(rName(ROOM.host))} reveals the lizard when you're done.</p>`}
+      ${roomFoot()}`;
+    $("#peek").onclick = () => { o.show = !o.show; render(); };
+    const rv = $("#reveal"); if (rv) rv.onclick = () => roomRef("round/phase").set("reveal");
+    bindFoot(); return;
+  }
+  // reveal
+  app.innerHTML = bar + `
+    <div class="card role liz"><div class="eyebrow">${r.liz.length>1 ? r.liz.length + " lizards! They were" : "The lizard was"}</div>
+      <div class="word">${esc(r.liz.map(rName).join(" & "))}</div><p>The word was <b>${esc(r.word)}</b></p></div>
+    <div class="card"><div class="eyebrow">Who won?</div>
+      ${r.outcome ? `<p><b>${{team:"Team wins! +1 to everyone in on it.", steal:"Lizard stole it! +1 to each lizard.", lizard:"Lizard escaped! +3 to each lizard."}[r.outcome]}</b></p>`
+        : host ? `<p class="small-print">If the group caught the lizard, the lizard gets one guess at the word to steal the win.</p>
+          <div class="row"><button class="small" data-o="team">Team caught it</button><button class="small" data-o="steal">Caught, but lizard guessed the word</button><button class="small" data-o="lizard">Lizard escaped</button></div>`
+        : `<p class="small-print">Waiting for ${esc(rName(ROOM.host))} to pick who won…</p>`}</div>
+    ${notesHtml(r)}
+    ${memeHtml(r.memeB, "🦎")}
+    ${roomScores()}
+    ${host ? `<button class="big" id="again" ${r.outcome?"":"disabled"}>Next round</button>` : ""}
+    ${roomFoot()}`;
+  app.querySelectorAll("[data-o]").forEach(b => b.onclick = () => lizOutcomeOnline(b.dataset.o));
+  const ag = $("#again"); if (ag) ag.onclick = lizStartOnline;
+  bindFoot();
+}
+
+function renderTsuOnline(app){
+  const r = ROOM.round, o = O(), host = isHost(), me = DEVICE, st = ROOM.settings || {};
+  const m = MODES.find(x => x.id === r.mode) || null, k = (m && m.band) || 1, giverName = rName(r.giver);
+  if (!r.players.includes(me)){
+    app.innerHTML = `<div class="card center"><h3>You joined mid-round</h3><p class="small-print">You'll be in the next round.</p></div>${roomScores()}${roomFoot()}`;
+    bindFoot(); return;
+  }
+  if (o.curRound !== r.id){ o.curRound = r.id; o.cur = 50; o.radio = false; o.deadline = null; }
+  const head = `<div class="spread"><span class="eyebrow">Round ${r.n} · Room ${esc(o.code)}</span>${avatarHtml(rAv(r.giver),"sm")}</div>${modeHtml(m)}`;
+  if (r.phase === "clue"){
+    if (r.giver === me){
+      const rev = m && m.id === "reverse";
+      app.innerHTML = head + `
+        <div class="card"><div class="eyebrow">Only you can see this</div>
+          ${endsHtml(r.scale)}${meterHtml({target:r.target, k})}
+          <p>The target is at <b>${r.target}</b>. ${rev ? `<b>Reverse Tide:</b> give a clue for <b>${100-r.target}</b> instead, the mirror spot.` : `Think of one thing that sits right there between <b>${esc(r.scale[0])}</b> and <b>${esc(r.scale[1])}</b>.`}</p>
+          ${m && (m.id==="silent"||m.id==="sound") ? `<p><b>${esc(m.name)}:</b> ${esc(m.text)}</p>` : ""}</div>
+        ${scarePicker(r)}
+        <button class="big" id="said">I've said my clue out loud</button>${roomFoot()}`;
+      $("#said").onclick = () => roomRef("round/phase").set("guess");
+      bindScare();
+    } else {
+      app.innerHTML = head + `<div class="card center" style="min-height:220px;justify-content:center">
+          ${endsHtml(r.scale)}<h3>${esc(giverName)} is thinking of a clue…</h3><p class="small-print">Listen for it, then place your pin.</p></div>
+        ${scarePicker(r)}${roomScores()}${roomFoot()}`;
+      bindScare();
+    }
+    bindFoot(); return;
+  }
+  if (r.phase === "guess"){
+    const pins = ROOM.pins || {}, guessers = r.players.filter(d => d !== r.giver && ROOM.players[d]);
+    const status = `<div class="order">${guessers.map(d => `<span>${pins[d] !== undefined ? "🔒 " : "… "}${esc(rName(d))}</span>`).join("")}</div>`;
+    if (r.giver === me || pins[me] !== undefined){
+      app.innerHTML = head + `<div class="card center">${endsHtml(r.scale)}
+          <h3>${r.giver === me ? "Guessers are placing their pins" : `Locked in at ${pins[me]}`}</h3>${status}
+          <p class="small-print">The wave hits once everyone locks in.</p></div>${scarePicker(r)}${roomFoot()}`;
+      bindScare(); bindFoot(); return;
+    }
+    const speed = m && m.id === "speed";
+    if (speed && !o.deadline) o.deadline = Date.now() + 10000;
+    const zone = o.radio ? Math.min(3, Math.floor(r.target/25)) : null;
+    app.innerHTML = head + `
+      <div class="card">
+        <div class="eyebrow">Your guess${speed ? ` · <span id="spd">${Math.max(0, Math.ceil((o.deadline - Date.now())/1000))}</span>s left` : ""}</div>
+        <h2>${m && m.id==="reverse" ? "Where is the REAL target?" : "Where does " + esc(giverName) + "'s clue land?"}</h2>
+        ${endsHtml(r.scale)}${meterHtml({pins:[{v:o.cur, label:rName(me)}], zone})}
+        ${zone !== null ? `<p class="small-print">📻 Radio says the target is somewhere between <b>${zone*25}</b> and <b>${zone*25+25}</b>.</p>` : ""}
+        <label for="pin" class="small-print">Drag to place your pin</label>
+        <input type="range" id="pin" min="0" max="100" value="${o.cur}">
+        <div class="readout" id="ro">${o.cur}</div>
+      </div>
+      ${zone === null ? powerBtn({acct:o.acct}, "radio", "useradio", "Use Radio") : ""}
+      <button class="big" id="lock">Lock in</button>
+      <div class="card">${status}</div>${roomFoot()}`;
+    const pin = $("#pin"), pinEl = app.querySelector(".pin");
+    pin.oninput = () => { o.cur = +pin.value; $("#ro").textContent = pin.value; pinEl.style.left = pin.value + "%"; pinEl.classList.toggle("right", pin.value > 70); };
+    const lock = () => { stopTimer(); roomRef("pins/" + me).set(o.cur); };
+    $("#lock").onclick = lock;
+    const ur = $("#useradio"); if (ur) ur.onclick = () => { if (spendPower({acct:o.acct}, "radio")){ o.radio = true; render(); } };
+    if (speed) timer = setInterval(() => { const left = Math.max(0, Math.ceil((o.deadline - Date.now())/1000)); const el = $("#spd"); if (el) el.textContent = left; if (left <= 0) lock(); }, 250);
+    bindFoot(); return;
+  }
+  if (r.phase === "reveal"){
+    const pins = (r.res || []).map(x => ({v:x.pin, label:rName(x.d)}));
+    app.innerHTML = `${modeHtml(m)}
+      <div class="card"><div class="eyebrow">The wave hits ${r.target}</div>
+        ${endsHtml(r.scale)}${meterHtml({target:r.target, k, pins})}
+        <div class="log">${(r.lines || []).map(([who,txt,cls]) => `<div><span>${esc(who)}</span><span class="${cls==="-"?"":cls}">${esc(txt)}</span></div>`).join("")}</div>
+        <p class="small-print">${(st.scoring||"wta")==="wta" ? "Winner takes all: only the closest guesser scores." : "Everyone scores."} Dark band = 4, middle = 3, light = 2.</p></div>
+      ${notesHtml(r)}
+      ${r.allMiss ? memeHtml(TSU_MEMES[r.id % TSU_MEMES.length], "🌊") : ""}
+      ${roomScores()}
+      ${host ? `<button class="big" id="next">${r.champ ? "See the champion" : "Next round"}</button>` : `<p class="small-print" style="text-align:center">${esc(rName(ROOM.host))} starts the next round.</p>`}
+      ${roomFoot()}`;
+    requestAnimationFrame(() => requestAnimationFrame(() => { const w = $("#water"); if (w) w.style.width = r.target + "%"; }));
+    const nx = $("#next"); if (nx) nx.onclick = () => r.champ ? roomRef("round/phase").set("champ") : tsuStartOnline(false);
+    bindFoot(); return;
+  }
+  // champion
+  app.innerHTML = `
+    <div class="card center"><div class="eyebrow">Tsunami champion</div>${avatarHtml(rAv(r.champ),"lg")}<div class="who">🏄 ${esc(rName(r.champ))}</div>
+      <p>rode the wave to ${(ROOM.scores||{})[r.champ] || 0} points.</p></div>
+    ${notesHtml(r)}
+    ${memeHtml(["Everyone else","after getting wiped out"], "🌊")}
+    ${roomScores()}
+    ${host ? `<button class="big" id="again">Play again</button>` : ""}
+    ${roomFoot()}`;
+  const ag = $("#again"); if (ag) ag.onclick = () => tsuStartOnline(true);
+  bindFoot();
 }
 
 /* ================= boot ================= */

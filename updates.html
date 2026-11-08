@@ -48,9 +48,48 @@
   </div>
 </div>
 
+<!-- shows up when you type "password" anywhere on this page -->
+<div id="secret-links" hidden>
+  <div class="section-label">🔓 Every page</div>
+  <div class="games-grid">
+    <a class="game-card" href="index.html"><span class="game-card-icon">🏠</span><h3>Home</h3><p>index.html</p></a>
+    <a class="game-card" href="updates.html"><span class="game-card-icon">📜</span><h3>Update log</h3><p>updates.html</p></a>
+    <a class="game-card" href="glitchgamenight.html"><span class="game-card-icon">🦎</span><h3>Glitch Game Night</h3><p>glitchgamenight.html</p></a>
+    <a class="game-card" href="admin.html"><span class="game-card-icon">🛠️</span><h3>Admin</h3><p>admin.html</p></a>
+    <a class="game-card" href="beta.html"><span class="game-card-icon">🧪</span><h3>Beta</h3><p>beta.html</p></a>
+    <a class="game-card" href="bookmarklet.html"><span class="game-card-icon">🔖</span><h3>Bookmarklet</h3><p>bookmarklet.html</p></a>
+    <a class="game-card" href="games/2048.html"><span class="game-card-icon">🟨</span><h3>2048</h3><p>games/2048.html</p></a>
+    <a class="game-card" href="games/run-1.html"><span class="game-card-icon">🏃</span><h3>Run 1</h3><p>games/run-1.html</p></a>
+    <a class="game-card" href="games/run-2.html"><span class="game-card-icon">🏃</span><h3>Run 2</h3><p>games/run-2.html</p></a>
+    <a class="game-card" href="games/run-3.html"><span class="game-card-icon">🏃</span><h3>Run 3</h3><p>games/run-3.html</p></a>
+    <a class="game-card" href="games/drift-boss.html"><span class="game-card-icon">🚗</span><h3>Drift Boss</h3><p>games/drift-boss.html</p></a>
+    <a class="game-card" href="games/deal-or-no-deal.html"><span class="game-card-icon">💼</span><h3>Deal Or No Deal</h3><p>games/deal-or-no-deal.html</p></a>
+    <a class="game-card" href="games/escape-road.html"><span class="game-card-icon">🚨</span><h3>Escape Road</h3><p>games/escape-road.html</p></a>
+    <a class="game-card" href="games/escape-road-2.html"><span class="game-card-icon">🚨</span><h3>Escape Road 2</h3><p>games/escape-road-2.html</p></a>
+    <a class="game-card" href="games/paper-io-2.html"><span class="game-card-icon">🗺️</span><h3>Paper.io 2</h3><p>games/paper-io-2.html</p></a>
+    <a class="game-card" href="games/slope.html"><span class="game-card-icon">⛷️</span><h3>Slope</h3><p>games/slope.html</p></a>
+  </div>
+</div>
+
 <footer>
   © Gavin Games · <a href="index.html" style="color:var(--accent)">← Back to games</a>
 </footer>
+
+<script>
+// type p-a-s-s-w-o-r-d anywhere on the page to reveal every page link
+(function(){
+  var typed = "";
+  document.addEventListener("keydown", function(e){
+    if (e.key.length !== 1) return;
+    typed = (typed + e.key.toLowerCase()).slice(-8);
+    if (typed === "password"){
+      var box = document.getElementById("secret-links");
+      box.hidden = false;
+      box.scrollIntoView({behavior: "smooth"});
+    }
+  });
+})();
+</script>
 
 </body>
 </html>
