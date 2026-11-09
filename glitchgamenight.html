@@ -918,7 +918,9 @@ const CATS = {
   "Space": ["Moon","Black Hole","Mars","Comet","Satellite","Sun","Astronaut","UFO","Galaxy","Saturn's Rings","Rocket Launch","Space Suit","Asteroid","Star","Telescope","Gravity"],
   "Internet Stuff": ["Meme","Emoji","Livestream","Password","Wi-Fi","Group Chat","Hashtag","Dance Trend","Unboxing Video","Comment Section","Download Bar","Captcha","Pop-up Ad","Buffering","Notification","Screenshot"],
   "Kitchen Stuff": ["Spatula","Blender","Frying Pan","Oven Mitt","Whisk","Cutting Board","Fork","Ladle","Rolling Pin","Kettle","Measuring Cup","Can Opener","Tongs","Grater","Colander","Lunch Bag"],
-  "Hobbies": ["Painting","Fishing","Gardening","Baking","Camping","Knitting","Reading","Dancing","Hiking","Magic Tricks","Coding","Skating","Photography","Drawing","Collecting Cards","Origami"]
+  "Hobbies": ["Painting","Fishing","Gardening","Baking","Camping","Knitting","Reading","Dancing","Hiking","Magic Tricks","Coding","Skating","Photography","Drawing","Collecting Cards","Origami"],
+  "Classic Roger": ["I bought another ___","Tough cookies","Did you report back?","Don't argue with me","I asked you 10 times","I'm locking you out","[Insert offensive thing here]","There's only 5 places it could be","Put it back on the shelf","Cock-a-doodle-doo","I signed you up for ___","What are the ___ things I asked you to do?","AI yap","Just ask AI, monkey see monkey do","I'm on a diet","*snores*"],
+  "Memes": ["Skibidi Toilet","Rizz","67","La Peace","Sigma","Ohio","Gyatt","Fanum Tax","Mewing","Aura","Brainrot","Tung Tung Tung Sahur","Tralalero Tralala","Ballerina Cappuccina","Bombardiro Crocodilo","Chill Guy","Grimace Shake","Delulu","Labubu","Very Demure","NPC Streamer","Looksmaxxing"]
 };
 // Vague hint for a lizard who has to give the first clue (or uses a Lizard Hint). Word=hint, per category.
 const HINTS = {
@@ -947,13 +949,15 @@ const HINTS = {
   "Space":"Moon=night sky|Black Hole=pull|Mars=red|Comet=tail|Satellite=orbit|Sun=hot|Astronaut=floating|UFO=mystery|Galaxy=huge|Saturn's Rings=planet|Rocket Launch=countdown|Space Suit=helmet|Asteroid=rock|Star=twinkle|Telescope=looking|Gravity=falling",
   "Internet Stuff":"Meme=funny|Emoji=faces|Livestream=live|Password=secret|Wi-Fi=signal|Group Chat=friends|Hashtag=symbol|Dance Trend=moves|Unboxing Video=new stuff|Comment Section=opinions|Download Bar=waiting|Captcha=robot check|Pop-up Ad=annoying|Buffering=waiting|Notification=ding|Screenshot=capture",
   "Kitchen Stuff":"Spatula=flipping|Blender=smoothies|Frying Pan=stove|Oven Mitt=hot|Whisk=mixing|Cutting Board=chopping|Fork=eating|Ladle=soup|Rolling Pin=dough|Kettle=boiling|Measuring Cup=baking|Can Opener=metal|Tongs=grabbing|Grater=cheese|Colander=draining|Lunch Bag=carry",
-  "Hobbies":"Painting=brush|Fishing=lake|Gardening=plants|Baking=oven|Camping=outdoors|Knitting=yarn|Reading=books|Dancing=moves|Hiking=trails|Magic Tricks=cards|Coding=computer|Skating=wheels|Photography=camera|Drawing=pencil|Collecting Cards=rare|Origami=paper"
+  "Hobbies":"Painting=brush|Fishing=lake|Gardening=plants|Baking=oven|Camping=outdoors|Knitting=yarn|Reading=books|Dancing=moves|Hiking=trails|Magic Tricks=cards|Coding=computer|Skating=wheels|Photography=camera|Drawing=pencil|Collecting Cards=rare|Origami=paper",
+  "Classic Roger":"I bought another ___=shopping|Tough cookies=no sympathy|Did you report back?=updates|Don't argue with me=no debate|I asked you 10 times=repeating|I'm locking you out=door|[Insert offensive thing here]=blank|There's only 5 places it could be=lost stuff|Put it back on the shelf=store|Cock-a-doodle-doo=morning|I signed you up for ___=surprise|What are the ___ things I asked you to do?=chores|AI yap=talking|Just ask AI, monkey see monkey do=copying|I'm on a diet=food|*snores*=sleep",
+  "Memes":"Skibidi Toilet=bathroom|Rizz=charm|67=numbers|La Peace=chill|Sigma=lone wolf|Ohio=weird place|Gyatt=reaction|Fanum Tax=stealing food|Mewing=jawline|Aura=vibes|Brainrot=too much scrolling|Tung Tung Tung Sahur=Italian brainrot|Tralalero Tralala=Italian brainrot|Ballerina Cappuccina=Italian brainrot|Bombardiro Crocodilo=Italian brainrot|Chill Guy=relaxed|Grimace Shake=purple|Delulu=dreaming|Labubu=collectible|Very Demure=mindful|NPC Streamer=repeating|Looksmaxxing=glow up"
 };
 function hintFor(cat, word){
   const hit = (HINTS[cat]||"").split("|").map(p => p.split("=")).find(([w]) => w === word);
   return hit ? hit[1] : "starts with " + word[0].toUpperCase();
 }
-const LIZ_MEMES = [["Me nodding","like I know the word"],["When they say \"you know,","the thing\" and you don't know"],["POV: everyone gave","a great clue and you said \"stuff\""],["Blending in","professionally since 2026"],["Trust me bro","I totally know the word"]];
+const LIZ_MEMES = [["Me nodding","like I know the word"],["When they say \"you know,","the thing\" and you don't know"],["POV: everyone gave","a great clue and you said \"stuff\""],["Blending in","professionally since 2026"],["Trust me bro","I totally know the word"],["Me looking for the word:","\"There's only 5 places it could be\""],["When they say you're the lizard","Don't argue with me"]];
 const LIZ_END = [["The lizard","when someone accidentally says the word"],["Nobody:","The lizard: \"it's like... a thing\""],["When you vote out","your own best friend"],["Me after","voting the wrong person"]];
 const memeHtml = (m, face) => `<div class="meme" aria-label="Meme: ${esc(m[0]+" "+m[1])}"><div class="t">${esc(m[0])}</div><div class="face">${face}</div><div class="t">${esc(m[1])}</div></div>`;
 
