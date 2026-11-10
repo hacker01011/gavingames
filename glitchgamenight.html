@@ -126,6 +126,27 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid 
 .pk-idol{background:linear-gradient(140deg,#d63384,#3b1d6e)}
 .pk-cursed{background:linear-gradient(140deg,#3d1a6e,#0d0d14)}
 .pk-glitch{background:linear-gradient(140deg,#118a4e,#0b2a3a)}
+.pk-brainrot{background:linear-gradient(140deg,#7c3aed,#db2777)}
+.pk-roger{background:linear-gradient(140deg,#b45309,#3f2a14)}
+.pk-space{background:linear-gradient(140deg,#1e3a8a,#0b1020)}
+.pk-snack{background:linear-gradient(140deg,#ef4444,#f59e0b)}
+.pk-sports{background:linear-gradient(140deg,#15803d,#1e3a8a)}
+.pk-spooky{background:linear-gradient(140deg,#4c1d95,#111)}
+.paywrap{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:flex-end;justify-content:center;z-index:50}
+.paysheet{--main:var(--accent);--main-ink:var(--accent-ink);background:var(--surface);color:var(--ink);width:100%;max-width:440px;border-radius:20px 20px 0 0;padding:18px 18px 24px;display:flex;flex-direction:column;gap:10px;box-shadow:0 -10px 40px rgba(0,0,0,.3)}
+@media(min-width:600px){.paywrap{align-items:center}.paysheet{border-radius:20px}}
+.payitem{display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;background:var(--rare-bg)}
+.payitem div{flex:1;display:flex;flex-direction:column}.payitem small{opacity:.7}
+.payicon{font-size:2rem;line-height:1}
+.payrow{display:flex;justify-content:space-between;font-size:.9rem;padding:4px 2px;border-bottom:1px solid var(--line)}
+.payrow.total{font-weight:700;font-size:1.05rem;border-bottom:0}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:spin .7s linear infinite;vertical-align:-2px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.gbuxgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+.gbux{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;padding:16px 8px 12px;border-radius:14px;background:linear-gradient(160deg,#1e3a8a,#7c3aed);color:#fff}
+.gbux b{font-size:1.3rem}.gbux small{opacity:.8}
+.gbux .price{margin-top:6px;background:#fff;color:#1e3a8a;border-radius:999px;padding:3px 12px;font-weight:700}
+.gbux em{position:absolute;top:-8px;font-style:normal;font-size:.7rem;font-weight:700;background:#f59e0b;color:#111;border-radius:999px;padding:2px 8px;white-space:nowrap}
 .toast{background:var(--rare-bg);border:2px solid var(--accent);border-radius:14px;padding:12px 14px;font-weight:600}
 
 /* lizard */
@@ -255,8 +276,27 @@ const PACKS = {
     ["c-mask","face","👺","Curse mask"],["c-orb","badge","🔮","Cursed orb"],["c-ghost","face","👻","Spirit"],["c-void","bg","#2b1250","Cursed Void"]]},
   glitch:{name:"Glitch Pack", css:"pk-glitch", blurb:"Pixels, robots and error messages", items:[
     ["g-alien","face","👾","Pixel alien"],["g-robot","face","🤖","Robot"],["g-disk","badge","💾","Save disk"],["g-joy","badge","🕹️","Joystick"],
-    ["g-warn","badge","⚠️","Error"],["g-helmet","hat","🪖","Battle helmet"],["g-zap","badge","🌩️","Storm"],["g-green","bg","#118a4e","Glitch Green"]]}
+    ["g-warn","badge","⚠️","Error"],["g-helmet","hat","🪖","Battle helmet"],["g-zap","badge","🌩️","Storm"],["g-green","bg","#118a4e","Glitch Green"]]},
+  brainrot:{name:"Brainrot Pack", css:"pk-brainrot", blurb:"Skibidi, 67, sigma stares and Italian brainrot", items:[
+    ["br-toilet","badge","🚽","Skibidi toilet"],["br-moai","face","🗿","Sigma stare"],["br-shark","face","🦈","Tralalero"],["br-croc","badge","🐊","Bombardiro"],
+    ["br-drum","badge","🥁","Tung Tung Tung"],["br-ballet","badge","🩰","Ballerina"],["br-67","badge","🤷","67"],["br-ohio","bg","#7c3aed","Only in Ohio"]]},
+  roger:{name:"Classic Roger", css:"pk-roger", blurb:"Tough cookies. Don't argue with me.", items:[
+    ["rg-rooster","face","🐓","Cock-a-doodle-doo"],["rg-snore","face","😴","*snores*"],["rg-lock","badge","🔒","Locked out"],["rg-cookie","badge","🍪","Tough cookie"],
+    ["rg-cart","badge","🛒","Bought another one"],["rg-ai","badge","🤖","AI yap"],["rg-diet","badge","🥗","On a diet"],["rg-shelf","bg","#92400e","Back on the shelf"]]},
+  space:{name:"Space Cadets", css:"pk-space", blurb:"Rockets, moons and things from beyond", items:[
+    ["sp-astro","face","🧑‍🚀","Astronaut"],["sp-moon","face","🌝","Moon face"],["sp-rocket","badge","🚀","Rocket"],["sp-ufo","badge","🛸","UFO"],
+    ["sp-comet","badge","☄️","Comet"],["sp-scope","badge","🔭","Telescope"],["sp-star","badge","🌟","Shooting star"],["sp-deep","bg","#0b1d51","Deep Space"]]},
+  snack:{name:"Snack Attack", css:"pk-snack", blurb:"Pizza, donuts and way too many fries", items:[
+    ["sn-burger","face","🍔","Burger"],["sn-pizza","badge","🍕","Pizza"],["sn-donut","badge","🍩","Donut"],["sn-taco","badge","🌮","Taco"],
+    ["sn-fries","badge","🍟","Fries"],["sn-cupcake","badge","🧁","Cupcake"],["sn-chef","hat","👨‍🍳","Chef"],["sn-cheese","bg","#f59e0b","Cheese"]]},
+  sports:{name:"All-Stars", css:"pk-sports", blurb:"Gold medals, GOATs and game winners", items:[
+    ["st-goat","face","🐐","GOAT"],["st-ball","badge","🏀","Basketball"],["st-foot","badge","🏈","Football"],["st-base","badge","⚾","Baseball"],
+    ["st-medal","badge","🥇","Gold medal"],["st-pong","badge","🏓","Ping pong"],["st-boxing","outfit","🥊","Boxing gloves"],["st-field","bg","#15803d","Stadium"]]},
+  spooky:{name:"Spooky Night", css:"pk-spooky", blurb:"Bats, vampires and creaky graveyards", items:[
+    ["sk-vamp","face","🧛","Vampire"],["sk-zombie","face","🧟","Zombie"],["sk-bat","badge","🦇","Bat"],["sk-spider","badge","🕷️","Spider"],
+    ["sk-candle","badge","🕯️","Candle"],["sk-grave","badge","🪦","Gravestone"],["sk-broom","badge","🧹","Broom"],["sk-yard","bg","#1c1917","Graveyard"]]}
 };
+const PACK_PRICE = 250; // packs can also be bought with Gbucks
 Object.entries(PACKS).forEach(([pid,p]) => addItems(p.items, {pack:pid}));
 
 const POWERS = {
@@ -264,11 +304,8 @@ const POWERS = {
   radio:{name:"Radio", icon:"📻", price:75, text:"Tsunami Meter: shows which quarter of the meter the target is in."},
   scare:{name:"Jumpscare", icon:"👻", price:50, text:"Troll the next person: their secret screen opens with a jumpscare."},
   letter:{name:"First Letter", icon:"🔤", price:80, text:"If you're the lizard, see the first letter of the secret word."},
-  radar:{name:"Lizard Radar", icon:"📡", price:100, text:"If you're NOT the lizard, find out one player who is definitely safe."},
-  sonar:{name:"Sonar", icon:"🔊", price:150, text:"Tsunami Meter: narrows the target down to a 10-point window."}
+  radar:{name:"Lizard Radar", icon:"📡", price:100, text:"If you're NOT the lizard, find out one player who is definitely safe."}
 };
-// how far off a Sonar window can start from the target (window is 10 wide)
-function sonarWindow(target){ const s = Math.max(0, Math.min(90, target - Math.floor(Math.random()*11))); return s; }
 const xpNeed = lvl => 40 + lvl*20;
 const PACK_EVERY = 2;
 // Gbucks are rare: you only get them from leveling up, the daily bonus, winning a Tsunami game and pack doubles.
@@ -286,7 +323,7 @@ const today = () => { const d = new Date(); return d.getFullYear()+"-"+String(d.
 const ref = path => fdb.ref(ROOT + "/" + path);
 // Firebase drops empty arrays/objects, so fill them back in when an account loads
 function fixAccount(a){
-  a.items = a.items || []; a.power = Object.assign({hint:0, radio:0, scare:0, letter:0, radar:0, sonar:0}, a.power || {});
+  a.items = a.items || []; a.power = Object.assign({hint:0, radio:0, scare:0, letter:0, radar:0}, a.power || {});
   a.wins = Object.assign({lizard:0, tsunami:0}, a.wins || {}); a.colors = a.colors || {};
   a.avatar = Object.assign({face:"f-frog", bg:"bg-sky", hat:null, badge:null, outfit:null}, a.avatar || {});
   a.xp = a.xp || 0; a.level = a.level || 1; a.gbucks = a.gbucks || 0; a.packs = a.packs || 0;
@@ -677,6 +714,7 @@ function renderProfile(app){
       : `<div class="card">
         <h3>${a.packs ? `You have ${a.packs} free pack${a.packs>1?"s":""} 🎁` : "No free packs right now"}</h3>
         <p class="small-print">You get a free pack every ${PACK_EVERY} levels. Each pack has 3 random items. Doubles turn into ${GB.double} Gbucks each.</p>
+        ${a.gbucks >= PACK_PRICE ? `<button class="small" id="buypack">Buy a pack for ${PACK_PRICE} Gbucks</button>` : `<p class="small-print">Or buy one for ${PACK_PRICE} Gbucks (you have ${a.gbucks}).</p>`}
         <div class="packs4">${Object.entries(PACKS).map(([pid,pk]) => {
           const left = pk.items.filter(([id]) => !a.items.includes(id)).length;
           return `<button class="pack ${pk.css}" data-pack="${pid}" ${a.packs?"":"disabled"}><b>${esc(pk.name)}</b><span>${esc(pk.blurb)}</span><span>${left} of ${pk.items.length} left to find</span></button>`; }).join("")}</div>
@@ -717,6 +755,66 @@ function renderProfile(app){
     p.opened = {pack:pid, got, bonus}; render();
   });
   const ok = $("#ok"); if (ok) ok.onclick = () => { p.opened = null; p.tab = "avatar"; render(); };
+  const bp = $("#buypack"); if (bp) bp.onclick = () => { if (a.gbucks < PACK_PRICE) return; a.gbucks -= PACK_PRICE; a.packs++; saveAccount(a); S.toasts = ["Bought a pack! Pick which one to open."]; render(); };
+}
+
+/* ================= Gbux Store: looks like a checkout, but "buying" just sends a request to the admin page ================= */
+// Nothing is charged here. The request shows up on admin.html; Gavin approves it once he's been paid in person.
+const GBUX_BUNDLES = [
+  {g:500, price:1, icon:"💰"},
+  {g:1100, price:2, icon:"💰", tag:"+10% bonus"},
+  {g:5000, price:5, icon:"💎", tag:"Most popular"},
+  {g:11000, price:10, icon:"💎", tag:"+10% bonus"},
+  {g:25000, price:20, icon:"👑", tag:"Best value"}
+];
+const money = n => "$" + n.toFixed(2);
+const fmt = n => n.toLocaleString("en-US");
+// this account's requests, kept live from requests/{accountId}
+let reqWatch = null;
+function watchRequests(id){
+  if (!fdb || (reqWatch && reqWatch.id === id)) return;
+  if (reqWatch) reqWatch.r.off();
+  const r = ref("requests/" + id);
+  reqWatch = {id, r};
+  r.on("value", s => { S.myReqs = s.val() || {}; if (S.view === "shop" && !$("#overlay").innerHTML) render(); });
+}
+function myRequestsHtml(){
+  const list = Object.values(S.myReqs || {}).sort((x,y) => y.at - x.at).slice(0,5);
+  if (!list.length) return "";
+  const st = {pending:"⏳ Waiting for Gavin", approved:"✅ Added", denied:"❌ Denied"};
+  return `<label>Your purchases</label>${list.map(q => `<div class="spread small-print"><span>${fmt(q.gbux)} Gbux · ${money(q.price)}</span><span>${st[q.status] || q.status}</span></div>`).join("")}`;
+}
+function openCheckout(a, b){
+  const o = $("#overlay");
+  const close = () => { o.innerHTML = ""; render(); };
+  const sheet = inner => { o.innerHTML = `<div class="paywrap" role="dialog" aria-label="Checkout"><div class="paysheet">${inner}</div></div>`;
+    o.querySelector(".paywrap").onclick = e => { if (e.target.classList.contains("paywrap")) close(); }; };
+  sheet(`
+    <div class="spread"><b>Gbux Store</b><button class="ghost small" id="pc">✕</button></div>
+    <div class="payitem"><span class="payicon">${b.icon}</span><div><b>${fmt(b.g)} Gbux</b><small>Glitch Game Night</small></div><b>${money(b.price)}</b></div>
+    <div class="payrow"><span>Account</span><span>${esc(a.name)}</span></div>
+    <div class="payrow"><span>Payment</span><span>Pay Gavin in person</span></div>
+    <div class="payrow"><span>Subtotal</span><span>${money(b.price)}</span></div>
+    <div class="payrow total"><span>Total</span><span>${money(b.price)}</span></div>
+    <button class="big" id="pay">Buy for ${money(b.price)}</button>
+    <p class="small-print">Your Gbux are added after Gavin approves the purchase.</p>`);
+  $("#pc").onclick = close;
+  $("#pay").onclick = () => {
+    const btn = $("#pay"); btn.disabled = true; btn.innerHTML = `<span class="spin"></span> Processing…`;
+    const done = ok => { sheet(ok ? `
+      <div class="center" style="display:flex;flex-direction:column;align-items:center;gap:8px">
+        <div style="font-size:3rem">✅</div><h3>Purchase requested!</h3>
+        <p class="small-print">Pay Gavin <b>${money(b.price)}</b>. Your <b>${fmt(b.g)} Gbux</b> show up as soon as he approves it.</p>
+        <button class="big" id="pd">Done</button></div>` : `
+      <div class="center" style="display:flex;flex-direction:column;align-items:center;gap:8px">
+        <div style="font-size:3rem">⚠️</div><h3>Couldn't send that</h3>
+        <p class="small-print">The store needs the game to be online. Try again in a bit.</p>
+        <button class="big" id="pd">OK</button></div>`); $("#pd").onclick = close; };
+    if (!fdb){ setTimeout(() => done(false), 900); return; }
+    const req = {acct:a.id, name:a.name, gbux:b.g, price:b.price, at:Date.now(), status:"pending"};
+    Promise.all([ref("requests/" + a.id).push(req), new Promise(r => setTimeout(r, 1300))])
+      .then(() => done(true)).catch(() => done(false));
+  };
 }
 
 /* ================= item shop: commons + rares always in stock, epic/legendary featured weekly ================= */
@@ -786,7 +884,14 @@ function renderShop(app){
       <h3>Power-ups · always in stock</h3>
       <div class="shopgrid">${Object.entries(POWERS).map(([k,pw]) => `<button class="sitem" style="--rc:#0e7fa6" data-sel="pw:${k}" aria-pressed="${sh.sel==="pw:"+k}"><span class="e">${pw.icon}</span><b>${esc(pw.name)}</b><small>have ${a.power[k]||0}</small><span class="price">${pw.price} G</span></button>`).join("")}</div>
     </div>
+    <div class="card">
+      <div class="spread"><h3>💎 Get Gbux</h3><span class="tag">Instant after approval</span></div>
+      <div class="gbuxgrid">${GBUX_BUNDLES.map((b,k) => `<button class="gbux" data-bundle="${k}">${b.tag ? `<em>${esc(b.tag)}</em>` : ""}<span class="payicon">${b.icon}</span><b>${fmt(b.g)}</b><small>Gbux</small><span class="price">${money(b.price)}</span></button>`).join("")}</div>
+      ${myRequestsHtml()}
+    </div>
     <p class="small-print">Gbucks are free to earn but rare: +${GB.daily} daily bonus for your first round each day, +${GB.levelUp} every level up, +${GB.champ} for winning Tsunami Meter, +${GB.double} for pack doubles.</p>`;
+  watchRequests(a.id);
+  app.querySelectorAll("[data-bundle]").forEach(b => b.onclick = () => openCheckout(a, GBUX_BUNDLES[+b.dataset.bundle]));
   $("#back").onclick = () => S.verified.includes(a.id) ? go("profile", {profile:{id:a.id, tab:"avatar"}}) : go("home");
   app.querySelectorAll("[data-sel]").forEach(b => b.onclick = () => { sh.sel = b.dataset.sel; render(); window.scrollTo(0,0); });
   const c = $("#cancel"); if (c) c.onclick = () => { sh.sel = null; render(); };
@@ -1148,14 +1253,13 @@ function tsuNewRound(){
   const scale = mode && mode.id === "whirlpool" ? [pick(tpool())[0], pick(tpool())[1]] : pick(tpool());
   G.giver = G.giver % n;
   const guessers = [...Array(n).keys()].filter(i => i !== G.giver);
-  G.r = { scale, target:rint(3,97), mode, guessers, gi:0, pins:{}, radio:{}, sonar:{}, phase:"pass", meme:pick(TSU_MEMES), scored:false, scareSet:null, scareBy:null, notes:[] };
+  G.r = { scale, target:rint(3,97), mode, guessers, gi:0, pins:{}, radio:{}, phase:"pass", meme:pick(TSU_MEMES), scored:false, scareSet:null, scareBy:null, notes:[] };
   G.round++;
   go("tsu");
 }
-function meterHtml({target=null, k=1, pins=[], zone=null, sonar=null}){
+function meterHtml({target=null, k=1, pins=[], zone=null}){
   let inner = `<div class="water" id="water"></div>`;
   if (zone !== null) inner += `<div class="zone" style="left:${zone*25}%;width:25%"></div>`;
-  if (sonar !== null) inner += `<div class="zone" style="left:${sonar}%;width:10%"></div>`;
   if (target !== null){
     inner += `<div class="band b2" style="left:${target}%;width:${34*k}%"></div><div class="band b3" style="left:${target}%;width:${20*k}%"></div>
       <div class="band b4" style="left:${target}%;width:${8*k}%"><span>${k<1?"":"4"}</span></div>`;
@@ -1228,22 +1332,19 @@ function renderTsunami(app){
       <div class="card">
         <div class="eyebrow">${solo ? "Guess" : esc(wn) + "'s secret guess"}${speed ? ` · <span id="spd">10</span>s left` : ""}</div>
         <h2>${esc(wn)}, ${m && m.id==="reverse" ? "where is the REAL target?" : "where does the clue land?"}</h2>
-        ${endsHtml(r.scale)}${meterHtml({pins:[{v:cur,label:wn}], zone, sonar:r.sonar[who] ?? null})}
+        ${endsHtml(r.scale)}${meterHtml({pins:[{v:cur,label:wn}], zone})}
         ${zone !== null ? `<p class="small-print">📻 Radio says the target is somewhere between <b>${zone*25}</b> and <b>${zone*25+25}</b>.</p>` : ""}
-        ${r.sonar[who] !== undefined ? `<p class="small-print">🔊 Sonar says the target is between <b>${r.sonar[who]}</b> and <b>${r.sonar[who]+10}</b>.</p>` : ""}
         <label for="pin" class="small-print">Drag to place your pin</label>
         <input type="range" id="pin" min="0" max="100" value="${cur}">
         <div class="readout" id="ro">${cur}</div>
       </div>
       ${zone === null ? powerBtn(P[who], "radio", "useradio", "Use Radio") : ""}
-      ${r.sonar[who] === undefined ? powerBtn(P[who], "sonar", "usesonar", "Use Sonar") : ""}
       ${nx !== undefined && !r.scareSet ? powerBtn(P[who], "scare", "usescare", "Jumpscare " + esc(nm(nx))) : ""}
       <button class="big" id="lock">Lock in${r.gi < r.guessers.length-1 ? ", next guesser" : ", reveal"}</button>
       ${solo ? "" : `<p class="small-print">Other guessers: don't look at the pin. Pass the device after locking in.</p>`}`;
     const pin = $("#pin"), pinEl = app.querySelector(".pin");
     pin.oninput = () => { r.cur = +pin.value; $("#ro").textContent = pin.value; pinEl.style.left = pin.value + "%"; pinEl.classList.toggle("right", pin.value>70); };
     const ur = $("#useradio"); if (ur) ur.onclick = () => { if (spendPower(P[who], "radio")){ r.radio[who] = true; r.cur = +pin.value; render(); } };
-    const un = $("#usesonar"); if (un) un.onclick = () => { if (spendPower(P[who], "sonar")){ r.sonar[who] = sonarWindow(r.target); r.cur = +pin.value; render(); } };
     const us = $("#usescare"); if (us) us.onclick = () => { if (spendPower(P[who], "scare")){ r.scareSet = wn; us.outerHTML = `<p class="small-print">👻 Set! ${esc(nm(nx))} is getting jumpscared.</p>`; } };
     const lock = () => {
       r.pins[who] = +pin.value; r.cur = null;
@@ -1685,7 +1786,7 @@ function renderTsuOnline(app){
     app.innerHTML = `<div class="card center"><h3>You joined mid-round</h3><p class="small-print">You'll be in the next round.</p></div>${roomScores()}${roomFoot()}`;
     bindFoot(); return;
   }
-  if (o.curRound !== r.id){ o.curRound = r.id; o.cur = 50; o.radio = false; o.sonar = null; o.deadline = null; }
+  if (o.curRound !== r.id){ o.curRound = r.id; o.cur = 50; o.radio = false; o.deadline = null; }
   const head = `<div class="spread"><span class="eyebrow">Round ${r.n} · Room ${esc(o.code)}</span>${avatarHtml(rAv(r.giver),"sm")}</div>${modeHtml(m)}`;
   if (r.phase === "clue"){
     if (r.giver === me){
@@ -1723,15 +1824,13 @@ function renderTsuOnline(app){
       <div class="card">
         <div class="eyebrow">Your guess${speed ? ` · <span id="spd">${Math.max(0, Math.ceil((o.deadline - Date.now())/1000))}</span>s left` : ""}</div>
         <h2>${m && m.id==="reverse" ? "Where is the REAL target?" : "Where does " + esc(giverName) + "'s clue land?"}</h2>
-        ${endsHtml(r.scale)}${meterHtml({pins:[{v:o.cur, label:rName(me)}], zone, sonar:o.sonar})}
+        ${endsHtml(r.scale)}${meterHtml({pins:[{v:o.cur, label:rName(me)}], zone})}
         ${zone !== null ? `<p class="small-print">📻 Radio says the target is somewhere between <b>${zone*25}</b> and <b>${zone*25+25}</b>.</p>` : ""}
-        ${o.sonar !== null ? `<p class="small-print">🔊 Sonar says the target is between <b>${o.sonar}</b> and <b>${o.sonar+10}</b>.</p>` : ""}
         <label for="pin" class="small-print">Drag to place your pin</label>
         <input type="range" id="pin" min="0" max="100" value="${o.cur}">
         <div class="readout" id="ro">${o.cur}</div>
       </div>
       ${zone === null ? powerBtn({acct:o.acct}, "radio", "useradio", "Use Radio") : ""}
-      ${o.sonar === null ? powerBtn({acct:o.acct}, "sonar", "usesonar", "Use Sonar") : ""}
       <button class="big" id="lock">Lock in</button>
       <div class="card">${status}</div>${roomFoot()}`;
     const pin = $("#pin"), pinEl = app.querySelector(".pin");
@@ -1739,7 +1838,6 @@ function renderTsuOnline(app){
     const lock = () => { stopTimer(); roomRef("pins/" + me).set(o.cur); };
     $("#lock").onclick = lock;
     const ur = $("#useradio"); if (ur) ur.onclick = () => { if (spendPower({acct:o.acct}, "radio")){ o.radio = true; render(); } };
-    const un = $("#usesonar"); if (un) un.onclick = () => { if (spendPower({acct:o.acct}, "sonar")){ o.sonar = sonarWindow(r.target); render(); } };
     if (speed) timer = setInterval(() => { const left = Math.max(0, Math.ceil((o.deadline - Date.now())/1000)); const el = $("#spd"); if (el) el.textContent = left; if (left <= 0) lock(); }, 250);
     bindFoot(); return;
   }

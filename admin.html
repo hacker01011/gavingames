@@ -128,6 +128,7 @@
     <button class="tab" onclick="switchTab('managegames',this)">🎮 Manage Games</button>
     <button class="tab" onclick="switchTab('manageupdates',this)">✏️ Manage Updates</button>
     <button class="tab" onclick="switchTab('token',this)">🔑 Token</button>
+    <button class="tab" onclick="switchTab('gbux',this)">💎 Gbux Requests</button>
   </div>
 
   <!-- POST UPDATE -->
@@ -244,8 +245,32 @@
       <div class="status" id="token-status"></div>
     </div>
   </div>
+  <!-- GBUX REQUESTS (Glitch Game Night store) -->
+  <div class="tab-panel" id="tab-gbux">
+    <div class="card">
+      <h2>Pending Gbux purchases</h2>
+      <p class="token-note" style="margin-top:-8px;margin-bottom:12px">From the Gbux Store in Glitch Game Night. Nothing was charged: approve once they've paid you, and the Gbux go straight to their account.</p>
+      <div id="gbux-pending"><div style="color:var(--muted);font-size:13px;">Loading...</div></div>
+      <div class="status" id="gbux-status"></div>
+    </div>
+    <div class="card">
+      <h2>Give Gbux directly</h2>
+      <label>Account</label>
+      <select id="gbux-acct"></select>
+      <label>Amount</label>
+      <input type="number" id="gbux-amt" min="1" placeholder="500">
+      <div class="btn-row"><button class="btn btn-primary" onclick="giveGbux()">Give Gbux</button></div>
+      <div class="status" id="gbux-give-status"></div>
+    </div>
+    <div class="card">
+      <h2>Recent history</h2>
+      <div id="gbux-history"></div>
+    </div>
+  </div>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script>
 const OWNER = 'hacker01011';
 const REPO  = 'gavingames';
@@ -273,6 +298,7 @@ function switchTab(name, btn) {
   btn.classList.add('active');
   if (name === 'managegames') loadManageGames();
   if (name === 'manageupdates') loadManageUpdates();
+  if (name === 'gbux') loadGbux();
 }
 
 // ── TOKEN ──
@@ -684,6 +710,71 @@ async function deleteUpdate(i) {
     showStatus('manageupdates-status','✓ Entry removed. Live in ~30 seconds.','success');
     setTimeout(loadManageUpdates, 1000);
   } catch(e) { showStatus('manageupdates-status','✗ '+e.message,'error'); }
+}
+
+// ── GBUX REQUESTS (Glitch Game Night lives under /ggn in this Firebase database) ──
+const GGN_CONFIG = {apiKey:"AIzaSyB37QAsv1bRN1sgibjm1Wt2NY2bqF0lDA8", authDomain:"gavingames-cra-7e129.firebaseapp.com",
+  databaseURL:"https://gavingames-cra-7e129-default-rtdb.firebaseio.com", projectId:"gavingames-cra-7e129"};
+let ggnDb = null, ggnAccounts = {}, ggnReqs = {};
+const esc = t => String(t).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const gref = path => ggnDb.ref("ggn/" + path);
+function loadGbux(){
+  if (ggnDb) return;
+  try {
+    const app = firebase.apps.find(x => x.name === "ggn") || firebase.initializeApp(GGN_CONFIG, "ggn");
+    ggnDb = app.database();
+  } catch(e){ showStatus('gbux-status','✗ Could not connect: '+e.message,'error'); return; }
+  gref("accounts").on("value", s => { ggnAccounts = s.val() || {}; drawAcctSelect(); drawGbux(); });
+  gref("requests").on("value", s => { ggnReqs = s.val() || {}; drawGbux(); });
+}
+function drawAcctSelect(){
+  const sel = document.getElementById('gbux-acct'), cur = sel.value;
+  sel.innerHTML = Object.values(ggnAccounts).sort((a,b) => (a.name||"").localeCompare(b.name||""))
+    .map(a => `<option value="${esc(a.id)}">${esc(a.name)} (${(a.gbucks||0).toLocaleString()} G)</option>`).join("");
+  if (cur) sel.value = cur;
+}
+function allReqs(){ return Object.entries(ggnReqs).flatMap(([acct, list]) => Object.entries(list || {}).map(([rid, r]) => ({...r, acct, rid}))); }
+function drawGbux(){
+  const all = allReqs(), when = t => new Date(t).toLocaleString([], {month:"short", day:"numeric", hour:"numeric", minute:"2-digit"});
+  const pend = all.filter(r => r.status === "pending").sort((a,b) => a.at - b.at);
+  document.getElementById('gbux-pending').innerHTML = pend.length ? pend.map(r => `
+    <div class="manage-item">
+      <div style="flex:1"><div style="font-size:14px;font-weight:500">${esc(r.name)} · ${Number(r.gbux).toLocaleString()} Gbux</div>
+        <div style="font-size:12px;color:var(--muted)">Owes you $${Number(r.price).toFixed(2)} · ${when(r.at)}</div></div>
+      <button class="btn" style="flex:0;padding:7px 12px;color:var(--success)" onclick="decideReq('${esc(r.acct)}','${esc(r.rid)}',true)">Approve</button>
+      <button class="btn btn-danger" style="flex:0;padding:7px 12px" onclick="decideReq('${esc(r.acct)}','${esc(r.rid)}',false)">Deny</button>
+    </div>`).join("") : `<div style="color:var(--muted);font-size:13px;">No pending requests. 🎉</div>`;
+  const hist = all.filter(r => r.status !== "pending").sort((a,b) => (b.doneAt||b.at) - (a.doneAt||a.at)).slice(0, 15);
+  document.getElementById('gbux-history').innerHTML = hist.length ? hist.map(r => `
+    <div class="manage-item" style="font-size:13px"><span style="flex:1">${esc(r.name)} · ${Number(r.gbux).toLocaleString()} G · $${Number(r.price).toFixed(2)}</span>
+      <span style="color:${r.status === "approved" ? "var(--success)" : "var(--danger)"}">${esc(r.status)}</span></div>`).join("")
+    : `<div style="color:var(--muted);font-size:13px;">Nothing yet.</div>`;
+}
+// flips the request out of "pending" exactly once, then adds the Gbux, so a double click can't pay out twice
+async function decideReq(acct, rid, approve){
+  try {
+    const res = await gref(`requests/${acct}/${rid}`).transaction(r => {
+      if (r === null) return null;
+      if (r.status !== "pending") return;
+      return {...r, status: approve ? "approved" : "denied", doneAt: Date.now()};
+    });
+    const r = res.snapshot.val();
+    if (!res.committed || !r || r.status !== (approve ? "approved" : "denied")) { showStatus('gbux-status','That request was already handled.','error'); return; }
+    if (approve){
+      await addGbux(acct, Number(r.gbux));
+      showStatus('gbux-status', `✓ Gave ${r.name} ${Number(r.gbux).toLocaleString()} Gbux.`, 'success');
+    } else showStatus('gbux-status', `Denied ${r.name}'s request.`, 'success');
+  } catch(e){ showStatus('gbux-status','✗ '+e.message,'error'); }
+}
+async function addGbux(acct, amount){
+  if (!(await gref(`accounts/${acct}/id`).once("value")).exists()) throw new Error("That account doesn't exist anymore.");
+  await gref(`accounts/${acct}/gbucks`).transaction(g => (g || 0) + amount);
+}
+async function giveGbux(){
+  const acct = document.getElementById('gbux-acct').value, amt = Math.floor(+document.getElementById('gbux-amt').value);
+  if (!acct || !(amt > 0)) { showStatus('gbux-give-status','Pick an account and an amount.','error'); return; }
+  try { await addGbux(acct, amt); showStatus('gbux-give-status', `✓ Gave ${ggnAccounts[acct]?.name || "them"} ${amt.toLocaleString()} Gbux.`, 'success'); document.getElementById('gbux-amt').value = ""; }
+  catch(e){ showStatus('gbux-give-status','✗ '+e.message,'error'); }
 }
 
 document.getElementById('password-input').focus();
