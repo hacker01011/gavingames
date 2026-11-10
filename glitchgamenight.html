@@ -7,7 +7,7 @@
 :root{
   --bg:#eef2f5; --surface:#ffffff; --ink:#14212b; --muted:#566673; --line:#d2dce3;
   --accent:#ff7a1a; --accent-ink:#1a0d00;
-  --leaf:#2f8a3e; --leaf-ink:#ffffff; --sea:#0e7fa6; --sea-ink:#ffffff;
+  --leaf:#2f8a3e; --leaf-ink:#ffffff; --sea:#0e7fa6; --sea-ink:#ffffff; --grape:#8e4ec6; --grape-ink:#ffffff;
   --foam:#bfe9f5; --b4:#0b6e8f; --b3:#3aa5c7; --b2:#9ad6e8;
   --gold:#b7791f; --ok:#15803d; --bad:#c2410c; --rare-bg:#fff1e6;
   --display:"Lilita One", "Arial Rounded MT Bold", system-ui, sans-serif;
@@ -17,13 +17,13 @@
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#0b1218; --surface:#141f28; --ink:#e6eef3; --muted:#93a6b3; --line:#26343f;
   --accent:#ff9447; --accent-ink:#1a0d00;
-  --leaf:#5cc96b; --leaf-ink:#0b170c; --sea:#38b6dc; --sea-ink:#04131a;
+  --leaf:#5cc96b; --leaf-ink:#0b170c; --sea:#38b6dc; --sea-ink:#04131a; --grape:#c39af0; --grape-ink:#1b0b2c;
   --foam:#123a4a; --b4:#5fd0f0; --b3:#2f97b8; --b2:#1d5f75;
   --gold:#f6c453; --ok:#4ade80; --bad:#fdba74; --rare-bg:#2a1608; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0b1218; --surface:#141f28; --ink:#e6eef3; --muted:#93a6b3; --line:#26343f;
   --accent:#ff9447; --accent-ink:#1a0d00;
-  --leaf:#5cc96b; --leaf-ink:#0b170c; --sea:#38b6dc; --sea-ink:#04131a;
+  --leaf:#5cc96b; --leaf-ink:#0b170c; --sea:#38b6dc; --sea-ink:#04131a; --grape:#c39af0; --grape-ink:#1b0b2c;
   --foam:#123a4a; --b4:#5fd0f0; --b3:#2f97b8; --b2:#1d5f75;
   --gold:#f6c453; --ok:#4ade80; --bad:#fdba74; --rare-bg:#2a1608; color-scheme:dark}
 html,body{height:100%}
@@ -32,6 +32,7 @@ body{background:var(--bg);color:var(--ink);font:16px/1.5 var(--body);
 .stage{max-width:480px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
 .stage.lizard{--main:var(--leaf);--main-ink:var(--leaf-ink)}
 .stage.tsunami{--main:var(--sea);--main-ink:var(--sea-ink)}
+.stage.dash{--main:var(--grape);--main-ink:var(--grape-ink)}
 .stage{--main:var(--accent);--main-ink:var(--accent-ink)}
 h1,h2,h3{font-family:var(--display);font-weight:400;line-height:1.05;text-wrap:balance;margin:0}
 h1{font-size:2.5rem}
@@ -65,6 +66,22 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid 
 .gamecard span{font-weight:400;font-size:.9rem}
 .gc-liz{background:var(--leaf);color:var(--leaf-ink)}
 .gc-tsu{background:var(--sea);color:var(--sea-ink)}
+.gc-dash{background:var(--grape);color:var(--grape-ink)}
+/* doodle dash */
+.dcv{width:100%;aspect-ratio:4/3;height:auto;background:#fff;border:2px solid var(--line);border-radius:14px;touch-action:none;cursor:crosshair;display:block}
+.dcv.view{cursor:default}
+.dhead{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.dhead>span:first-child{display:flex;flex-direction:column;min-width:0}
+.dmask{font:400 1.5rem var(--display);letter-spacing:.06em;white-space:pre-wrap;word-break:break-word}
+.dtime{font:400 2rem var(--display);font-variant-numeric:tabular-nums;min-width:2.4em;text-align:center;padding:4px 10px;border-radius:12px;background:var(--main);color:var(--main-ink)}
+.dtime.low{background:var(--bad);color:#fff}
+.dtools{display:flex;flex-wrap:wrap;gap:6px}
+.dsw{width:36px;height:36px;padding:0;border-radius:50%;background:var(--sw);border:2px solid var(--line);font-size:1rem}
+.dsw[aria-pressed="true"]{outline:3px solid var(--main);outline-offset:2px}
+.dsz[aria-pressed="false"]{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.dpick{display:flex;flex-direction:column;gap:10px;width:100%}
+.dchat{max-height:180px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;font-size:.92rem}
+.dchat .ok{color:var(--ok);font-weight:700}
 
 /* avatars */
 .av{--s:44px;position:relative;width:var(--s);height:var(--s);border-radius:50%;background:var(--avbg,#888);display:inline-grid;place-items:center;flex:none;box-shadow:inset 0 -3px 0 rgba(0,0,0,.18)}
@@ -84,7 +101,7 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid 
 .rewardrow{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px dashed var(--line)}
 .rewardrow .lv{font:400 1.1rem var(--display);width:3.2em;flex:none}
 .rewardrow.locked{opacity:.5}
-.mini{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mini{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:12px}
 .mini .log{font-size:.88rem}
 .av.lg{--s:96px}
 .av.md{--s:60px}
@@ -161,6 +178,13 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid 
 .hold.on i{width:100%;transition:width 2s linear}
 .hold span{position:relative}
 .receipt{border:1px dashed var(--line);border-radius:12px;padding:10px 12px}
+.nt{background:var(--nt);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;font-weight:800}
+.nt.shine{background-size:200% auto;animation:ntshine 3s linear infinite}
+@keyframes ntshine{to{background-position:200% center}}
+@media (prefers-reduced-motion:reduce){.nt.shine{animation:none}}
+.announce{padding:10px 14px;border-radius:12px;background:var(--rare-bg);border:1px solid var(--accent);font-weight:600}
+.announce.sale{background:linear-gradient(90deg,#b91c1c,#f59e0b);color:#fff;border:0}
+.tradebox{padding:10px;border:1px solid var(--line);border-radius:12px;margin-top:8px;font-size:.9rem;display:flex;flex-direction:column;gap:6px}
 .gbux em{position:absolute;top:-8px;font-style:normal;font-size:.7rem;font-weight:700;background:#f59e0b;color:#111;border-radius:999px;padding:2px 8px;white-space:nowrap}
 .toast{background:var(--rare-bg);border:2px solid var(--accent);border-radius:14px;padding:12px 14px;font-weight:600}
 
@@ -312,6 +336,18 @@ const PACKS = {
     ["sk-candle","badge","🕯️","Candle"],["sk-grave","badge","🪦","Gravestone"],["sk-broom","badge","🧹","Broom"],["sk-yard","bg","#1c1917","Graveyard"]]}
 };
 const PACK_PRICE = 250; // packs can also be bought with Gbucks
+// name colors: change how your name looks on the hub, leaderboards and your profile
+const NAMETAGS = [
+  ["nt-red","Red","#e5484d","common"],["nt-blue","Blue","#0090ff","common"],["nt-green","Green","#30a46c","common"],["nt-orange","Orange","#f76b15","common"],
+  ["nt-pink","Bubblegum","linear-gradient(90deg,#ff7eb3,#ff4f9a)","rare"],["nt-ocean","Ocean","linear-gradient(90deg,#06b6d4,#3b82f6)","rare"],
+  ["nt-toxic","Toxic","linear-gradient(90deg,#a3e635,#16a34a)","rare"],["nt-sunset","Sunset","linear-gradient(90deg,#f97316,#ec4899,#8b5cf6)","epic"],
+  ["nt-ice","Diamond","linear-gradient(90deg,#22d3ee,#a5f3fc,#38bdf8,#a5f3fc,#22d3ee)","epic",true],
+  ["nt-gold","Gold","linear-gradient(90deg,#b8860b,#ffd700,#fff3b0,#ffd700,#b8860b)","legendary",true],
+  ["nt-rainbow","Rainbow","linear-gradient(90deg,#ff5f6d,#ffc371,#47e891,#3fa7ff,#b06cff,#ff5f6d)","legendary",true]
+];
+NAMETAGS.forEach(([id,name,v,rarity,shine]) => addItems([[id,"nametag",v,name]], {rarity, price:RARITY[rarity].price, shine:!!shine}));
+// only from the Achievement hunter achievement
+addItems([["nt-trophy","nametag","linear-gradient(90deg,#f59e0b,#fde68a,#f59e0b)","Champion"]], {ach:true, shine:true});
 Object.entries(PACKS).forEach(([pid,p]) => addItems(p.items, {pack:pid}));
 
 const POWERS = {
@@ -327,7 +363,7 @@ const PACK_EVERY = 2;
 const GB = {levelUp:25, daily:20, champ:30, double:10, start:100};
 
 /* ================= storage: global Firebase database, or this browser as a fallback ================= */
-const DATA = { accounts:{}, daily:{} };
+const DATA = { accounts:{}, daily:{}, settings:{}, trades:{} };
 let fdb = null, storeMode = "loading";
 const FB_CONFIG = {
   apiKey:"AIzaSyB37QAsv1bRN1sgibjm1Wt2NY2bqF0lDA8", authDomain:"gavingames-cra-7e129.firebaseapp.com",
@@ -339,18 +375,20 @@ const ref = path => fdb.ref(ROOT + "/" + path);
 // Firebase drops empty arrays/objects, so fill them back in when an account loads
 function fixAccount(a){
   a.items = a.items || []; a.power = Object.assign({hint:0, radio:0, scare:0, letter:0, radar:0}, a.power || {});
-  a.wins = Object.assign({lizard:0, tsunami:0}, a.wins || {}); a.colors = a.colors || {};
-  a.avatar = Object.assign({face:"f-frog", bg:"bg-sky", hat:null, badge:null, outfit:null}, a.avatar || {});
+  a.wins = Object.assign({lizard:0, tsunami:0, dash:0}, a.wins || {}); a.colors = a.colors || {};
+  a.avatar = Object.assign({face:"f-frog", bg:"bg-sky", hat:null, badge:null, outfit:null, nametag:null}, a.avatar || {});
+  a.stats = a.stats || {}; a.ach = a.ach || {};
   a.xp = a.xp || 0; a.level = a.level || 1; a.gbucks = a.gbucks || 0; a.packs = a.packs || 0;
   return a;
 }
 const clean = o => JSON.parse(JSON.stringify(o)); // strips undefined, which Firebase rejects
 function saveLocal(){ try { localStorage.setItem("glitch-game-night", JSON.stringify(DATA)); } catch(e){} }
 function saveAccount(a){
+  checkAchievements(a);
   DATA.accounts[a.id] = a;
   if (fdb) ref("accounts/" + a.id).set(clean(a)).catch(e => console.warn("save failed", e)); else saveLocal();
 }
-function dailyToday(){ const t = today(); DATA.daily[t] = DATA.daily[t] || {lizard:{}, tsunami:{}}; DATA.daily[t].lizard = DATA.daily[t].lizard || {}; DATA.daily[t].tsunami = DATA.daily[t].tsunami || {}; return DATA.daily[t]; }
+function dailyToday(){ const t = today(); DATA.daily[t] = DATA.daily[t] || {lizard:{}, tsunami:{}}; DATA.daily[t].lizard = DATA.daily[t].lizard || {}; DATA.daily[t].tsunami = DATA.daily[t].tsunami || {}; DATA.daily[t].dash = DATA.daily[t].dash || {}; return DATA.daily[t]; }
 function addDaily(game, id, pts){
   if (!pts) return;
   const d = dailyToday(); d[game][id] = (d[game][id]||0) + pts;
@@ -375,8 +413,24 @@ function initStore(){
     Object.values(acc).forEach(fixAccount);
     DATA.accounts = acc; rerenderIfCalm();
   }, e => console.warn("accounts", e));
+  ref("settings").on("value", snap => { DATA.settings = snap.val() || {}; rerenderIfCalm(); });
+  ref("trades").on("value", snap => { DATA.trades = snap.val() || {}; rerenderIfCalm(); });
   ref("daily/" + today()).on("value", snap => { DATA.daily[today()] = snap.val() || {lizard:{}, tsunami:{}}; rerenderIfCalm(); });
 }
+
+/* ================= admin settings: announcement banner and sales (set on admin.html) ================= */
+const liveUntil = x => x && (!x.until || x.until > Date.now());
+function announceHtml(){
+  const an = DATA.settings && DATA.settings.announce;
+  return an && an.text && liveUntil(an) ? `<div class="announce" role="status">📣 ${esc(an.text)}</div>` : "";
+}
+const curSale = () => { const x = DATA.settings && DATA.settings.sale; return x && liveUntil(x) ? x : null; };
+const gbuxBonus = () => (curSale() && +curSale().gbux) || 0;   // % extra Gbux on every bundle
+const shopSaleOff = () => (curSale() && +curSale().shop) || 0; // % off items and power-ups
+const saleGbux = g => Math.round(g * (1 + gbuxBonus()/100));
+const salePrice = p => Math.max(1, Math.ceil(p * (1 - shopSaleOff()/100)));
+const priceTag = p => shopSaleOff() ? `<s style="opacity:.6">${p}</s> ${salePrice(p)} G` : p + " G";
+const saleEnds = () => { const x = curSale(); return x && x.until ? " · ends " + new Date(x.until).toLocaleDateString([], {weekday:"short", month:"short", day:"numeric"}) : ""; };
 
 /* ================= helpers ================= */
 const $ = s => document.querySelector(s);
@@ -393,18 +447,24 @@ function avatarHtml(av, size=""){
   const h = ITEMS[av.hat], b = ITEMS[av.badge], o = ITEMS[av.outfit];
   return `<span class="av ${size}" style="--avbg:${bg.v}" aria-hidden="true"><span class="f">${f.v}</span>${o?`<span class="o">${o.v}</span>`:""}${h?`<span class="h">${h.v}</span>`:""}${b?`<span class="b">${b.v}</span>`:""}</span>`;
 }
-const swatch = i => i.type==="bg" ? `<span class="chipc" style="background:${i.v}"></span>` : `<span class="e">${i.v}</span>`;
+const swatch = i => i.type==="bg" ? `<span class="chipc" style="background:${i.v}"></span>`
+  : i.type==="nametag" ? `<span class="e nt ${i.shine?"shine":""}" style="--nt:${i.v}">Aa</span>` : `<span class="e">${i.v}</span>`;
+// a player's name in their name color (if they wear one)
+const nameHtml = a => { const t = a && a.avatar && ITEMS[a.avatar.nametag], n = esc(a ? a.name : "");
+  return t ? `<span class="nt ${t.shine?"shine":""}" style="--nt:${t.v}">${n}</span>` : n; };
 const guestAv = {face:"f-monkey", bg:"bg-slate"};
-const loggedIn = id => S.verified.includes(id) && DATA.accounts[id] && DATA.accounts[id].keyVersion === KEY_VERSION;
+const loggedIn = id => S.verified.includes(id) && DATA.accounts[id] && DATA.accounts[id].keyVersion === KEY_VERSION && !DATA.accounts[id].frozen;
 
 /* ================= app state ================= */
 let S = window.claude?.hot?.data?.S || {
   view:"home", game:null,
-  lobby:{ lizard:{players:[], cat:"Random", lizards:1, look:10}, tsunami:{players:[], win:15, look:10, packs:null, rare:"rare", scoring:"wta"} },
+  lobby:{ lizard:{players:[], cat:"Random", lizards:1, look:10}, tsunami:{players:[], win:15, look:10, packs:null, rare:"rare", scoring:"wta"}, dash:{players:[], cat:"Random", time:80, rounds:1} },
   verified:[], // account ids that passed the color check this visit
   quiz:null, create:null, profile:null, add:null, lb:"lizard",
   liz:null, tsu:null, toasts:[]
 };
+S.lobby.dash = S.lobby.dash || {players:[], cat:"Random", time:80, rounds:1};
+const GAME_TITLE = {lizard:"🦎 Lizard in the Room", tsunami:"🌊 Tsunami Meter", dash:"🎨 Doodle Dash"};
 const calmViews = ["home","leaderboard","profile","pickAccount","lobby","shop","online"];
 function rerenderIfCalm(){ if (calmViews.includes(S.view)) render(); }
 
@@ -415,7 +475,7 @@ function render(){
   const app = $("#app");
   app.className = "stage" + (S.game ? " " + S.game : "");
   const views = {home:renderHome, leaderboard:renderLeaderboard, pickAccount:renderPickAccount, create:renderCreate, quiz:renderQuiz,
-    profile:renderProfile, shop:renderShop, lobby:renderLobby, online:renderOnline, liz:renderLizard, tsu:renderTsunami};
+    profile:renderProfile, shop:renderShop, lobby:renderLobby, online:renderOnline, liz:renderLizard, tsu:renderTsunami, dash:renderDash};
   (views[S.view] || renderHome)(app);
 }
 
@@ -435,10 +495,59 @@ function reward(acctId, {xp=0, gb=0}){
   saveAccount(a);
   return notes;
 }
+/* ================= achievements ================= */
+const stat = (a, k, n=1) => { a.stats = a.stats || {}; a.stats[k] = (a.stats[k]||0) + n; };
+const st = (a, k) => (a.stats && a.stats[k]) || 0;
+const packDone = a => Object.values(PACKS).some(p => p.items.every(([id]) => a.items.includes(id)));
+const ACHIEVEMENTS = [
+  ["first","🎮","First game","Play your first round", a => st(a,"games") >= 1, 25],
+  ["games25","🕹️","Regular","Play 25 rounds", a => st(a,"games") >= 25, 50],
+  ["games100","🏟️","No life","Play 100 rounds", a => st(a,"games") >= 100, 150],
+  ["lizwin","🦎","Lizard winner","Score in a Lizard round", a => a.wins.lizard >= 1, 25],
+  ["lizwin10","🏅","Lizard pro","Score in 10 Lizard rounds", a => a.wins.lizard >= 10, 75],
+  ["escape","🫥","Slippery","Escape as the lizard", a => st(a,"escapes") >= 1, 50],
+  ["escape5","🐍","Master of disguise","Escape as the lizard 5 times", a => st(a,"escapes") >= 5, 150],
+  ["catch10","🔎","Lizard hunter","Catch the lizard 10 times", a => st(a,"catches") >= 10, 75],
+  ["tsuchamp","🌊","Tsunami champion","Win a game of Tsunami Meter", a => a.wins.tsunami >= 1, 50],
+  ["tsuchamp5","🌀","Wave rider","Win 5 games of Tsunami Meter", a => a.wins.tsunami >= 5, 150],
+  ["splash","💦","Big splash","Score 4+ points in one Tsunami round", a => st(a,"splash") >= 1, 50],
+  ["dashchamp","🎨","Doodle champion","Win a game of Doodle Dash", a => (a.wins.dash||0) >= 1, 50],
+  ["artist","🖍️","Picasso","Get 10 of your drawings guessed", a => st(a,"drawn") >= 10, 75],
+  ["quick","⚡","Quick draw","Guess a drawing first 5 times", a => st(a,"firsts") >= 5, 75],
+  ["lv5","⭐","Level 5","Reach level 5", a => a.level >= 5, 50],
+  ["lv10","🌟","Level 10","Reach level 10", a => a.level >= 10, 100],
+  ["lv20","💫","Level 20","Reach level 20", a => a.level >= 20, 250],
+  ["rich","💰","Rich","Have 1,000 Gbux at once", a => a.gbucks >= 1000, 50],
+  ["spender","🛍️","Big spender","Spend 5,000 Gbux", a => st(a,"spent") >= 5000, 150],
+  ["items25","🎒","Collector","Own 25 items", a => a.items.length >= 25, 75],
+  ["items50","🗃️","Hoarder","Own 50 items", a => a.items.length >= 50, 200],
+  ["packs10","🎁","Pack rat","Open 10 packs", a => st(a,"packs") >= 10, 75],
+  ["fullpack","🧩","Complete set","Collect every item in a pack", packDone, 150],
+  ["gift","💝","Generous","Send someone a gift", a => st(a,"gifts") >= 1, 25],
+  ["trade","🤝","Trader","Complete a trade", a => st(a,"trades") >= 1, 50],
+  ["drip","😎","Drip","Wear a hat, badge, outfit and name color at once", a => !!(a.avatar.hat && a.avatar.badge && a.avatar.outfit && a.avatar.nametag), 50],
+  ["hunter","🏆","Achievement hunter","Unlock 15 achievements. Unlocks the Champion name color.", a => Object.keys(a.ach||{}).length >= 15, 200, "nt-trophy"]
+].map(([id,icon,name,text,test,gb,item]) => ({id,icon,name,text,test,gb,item}));
+// runs on every save: unlocks anything new and pays it out
+function checkAchievements(a){
+  a.ach = a.ach || {};
+  let changed = true;
+  while (changed){
+    changed = false;
+    for (const x of ACHIEVEMENTS){
+      if (a.ach[x.id]) continue;
+      let ok = false; try { ok = !!x.test(a); } catch(e){}
+      if (!ok) continue;
+      a.ach[x.id] = Date.now(); a.gbucks += x.gb; changed = true;
+      if (x.item && !a.items.includes(x.item)) a.items.push(x.item);
+      (S.toasts = S.toasts || []).push(`🏆 ${a.name} unlocked "${x.name}"! +${x.gb} Gbux${x.item ? " and the " + ITEMS[x.item].name + " name color" : ""}`);
+    }
+  }
+}
 function newAccount(name, face, bg, colors, pin){
   const id = "a" + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
   return {id, name, colors, keyVersion:KEY_VERSION, pin:pin||null,avatar:{face, bg, hat:null, badge:null, outfit:null}, xp:0, level:1, gbucks:GB.start, items:[],
-    power:{hint:1, radio:1, scare:1}, packs:1, wins:{lizard:0, tsunami:0}, created:today()};
+    power:{hint:1, radio:1, scare:1}, packs:1, wins:{lizard:0, tsunami:0, dash:0}, created:today()};
 }
 const owns = (a, id) => ITEMS[id] && (ITEMS[id].free || a.items.includes(id));
 
@@ -450,29 +559,33 @@ function renderHome(app){
     <div style="display:flex;flex-direction:column;gap:6px">
       <div class="eyebrow">Pass-and-play · one device</div>
       <h1>Glitch Game Night</h1>
-      <p class="small-print">Two games, one set of accounts. Play to earn XP, level up for Gbucks and free outfits, then spend Gbucks in the Item Shop.</p>
+      ${announceHtml()}${curSale() ? `<div class="announce sale">🔥 Sale on now${gbuxBonus() ? ` · +${gbuxBonus()}% Gbux` : ""}${shopSaleOff() ? ` · ${shopSaleOff()}% off the shop` : ""}${saleEnds()}</div>` : ""}
+      ${S.toasts && S.toasts.length ? `<div class="toast">${S.toasts.splice(0).map(esc).join("<br>")}</div>` : ""}
+      <p class="small-print">Three games, one set of accounts. Play to earn XP, level up for Gbucks and free outfits, then spend Gbucks in the Item Shop.</p>
     </div>
     <button class="gamecard gc-liz" id="g-liz"><span class="ic">🦎</span><span><b>Lizard in the Room</b><span>3+ players. Everyone knows the word except the lizard.</span></span></button>
     <button class="gamecard gc-tsu" id="g-tsu"><span class="ic">🌊</span><span><b>Tsunami Meter</b><span>2+ players. Clue a secret spot between two opposites.</span></span></button>
+    <button class="gamecard gc-dash" id="g-dash"><span class="ic">🎨</span><span><b>Doodle Dash</b><span>2+ players. One person draws, everyone races to guess.</span></span></button>
     <button class="big" id="g-online">🌐 Play online <span style="font-weight:400">· everyone on their own device</span></button>
     <div class="card">
       <div class="spread"><h3>Accounts</h3><button class="small" id="new">+ New account</button></div>
-      ${accts.length ? `<div class="acct-grid">${accts.map(a => `<button data-acct="${a.id}">${avatarHtml(a.avatar,"md")}<span>${esc(a.name)}</span><small>Lv ${a.level}</small></button>`).join("")}</div>`
+      ${accts.length ? `<div class="acct-grid">${accts.map(a => `<button data-acct="${a.id}">${avatarHtml(a.avatar,"md")}<span>${nameHtml(a)}</span><small>${a.frozen ? "🧊 Frozen" : "Lv " + a.level}</small></button>`).join("")}</div>`
         : `<p class="small-print">No accounts yet. Make one to start earning XP and Gbucks. Guests can still play without one.</p>`}
     </div>
     <button class="big" id="shop">🛒 Item Shop <span style="font-weight:400">· new featured in ${untilReset()}</span></button>
     <div class="card">
       <div class="spread"><h3>🏆 Today's leaders</h3><span class="tag">resets at midnight</span></div>
-      <div class="mini">${["lizard","tsunami"].map(gm => {
+      <div class="mini">${["lizard","tsunami","dash"].map(gm => {
         const rows = Object.entries(dailyToday()[gm]||{}).filter(([id]) => DATA.accounts[id]).sort((x,y) => y[1]-x[1]).slice(0,3);
-        return `<div><div class="eyebrow">${gm==="lizard"?"🦎 Lizard":"🌊 Tsunami"}</div><div class="log">${rows.length
-          ? rows.map(([id,p],i) => `<div><span class="row" style="gap:6px;min-width:0">${["🥇","🥈","🥉"][i]} ${avatarHtml(DATA.accounts[id].avatar,"sm")}<span style="overflow:hidden;text-overflow:ellipsis">${esc(DATA.accounts[id].name)}</span></span><b>${p}</b></div>`).join("")
+        return `<div><div class="eyebrow">${{lizard:"🦎 Lizard", tsunami:"🌊 Tsunami", dash:"🎨 Doodle"}[gm]}</div><div class="log">${rows.length
+          ? rows.map(([id,p],i) => `<div><span class="row" style="gap:6px;min-width:0">${["🥇","🥈","🥉"][i]} ${avatarHtml(DATA.accounts[id].avatar,"sm")}<span style="overflow:hidden;text-overflow:ellipsis">${nameHtml(DATA.accounts[id])}</span></span><b>${p}</b></div>`).join("")
           : `<p class="small-print">No points yet today</p>`}</div></div>`; }).join("")}</div>
       <button class="ghost" id="lb">Full leaderboards</button>
     </div>
     <p class="status">${storeMode==="online" ? "Accounts are global: log in from any computer." : storeMode==="local" ? "Offline: accounts are saved in this browser only." : "Loading accounts…"}</p>`;
   $("#g-liz").onclick = () => go("lobby", {game:"lizard"});
   $("#g-tsu").onclick = () => go("lobby", {game:"tsunami"});
+  $("#g-dash").onclick = () => go("lobby", {game:"dash"});
   $("#g-online").onclick = () => { const o = O(); if (o.code && ROOM) o.step = "room"; else o.step = (o.acct && DATA.accounts[o.acct]) || o.guest ? "menu" : "who"; go("online"); };
   $("#lb").onclick = () => go("leaderboard");
   $("#shop").onclick = () => go("shop", {shop:{id:null, sel:null}});
@@ -495,11 +608,11 @@ function renderLeaderboard(app){
   app.innerHTML = `
     <div class="spread"><h2>🏆 Leaderboards</h2><button class="ghost small" id="back">Back</button></div>
     <div class="tabs">
-      ${[["lizard","🦎 Lizard"],["tsunami","🌊 Tsunami"],["levels","⭐ Levels"]].map(([k,t]) => `<button class="small" data-lb="${k}" aria-pressed="${S.lb===k}">${t}</button>`).join("")}
+      ${[["lizard","🦎 Lizard"],["tsunami","🌊 Tsunami"],["dash","🎨 Doodle"],["levels","⭐ Levels"]].map(([k,t]) => `<button class="small" data-lb="${k}" aria-pressed="${S.lb===k}">${t}</button>`).join("")}
     </div>
     <div class="card">
       <div class="eyebrow">${S.lb==="levels" ? "All time" : "Today only · resets at midnight"}</div>
-      ${rows.length ? `<div class="log">${rows.map(([a,v],i) => `<div><span class="row" style="gap:10px"><b style="width:1.6em">${medal(i)}</b>${avatarHtml(a.avatar,"sm")} ${esc(a.name)}</span><b>${esc(v)}</b></div>`).join("")}</div>`
+      ${rows.length ? `<div class="log">${rows.map(([a,v],i) => `<div><span class="row" style="gap:10px"><b style="width:1.6em">${medal(i)}</b>${avatarHtml(a.avatar,"sm")} ${nameHtml(a)}</span><b>${esc(v)}</b></div>`).join("")}</div>`
         : `<p class="small-print">Nobody has scored ${S.lb==="levels"?"yet":"in this game today"}. Play a round with an account to get on the board.</p>`}
     </div>`;
   $("#back").onclick = () => go("home");
@@ -651,6 +764,11 @@ function afterLogin(a, then){
 function renderQuiz(app){
   const q = S.quiz, a = DATA.accounts[q.id];
   if (!a){ go("home"); return; }
+  if (a.frozen){
+    app.innerHTML = `<div class="card center"><div style="font-size:3rem">🧊</div><h2>${esc(a.name)} is frozen</h2>
+      <p class="small-print">This account can't be used right now. Talk to Gavin.</p><button class="big" id="back">Back</button></div>`;
+    $("#back").onclick = () => go("home"); return;
+  }
   const head = `<div class="spread"><span class="row">${avatarHtml(a.avatar,"sm")}<b>${esc(a.name)}</b></span><button class="ghost small" id="back">Cancel</button></div>`;
   if (q.mode === "pin"){
     app.innerHTML = head + `
@@ -694,6 +812,8 @@ function renderQuiz(app){
 function renderProfile(app){
   const p = S.profile, a = DATA.accounts[p.id];
   if (!a){ go("home"); return; }
+  // pick up achievements earned from gifts or trades another player finished
+  if (ACHIEVEMENTS.some(x => !a.ach[x.id] && (() => { try { return x.test(a); } catch(e){ return false; } })())) saveAccount(a);
   const toast = S.toasts.length ? `<div class="toast">${S.toasts.map(esc).join("<br>")}</div>` : "";
   S.toasts = [];
   let body = "";
@@ -703,7 +823,7 @@ function renderProfile(app){
       const none = type!=="face"&&type!=="bg" ? `<button class="item" data-eq="${type}:" aria-pressed="${!a.avatar[type]}"><span class="e">∅</span>None</button>` : "";
       return `<label>${label}</label><div class="items">${none}${list.map(i => `<button class="item" data-eq="${type}:${i.id}" aria-pressed="${a.avatar[type]===i.id}">${swatch(i)}${esc(i.name)}</button>`).join("")}</div>`;
     };
-    body = `<div class="card">${slot("face","Face")}${slot("outfit","Outfit")}${slot("hat","Hat")}${slot("badge","Badge")}${slot("bg","Background")}
+    body = `<div class="card">${slot("face","Face")}${slot("outfit","Outfit")}${slot("hat","Hat")}${slot("badge","Badge")}${slot("bg","Background")}${slot("nametag","Name color")}
       <p class="small-print">Most outfits and items are in the Item Shop. Some unlock for free when you level up, and packs have more.</p></div>
       <div class="card"><h3>Login</h3>
         <p class="small-print">${a.pin ? "You can log in with your colors or your PIN." : "You log in with your colors. Add a PIN for a faster option."}</p>
@@ -720,6 +840,14 @@ function renderProfile(app){
       <div>${Object.entries(LEVEL_REWARDS).map(([lvl,[id]]) => { const i = ITEMS[id], got = a.level >= +lvl;
         return `<div class="rewardrow ${got?"":"locked"}"><span class="lv">Lv ${lvl}</span>${swatch(i)}<span style="flex:1">${esc(i.name)}</span><span class="tag">${got ? "Unlocked" : "🔒"}</span></div>`; }).join("")}</div></div>`;
   }
+  if (p.tab === "achievements"){
+    const got = ACHIEVEMENTS.filter(x => a.ach && a.ach[x.id]).length;
+    body = `<div class="card"><div class="spread"><h3>🏆 Achievements</h3><span class="tag">${got} / ${ACHIEVEMENTS.length}</span></div>
+      <div class="progress"><i style="width:${(got/ACHIEVEMENTS.length*100).toFixed(1)}%"></i></div>
+      <div>${ACHIEVEMENTS.map(x => { const has = a.ach && a.ach[x.id];
+        return `<div class="rewardrow ${has?"":"locked"}"><span class="lv" style="font-size:1.4rem">${has ? x.icon : "🔒"}</span><span style="flex:1"><b>${esc(x.name)}</b><br><small>${esc(x.text)}</small></span><span class="tag">+${x.gb} G</span></div>`; }).join("")}</div></div>`;
+  }
+  if (p.tab === "trade") body = tradeTabHtml(a, p);
   if (p.tab === "packs"){
     const opened = p.opened;
     body = opened ? `<div class="card center"><div class="eyebrow">${esc(PACKS[opened.pack].name)} opened!</div>
@@ -737,14 +865,14 @@ function renderProfile(app){
   }
   app.innerHTML = `
     <div class="spread"><button class="ghost small" id="back">← Hub</button><button class="ghost small" id="out">Log out</button></div>
-    ${toast}
-    <div class="card center">${avatarHtml(a.avatar,"lg")}<h2>${esc(a.name)}</h2>
-      <div class="stats" style="width:100%"><div><b>${a.level}</b>Level</div><div><b class="gb">${a.gbucks}</b>Gbucks</div><div><b>${a.wins.lizard + a.wins.tsunami}</b>Wins</div></div>
+    ${announceHtml()}${toast}
+    <div class="card center">${avatarHtml(a.avatar,"lg")}<h2>${nameHtml(a)}</h2>
+      <div class="stats" style="width:100%"><div><b>${a.level}</b>Level</div><div><b class="gb">${a.gbucks}</b>Gbucks</div><div><b>${a.wins.lizard + a.wins.tsunami + (a.wins.dash||0)}</b>Wins</div></div>
       <div style="width:100%"><div class="progress"><i style="width:${(a.xp/xpNeed(a.level)*100).toFixed(1)}%"></i></div>
       <p class="small-print">${a.xp} / ${xpNeed(a.level)} XP to level ${a.level+1}</p></div>
     </div>
     <button class="big" id="toshop">🛒 Item Shop</button>
-    <div class="tabs">${[["avatar","Avatar"],["packs","Packs"+(a.packs?" ("+a.packs+")":"")],["rewards","Level rewards"]].map(([k,t]) => `<button class="small" data-tab="${k}" aria-pressed="${p.tab===k}">${t}</button>`).join("")}</div>
+    <div class="tabs">${[["avatar","Avatar"],["packs","Packs"+(a.packs?" ("+a.packs+")":"")],["rewards","Levels"],["achievements","🏆 Awards"],["trade","💝 Trade"]].map(([k,t]) => `<button class="small" data-tab="${k}" aria-pressed="${p.tab===k}">${t}</button>`).join("")}</div>
     ${body}`;
   $("#toshop").onclick = () => go("shop", {shop:{id:a.id, sel:null}});
   const sp = $("#setpin"); if (sp) sp.onclick = () => go("create", {create:{step:"pin", redo:a.id, name:a.name, pinOnly:true, pin:"", pin1:null, next:{view:"profile"}}});
@@ -766,11 +894,12 @@ function renderProfile(app){
     const rolls = [pick(all), pick(all), pick(all)];
     const got = [], seen = new Set(); let bonus = 0;
     rolls.forEach(id => { if (a.items.includes(id) || seen.has(id)) bonus += GB.double; else { got.push(id); seen.add(id); a.items.push(id); } });
-    a.packs--; a.gbucks += bonus; saveAccount(a);
+    a.packs--; a.gbucks += bonus; stat(a, "packs"); saveAccount(a);
     p.opened = {pack:pid, got, bonus}; render();
   });
   const ok = $("#ok"); if (ok) ok.onclick = () => { p.opened = null; p.tab = "avatar"; render(); };
-  const bp = $("#buypack"); if (bp) bp.onclick = () => { if (a.gbucks < PACK_PRICE) return; a.gbucks -= PACK_PRICE; a.packs++; saveAccount(a); S.toasts = ["Bought a pack! Pick which one to open."]; render(); };
+  if (p.tab === "trade") bindTradeTab(a, p);
+  const bp = $("#buypack"); if (bp) bp.onclick = () => { if (a.gbucks < PACK_PRICE) return; a.gbucks -= PACK_PRICE; a.packs++; stat(a, "spent", PACK_PRICE); saveAccount(a); S.toasts = ["Bought a pack! Pick which one to open."]; render(); };
 }
 
 /* ================= Gbux Store: looks like a checkout, but "buying" just sends a request to the admin page ================= */
@@ -794,12 +923,6 @@ function watchRequests(id){
   reqWatch = {id, r};
   r.on("value", s => { S.myReqs = s.val() || {}; if (S.view === "shop" && !$("#overlay").innerHTML) render(); });
 }
-function myRequestsHtml(){
-  const list = Object.values(S.myReqs || {}).sort((x,y) => y.at - x.at).slice(0,5);
-  if (!list.length) return "";
-  const st = {pending:"⏳ Waiting for Gavin", approved:"✅ Added", denied:"❌ Denied"};
-  return `<label>Your purchases</label>${list.map(q => `<div class="spread small-print"><span>${fmt(q.gbux)} Gbux · ${money(q.price)}</span><span>${st[q.status] || q.status}</span></div>`).join("")}`;
-}
 /* gift cards: Gavin makes codes on admin.html (stored at giftcards/{CODE}); each one works once */
 const normGift = t => { const c = String(t).toUpperCase().replace(/[^A-Z0-9]/g, ""); return c.length === 8 ? c.slice(0,4) + "-" + c.slice(4) : null; };
 function redeemGift(a, raw){
@@ -810,10 +933,12 @@ function redeemGift(a, raw){
   return ref("giftcards/" + code).transaction(cur => {
     if (cur === null) return null;   // not loaded yet or doesn't exist; the server decides
     if (cur.used) return;            // already spent: abort
+    if (cur.expires && cur.expires < Date.now()) return;   // expired: abort
     return {...cur, used:a.id, usedBy:a.name, usedAt:Date.now()};
   }).then(({committed, snapshot}) => {
     const v = snapshot.val();
     if (!v) return {msg:"That gift card code doesn't exist."};
+    if (!v.used && v.expires && v.expires < Date.now()) return {msg:"That gift card expired on " + new Date(v.expires).toLocaleDateString() + "."};
     if (!committed || v.used !== a.id) return {msg:"That gift card was already redeemed."};
     a.gbucks += v.amount; saveAccount(a);
     return {ok:true, amount:v.amount};
@@ -959,6 +1084,159 @@ function openCheckout(a, b){
   review();
 }
 
+/* ================= gifting (free) and trading ================= */
+// Items you can give away or trade: shop and pack items. Free starters, level rewards and achievement items stay put.
+const giftable = id => { const i = ITEMS[id]; return !!i && !i.free && !i.level && !i.ach; };
+const SLOT_DEFAULT = {face:"f-frog", bg:"bg-sky"};
+function dropItem(acc, id){
+  const k = acc.items.indexOf(id); if (k < 0) return false;
+  acc.items.splice(k, 1);
+  const t = ITEMS[id].type; if (acc.avatar[t] === id) acc.avatar[t] = SLOT_DEFAULT[t] || null;
+  return true;
+}
+// Changes one account in place on the server so it never overwrites someone else's newer save.
+// fn returns false to cancel. Resolves with the saved account, or null if it was canceled.
+function changeAccount(id, fn){
+  if (!fdb){
+    const x = DATA.accounts[id]; if (!x) return Promise.resolve(null);
+    const copy = JSON.parse(JSON.stringify(x)); fixAccount(copy);
+    if (fn(copy) === false) return Promise.resolve(null);
+    DATA.accounts[id] = copy; saveLocal(); return Promise.resolve(copy);
+  }
+  return ref("accounts/" + id).transaction(cur => {
+    if (cur === null) return null;            // not loaded yet; the server retries with the real value
+    fixAccount(cur);
+    if (fn(cur) === false) return;            // cancel
+    return clean(cur);
+  }).then(r => {
+    if (!r.committed || !r.snapshot.exists()) return null;
+    const v = fixAccount(r.snapshot.val()); DATA.accounts[id] = v; return v;
+  });
+}
+const pushLog = (acc, text) => { acc.inbox = (acc.inbox || []).concat({text, at:Date.now()}).slice(-8); };
+
+async function sendGift(a, toId, kind, value){
+  const to = DATA.accounts[toId]; if (!to) return "Pick who to send it to.";
+  if (kind === "gbux"){
+    const amt = Math.floor(value);
+    if (!(amt > 0)) return "Type how many Gbux to send.";
+    const me = await changeAccount(a.id, x => { if (x.gbucks < amt) return false; x.gbucks -= amt; stat(x, "gifts"); });
+    if (!me) return "You don't have that many Gbux.";
+    const them = await changeAccount(toId, x => { x.gbucks += amt; pushLog(x, `🎁 ${a.name} sent you ${fmt(amt)} Gbux`); });
+    if (!them){ await changeAccount(a.id, x => { x.gbucks += amt; }); return "That didn't go through. Your Gbux were given back."; }
+    saveAccount(me);   // runs the achievement check on the sender
+    return {ok:`Sent ${fmt(amt)} Gbux to ${to.name}!`};
+  }
+  const id = value;
+  if (!giftable(id)) return "Pick an item to send.";
+  if (to.items.includes(id)) return `${to.name} already has that.`;
+  const me = await changeAccount(a.id, x => { if (!dropItem(x, id)) return false; stat(x, "gifts"); });
+  if (!me) return "You don't have that item anymore.";
+  const them = await changeAccount(toId, x => { if (x.items.includes(id)) return false; x.items.push(id); pushLog(x, `🎁 ${a.name} sent you ${ITEMS[id].name}`); });
+  if (!them){ await changeAccount(a.id, x => { if (!x.items.includes(id)) x.items.push(id); }); return `${to.name} already has that. You kept it.`; }
+  saveAccount(me);
+  return {ok:`Sent ${ITEMS[id].name} to ${to.name}!`};
+}
+
+// trades live at trades/{id}: {from, to, give:[my items], want:[their items], status:"pending"|"done"|"declined"|"canceled"|"failed"}
+function offerTrade(a, toId, give, want){
+  if (!fdb) return Promise.resolve("Trading needs the game to be online.");
+  if (!toId) return Promise.resolve("Pick who to trade with.");
+  if (!give.length || !want.length) return Promise.resolve("Pick at least one item on each side.");
+  const t = {from:a.id, fromName:a.name, to:toId, toName:DATA.accounts[toId].name, give, want, at:Date.now(), status:"pending"};
+  return ref("trades").push(t).then(() => ({ok:"Trade offer sent!"}));
+}
+const setTrade = (tid, status) => ref(`trades/${tid}/status`).set(status);
+async function acceptTrade(a, tid){
+  const tr = DATA.trades[tid];
+  if (!tr || tr.to !== a.id) return "That trade is gone.";
+  // claim the trade first so it can only be accepted once
+  const claim = await ref(`trades/${tid}`).transaction(t => { if (t === null) return null; if (t.status !== "pending") return; return {...t, status:"working"}; });
+  if (!claim.committed || !claim.snapshot.exists()) return "That trade was already handled.";
+  const t = claim.snapshot.val(), give = t.give || [], want = t.want || [];
+  const them = await changeAccount(t.from, x => {
+    if (!give.every(id => x.items.includes(id)) || want.some(id => x.items.includes(id))) return false;
+    give.forEach(id => dropItem(x, id)); want.forEach(id => x.items.push(id)); stat(x, "trades");
+    pushLog(x, `🤝 ${a.name} accepted your trade`);
+  });
+  if (!them){ await setTrade(tid, "failed"); return `${t.fromName} doesn't have those items anymore, so the trade was canceled.`; }
+  const me = await changeAccount(a.id, x => {
+    if (!want.every(id => x.items.includes(id)) || give.some(id => x.items.includes(id))) return false;
+    want.forEach(id => dropItem(x, id)); give.forEach(id => x.items.push(id)); stat(x, "trades");
+  });
+  if (!me){
+    // undo the other side
+    await changeAccount(t.from, x => { want.forEach(id => dropItem(x, id)); give.forEach(id => { if (!x.items.includes(id)) x.items.push(id); }); x.stats.trades = Math.max(0, (x.stats.trades||1) - 1); });
+    await setTrade(tid, "failed"); return "You don't have those items anymore, so the trade was canceled.";
+  }
+  await setTrade(tid, "done");
+  saveAccount(me);
+  return {ok:"Trade complete! 🤝"};
+}
+
+const itemChip = (id, on, attr) => { const i = ITEMS[id];
+  return `<button class="item" ${attr}="${id}" aria-pressed="${!!on}">${swatch(i)}${esc(i.name)}</button>`; };
+function tradeTabHtml(a, p){
+  const g = p.gift || (p.gift = {to:"", kind:"gbux", amt:"", item:null});
+  const tr = p.trade || (p.trade = {to:"", give:[], want:[]});
+  const others = Object.values(DATA.accounts).filter(x => x.id !== a.id && !x.frozen).sort((x,y) => x.name.localeCompare(y.name));
+  const opts = sel => `<option value="">Pick a player</option>` + others.map(x => `<option value="${x.id}" ${sel===x.id?"selected":""}>${esc(x.name)}</option>`).join("");
+  const mine = a.items.filter(giftable);
+  const target = DATA.accounts[tr.to];
+  const theirs = target ? target.items.filter(id => giftable(id) && !a.items.includes(id)) : [];
+  const trades = Object.entries(DATA.trades || {}).map(([tid, t]) => ({...t, tid}));
+  const incoming = trades.filter(t => t.to === a.id && t.status === "pending");
+  const outgoing = trades.filter(t => t.from === a.id && t.status === "pending");
+  const list = ids => (ids || []).map(id => ITEMS[id] ? `${ITEMS[id].type==="bg" ? "🎨" : ITEMS[id].type==="nametag" ? "🏷️" : ITEMS[id].v} ${esc(ITEMS[id].name)}` : "").join(", ");
+  const inbox = (a.inbox || []).slice().reverse();
+  return `
+    ${p.msg ? `<div class="toast" role="status">${esc(p.msg)}</div>` : ""}
+    ${inbox.length ? `<div class="card"><h3>📬 Your mail</h3>${inbox.map(m => `<p class="small-print">${esc(m.text)}</p>`).join("")}</div>` : ""}
+    ${incoming.length ? `<div class="card"><h3>🤝 Trade offers for you</h3>${incoming.map(t => `
+      <div class="tradebox"><b>${esc(t.fromName)}</b> gives: ${list(t.give)}<br><b>You</b> give: ${list(t.want)}
+        <div class="row"><button class="small" data-accept="${t.tid}">Accept</button><button class="small ghost" data-decline="${t.tid}">Decline</button></div></div>`).join("")}</div>` : ""}
+    <div class="card">
+      <h3>💝 Send a gift</h3>
+      <p class="small-print">Free, no fee. Send Gbux or an item you own.</p>
+      <label for="g-to">To</label><select id="g-to">${opts(g.to)}</select>
+      <div class="tabs" style="margin-top:8px"><button class="small" id="g-gbux" aria-pressed="${g.kind==="gbux"}">💰 Gbux</button><button class="small" id="g-item" aria-pressed="${g.kind==="item"}">🎒 Item</button></div>
+      ${g.kind === "gbux" ? `<label for="g-amt">How many Gbux? (you have ${fmt(a.gbucks)})</label><input id="g-amt" type="number" min="1" max="${a.gbucks}" value="${esc(g.amt)}">`
+        : mine.length ? `<label>Pick an item</label><div class="items">${mine.map(id => itemChip(id, g.item === id, "data-gitem")).join("")}</div>` : `<p class="small-print">You don't have any items you can give. Starter items and level rewards can't be given away.</p>`}
+      <button class="big" id="g-send" style="margin-top:10px">Send gift</button>
+    </div>
+    <div class="card">
+      <h3>🤝 Make a trade</h3>
+      <p class="small-print">Pick what you give and what you want. They get the offer and can accept or decline.</p>
+      <label for="t-to">Trade with</label><select id="t-to">${opts(tr.to)}</select>
+      <label>You give</label>
+      ${mine.length ? `<div class="items">${mine.map(id => itemChip(id, tr.give.includes(id), "data-tgive")).join("")}</div>` : `<p class="small-print">You don't have any tradeable items yet.</p>`}
+      ${target ? `<label>You want from ${esc(target.name)}</label>
+        ${theirs.length ? `<div class="items">${theirs.map(id => itemChip(id, tr.want.includes(id), "data-twant")).join("")}</div>` : `<p class="small-print">${esc(target.name)} doesn't have anything you don't already own.</p>`}` : ""}
+      <button class="big" id="t-send" style="margin-top:10px">Send trade offer</button>
+      ${outgoing.length ? `<label>Your offers waiting for an answer</label>${outgoing.map(t => `
+        <div class="tradebox">To <b>${esc(t.toName)}</b>: ${list(t.give)} for ${list(t.want)} <button class="small ghost" data-cancel="${t.tid}">Cancel</button></div>`).join("")}` : ""}
+    </div>`;
+}
+function bindTradeTab(a, p){
+  const g = p.gift, tr = p.trade;
+  const done = r => { p.msg = typeof r === "string" ? r : r.ok; if (typeof r !== "string"){ p.gift = null; p.trade = null; } render(); };
+  const busy = id => { const b = $(id); if (b){ b.disabled = true; b.textContent = "Working…"; } };
+  p.msg = null;
+  $("#g-to").onchange = e => { g.to = e.target.value; };
+  $("#g-gbux").onclick = () => { g.kind = "gbux"; render(); };
+  $("#g-item").onclick = () => { g.kind = "item"; render(); };
+  const amt = $("#g-amt"); if (amt) amt.oninput = () => { g.amt = amt.value; };
+  document.querySelectorAll("[data-gitem]").forEach(b => b.onclick = () => { g.item = b.dataset.gitem; render(); });
+  $("#g-send").onclick = () => { busy("#g-send"); sendGift(a, g.to, g.kind, g.kind === "gbux" ? +g.amt : g.item).then(done); };
+  $("#t-to").onchange = e => { tr.to = e.target.value; tr.want = []; render(); };
+  document.querySelectorAll("[data-tgive]").forEach(b => b.onclick = () => { const id = b.dataset.tgive; tr.give = tr.give.includes(id) ? tr.give.filter(x => x !== id) : tr.give.concat(id); render(); });
+  document.querySelectorAll("[data-twant]").forEach(b => b.onclick = () => { const id = b.dataset.twant; tr.want = tr.want.includes(id) ? tr.want.filter(x => x !== id) : tr.want.concat(id); render(); });
+  $("#t-send").onclick = () => { busy("#t-send"); offerTrade(a, tr.to, tr.give, tr.want).then(done); };
+  document.querySelectorAll("[data-accept]").forEach(b => b.onclick = () => { b.disabled = true; acceptTrade(a, b.dataset.accept).then(done); });
+  document.querySelectorAll("[data-decline]").forEach(b => b.onclick = () => setTrade(b.dataset.decline, "declined"));
+  document.querySelectorAll("[data-cancel]").forEach(b => b.onclick = () => setTrade(b.dataset.cancel, "canceled"));
+}
+
 /* ================= item shop: commons + rares always in stock, epic/legendary featured weekly ================= */
 function seeded(seed){
   let h = 2166136261; for (const c of seed) h = Math.imul(h ^ c.charCodeAt(0), 16777619);
@@ -994,15 +1272,15 @@ function renderShop(app){
   const toast = S.toasts.length ? `<div class="toast">${S.toasts.map(esc).join("<br>")}</div>` : "";
   S.toasts = [];
   const card = id => { const i = ITEMS[id], r = RARITY[i.rarity], own = owns(a, id);
-    return `<button class="sitem ${own?"owned":""}" style="--rc:${r.color}" data-sel="${id}" aria-pressed="${sh.sel===id}">${swatch(i)}<b>${esc(i.name)}</b><small>${r.label} ${i.type}</small><span class="price">${own ? "Owned" : i.price + " G"}</span></button>`; };
+    return `<button class="sitem ${own?"owned":""}" style="--rc:${r.color}" data-sel="${id}" aria-pressed="${sh.sel===id}">${swatch(i)}<b>${esc(i.name)}</b><small>${r.label} ${i.type==="nametag" ? "name color" : i.type}</small><span class="price">${own ? "Owned" : priceTag(i.price)}</span></button>`; };
   let detail = "";
   if (sh.sel){
     const isPow = sh.sel.startsWith("pw:"), key = sh.sel.slice(3);
-    const price = isPow ? POWERS[key].price : ITEMS[sh.sel].price;
+    const price = salePrice(isPow ? POWERS[key].price : ITEMS[sh.sel].price);
     const label = isPow ? `${POWERS[key].icon} ${POWERS[key].name}` : ITEMS[sh.sel].name;
     const own = !isPow && owns(a, sh.sel);
     detail = `<div class="card center">
-      ${isPow ? `<div style="font-size:3rem">${POWERS[key].icon}</div>` : avatarHtml({...a.avatar, [ITEMS[sh.sel].type]: sh.sel}, "lg")}
+      ${isPow ? `<div style="font-size:3rem">${POWERS[key].icon}</div>` : ITEMS[sh.sel].type === "nametag" ? `<h2>${nameHtml({...a, avatar:{...a.avatar, nametag:sh.sel}})}</h2>` : avatarHtml({...a.avatar, [ITEMS[sh.sel].type]: sh.sel}, "lg")}
       <h3>${esc(label)}</h3>
       ${isPow ? `<p class="small-print">${esc(POWERS[key].text)} You have ${a.power[key]||0}.</p>` : `<p class="small-print">Preview on your avatar</p>`}
       ${own ? `<p class="small-print">You already own this.</p>` :
@@ -1012,6 +1290,7 @@ function renderShop(app){
   app.innerHTML = `
     <div class="spread"><button class="ghost small" id="back">← Back</button><span class="row">${avatarHtml(a.avatar,"sm")}<b class="gb">${a.gbucks} Gbucks</b></span></div>
     <h1>🛒 Item Shop</h1>
+    ${announceHtml()}${shopSaleOff() ? `<div class="announce sale">🔥 SALE: ${shopSaleOff()}% off everything in the shop${saleEnds()}</div>` : ""}
     ${toast}${detail}
     <div class="card">
       <div class="spread"><h3>⭐ Featured this week</h3><span class="tag">New featured in ${untilReset()}</span></div>
@@ -1023,28 +1302,31 @@ function renderShop(app){
       <div class="shopgrid">${shopAlways().map(card).join("")}</div>
     </div>
     <div class="card">
-      <h3>Power-ups · always in stock</h3>
-      <div class="shopgrid">${Object.entries(POWERS).map(([k,pw]) => `<button class="sitem" style="--rc:#0e7fa6" data-sel="pw:${k}" aria-pressed="${sh.sel==="pw:"+k}"><span class="e">${pw.icon}</span><b>${esc(pw.name)}</b><small>have ${a.power[k]||0}</small><span class="price">${pw.price} G</span></button>`).join("")}</div>
+      <h3>🏷️ Name colors · always in stock</h3>
+      <p class="small-print">Changes how your name looks on the hub, leaderboards and your profile.</p>
+      <div class="shopgrid">${NAMETAGS.map(x => card(x[0])).join("")}</div>
     </div>
     <div class="card">
-      <div class="spread"><h3>💎 Get Gbux</h3><span class="tag">Instant after approval</span></div>
-      <div class="gbuxgrid">${GBUX_BUNDLES.map((b,k) => `<button class="gbux" data-bundle="${k}">${b.tag ? `<em>${esc(b.tag)}</em>` : ""}<span class="payicon">${b.icon}</span><b>${fmt(b.g)}</b><small>Gbux</small><span class="price">${money(b.price)}</span></button>`).join("")}</div>
-      <button class="ghost" id="giftcard" style="width:100%;margin-top:10px">🎁 Redeem a gift card</button>
-      ${myRequestsHtml()}
+      <h3>Power-ups · always in stock</h3>
+      <div class="shopgrid">${Object.entries(POWERS).map(([k,pw]) => `<button class="sitem" style="--rc:#0e7fa6" data-sel="pw:${k}" aria-pressed="${sh.sel==="pw:"+k}"><span class="e">${pw.icon}</span><b>${esc(pw.name)}</b><small>have ${a.power[k]||0}</small><span class="price">${priceTag(pw.price)}</span></button>`).join("")}</div>
     </div>
+    <div class="card">
+      <div class="spread"><h3>💎 Get Gbux</h3><span class="tag">${gbuxBonus() ? `🔥 +${gbuxBonus()}% bonus${saleEnds()}` : "Instant after approval"}</span></div>
+      <div class="gbuxgrid">${GBUX_BUNDLES.map((b,k) => `<button class="gbux" data-bundle="${k}">${gbuxBonus() ? `<em>SALE +${gbuxBonus()}%</em>` : b.tag ? `<em>${esc(b.tag)}</em>` : ""}<span class="payicon">${b.icon}</span>${gbuxBonus() ? `<s style="opacity:.6">${fmt(b.g)}</s>` : ""}<b>${fmt(saleGbux(b.g))}</b><small>Gbux</small><span class="price">${money(b.price)}</span></button>`).join("")}</div>
+      <button class="ghost" id="giftcard" style="width:100%;margin-top:10px">🎁 Redeem a gift card</button>    </div>
     <p class="small-print">Gbucks are free to earn but rare: +${GB.daily} daily bonus for your first round each day, +${GB.levelUp} every level up, +${GB.champ} for winning Tsunami Meter, +${GB.double} for pack doubles.</p>`;
   watchRequests(a.id);
-  app.querySelectorAll("[data-bundle]").forEach(b => b.onclick = () => openCheckout(a, GBUX_BUNDLES[+b.dataset.bundle]));
+  app.querySelectorAll("[data-bundle]").forEach(b => b.onclick = () => { const x = GBUX_BUNDLES[+b.dataset.bundle]; openCheckout(a, {...x, g:saleGbux(x.g)}); });
   $("#giftcard").onclick = () => openGiftCard(a);
   $("#back").onclick = () => S.verified.includes(a.id) ? go("profile", {profile:{id:a.id, tab:"avatar"}}) : go("home");
   app.querySelectorAll("[data-sel]").forEach(b => b.onclick = () => { sh.sel = b.dataset.sel; render(); window.scrollTo(0,0); });
   const c = $("#cancel"); if (c) c.onclick = () => { sh.sel = null; render(); };
   const buy = $("#buy"); if (buy) buy.onclick = () => {
     const sel = sh.sel;
-    if (sel.startsWith("pw:")){ const k = sel.slice(3), pw = POWERS[k]; if (a.gbucks < pw.price) return;
-      a.gbucks -= pw.price; a.power[k] = (a.power[k]||0) + 1; S.toasts = [`Bought ${pw.icon} ${pw.name}. You have ${a.power[k]}.`]; }
-    else { const i = ITEMS[sel]; if (a.gbucks < i.price || owns(a, sel)) return;
-      a.gbucks -= i.price; a.items.push(sel); a.avatar[i.type] = sel; S.toasts = [`Bought ${i.name} and put it on!`]; sh.sel = null; }
+    if (sel.startsWith("pw:")){ const k = sel.slice(3), pw = POWERS[k], cost = salePrice(pw.price); if (a.gbucks < cost) return;
+      a.gbucks -= cost; stat(a, "spent", cost); a.power[k] = (a.power[k]||0) + 1; S.toasts = [`Bought ${pw.icon} ${pw.name}. You have ${a.power[k]}.`]; }
+    else { const i = ITEMS[sel], cost = salePrice(i.price); if (a.gbucks < cost || owns(a, sel)) return;
+      a.gbucks -= cost; stat(a, "spent", cost); a.items.push(sel); a.avatar[i.type] = sel; S.toasts = [`Bought ${i.name} and put it on!`]; sh.sel = null; }
     saveAccount(a); render();
   };
 }
@@ -1062,7 +1344,7 @@ function renderPickAccount(app){
     <div class="spread"><h2>Add a player</h2><button class="ghost small" id="back">Back</button></div>
     <div class="card">
       <h3>Log in</h3>
-      ${accts.length ? `<div class="acct-grid">${accts.map(a => `<button data-acct="${a.id}">${avatarHtml(a.avatar,"md")}<span>${esc(a.name)}</span><small>Lv ${a.level}</small></button>`).join("")}</div>`
+      ${accts.length ? `<div class="acct-grid">${accts.map(a => `<button data-acct="${a.id}">${avatarHtml(a.avatar,"md")}<span>${nameHtml(a)}</span><small>${a.frozen ? "🧊 Frozen" : "Lv " + a.level}</small></button>`).join("")}</div>`
         : `<p class="small-print">Every account is already in this game.</p>`}
       <button class="ghost" id="new">+ Make a new account</button>
     </div>
@@ -1093,6 +1375,11 @@ function renderLobby(app){
       <label for="liz">Lizards</label>
       <select id="liz">${[["1","1 lizard"],["2","2 lizards"],["3","3 lizards"],["R","Random (secret: usually 1, 1 in 5 for 2, 1 in 10 for 3)"]].map(([v,t]) => `<option value="${v}" ${String(l.lizards)===v?"selected":""}>${t}</option>`).join("")}</select>
       <label for="look">Handoff timer</label><select id="look">${[5,10,15].map(t => `<option value="${t}" ${l.look==t?"selected":""}>${t} seconds</option>`).join("")}</select>`;
+  } else if (S.game === "dash"){
+    settings = `
+      <label for="dcat">Words</label><select id="dcat">${["Random", ...Object.keys(DASH_WORDS)].map(c => `<option ${c===l.cat?"selected":""}>${esc(c)}</option>`).join("")}</select>
+      <label for="dtimesel">Drawing time</label><select id="dtimesel">${[45,60,80,100].map(t => `<option value="${t}" ${l.time==t?"selected":""}>${t} seconds</option>`).join("")}</select>
+      <label for="drounds">Turns</label><select id="drounds">${[1,2,3].map(v => `<option value="${v}" ${l.rounds==v?"selected":""}>Everyone draws ${v===1?"once":v===2?"twice":"3 times"}</option>`).join("")}</select>`;
   } else {
     l.packs = l.packs || Object.keys(TPACKS);
     const packs = Object.keys(TPACKS).map(p => `<label class="chip"><input type="checkbox" data-tp="${esc(p)}" ${l.packs.includes(p)?"checked":""}><span>${esc(p)}<small>${TPACKS[p].length} scales</small></span></label>`).join("");
@@ -1106,19 +1393,26 @@ function renderLobby(app){
       <label for="look">Handoff timer</label><select id="look">${[5,10,15].map(t => `<option value="${t}" ${l.look==t?"selected":""}>${t} seconds</option>`).join("")}</select>`;
   }
   app.innerHTML = `
-    <div class="spread"><button class="ghost small" id="back">← Hub</button><span class="eyebrow">${liz ? "Lizard in the Room" : "Tsunami Meter"}</span></div>
-    <h1>${liz ? "🦎 Lizard in the Room" : "🌊 Tsunami Meter"}</h1>
+    <div class="spread"><button class="ghost small" id="back">← Hub</button><span class="eyebrow">${GAME_TITLE[S.game].slice(3)}</span></div>
+    <h1>${GAME_TITLE[S.game]}</h1>
     <div class="card">
       <div class="spread"><h3>Players (${l.players.length})</h3><button class="small" id="add">+ Add player</button></div>
       ${list || `<p class="small-print">Add at least ${min} players. Log in to earn XP and Gbucks, or add guests.</p>`}
     </div>
     <div class="card">${settings}</div>
     <button class="big" id="start" ${l.players.length < min ? "disabled" : ""}>${l.players.length < min ? `Need ${min - l.players.length} more player${min-l.players.length>1?"s":""}` : "Start"}</button>
-    <p class="small-print">${liz ? "Points: lizard escapes +3 · caught lizard guesses the word +1 · team catches the lizard +1 each." : "Within 4 = 4 points, within 10 = 3, within 17 = 2. If everyone gets wiped out, the clue-giver loses 1."} Every round with an account earns XP, and scoring earns extra XP. Level up for Gbucks.</p>`;
+    <p class="small-print">${S.game === "dash" ? "Guess it 1st = 5 points, 2nd = 4, 3rd = 3, later = 2. The artist gets 2 for each person who guesses it (up to 6)." : liz ? "Points: lizard escapes +3 · caught lizard guesses the word +1 · team catches the lizard +1 each." : "Within 4 = 4 points, within 10 = 3, within 17 = 2. If everyone gets wiped out, the clue-giver loses 1."} Every round with an account earns XP, and scoring earns extra XP. Level up for Gbucks.</p>`;
   $("#back").onclick = () => go("home");
   $("#add").onclick = () => go("pickAccount");
   app.querySelectorAll("[data-rm]").forEach(b => b.onclick = () => { l.players.splice(+b.dataset.rm,1); render(); });
   app.querySelectorAll("[data-up]").forEach(b => b.onclick = () => { const i = +b.dataset.up; [l.players[i-1], l.players[i]] = [l.players[i], l.players[i-1]]; render(); });
+  if (S.game === "dash"){
+    $("#dcat").onchange = e => l.cat = e.target.value;
+    $("#dtimesel").onchange = e => l.time = +e.target.value;
+    $("#drounds").onchange = e => l.rounds = +e.target.value;
+    $("#start").onclick = () => { S.dash = {scores:{}, turn:0}; dashNewTurn(); };
+    return;
+  }
   $("#look").onchange = e => l.look = +e.target.value;
   if (liz){
     $("#cat").onchange = e => l.cat = e.target.value;
@@ -1351,6 +1645,7 @@ function renderLizard(app){
         const pl = P[k];
         if (pl.acct && DATA.accounts[pl.acct]){
           const a = DATA.accounts[pl.acct];
+          stat(a, "games"); if (isLiz && r.outcome !== "team" && r.outcome !== "steal") stat(a, "escapes"); if (!isLiz && r.outcome === "team") stat(a, "catches");
           if (p > 0){ a.wins.lizard++; addDaily("lizard", pl.acct, p); }
           r.notes.push(`${a.name}: +${p > 0 ? 25 : 10} XP`);
           r.notes.push(...reward(pl.acct, {xp: p > 0 ? 25 : 10}));
@@ -1574,6 +1869,7 @@ function tsuScore(){
   for (let i=0;i<n;i++){
     const pl = P[i]; if (!pl.acct || !DATA.accounts[pl.acct]) continue;
     const p = gained[i] || 0;
+    stat(DATA.accounts[pl.acct], "games"); if (p >= 4) stat(DATA.accounts[pl.acct], "splash");
     r.notes.push(`${DATA.accounts[pl.acct].name}: +${10+p*2} XP`);
     r.notes.push(...reward(pl.acct, {xp: 10 + p*2}));
     if (p) addDaily("tsunami", pl.acct, p);
@@ -1611,7 +1907,7 @@ async function hostRoom(game){
   let code;
   for (let t = 0; t < 6; t++){ code = makeCode(); if (!(await ref("rooms/" + code).get()).exists()) break; }
   const l = S.lobby[game];
-  const settings = game === "lizard" ? {cat:l.cat, lizards:l.lizards} : {packs:l.packs || Object.keys(TPACKS), rare:l.rare, scoring:l.scoring, win:l.win};
+  const settings = game === "lizard" ? {cat:l.cat, lizards:l.lizards} : game === "dash" ? {cat:l.cat, time:l.time, rounds:l.rounds} : {packs:l.packs || Object.keys(TPACKS), rare:l.rare, scoring:l.scoring, win:l.win};
   await ref("rooms/" + code).set(clean({game, host:DEVICE, created:Date.now(), settings}));
   joinRoom(code);
 }
@@ -1666,13 +1962,24 @@ function applyOnlineRewards(){
     if (!a) return;
     const isLiz = r.liz.includes(DEVICE);
     const p = r.outcome === "team" ? (isLiz?0:1) : r.outcome === "steal" ? (isLiz?1:0) : (isLiz?3:0);
+    stat(a, "games"); if (isLiz && r.outcome !== "team" && r.outcome !== "steal") stat(a, "escapes"); if (!isLiz && r.outcome === "team") stat(a, "catches");
     if (p > 0){ a.wins.lizard++; addDaily("lizard", a.id, p); }
     o.notes = [`${a.name}: +${p>0?25:10} XP`, ...reward(a.id, {xp: p>0 ? 25 : 10})]; o.notesRound = r.id;
+  }
+  if (ROOM.game === "dash" && r.gained){
+    markRewarded(r.id);
+    if (!a) return;
+    const p = r.gained[DEVICE] || 0;
+    stat(a, "games"); if (r.drawer === DEVICE && p) stat(a, "drawn"); if (r.first === DEVICE) stat(a, "firsts");
+    o.notes = [`${a.name}: +${10+p*2} XP`, ...reward(a.id, {xp: 10 + p*2})]; o.notesRound = r.id;
+    if (p) addDaily("dash", a.id, p);
+    if (r.champ === DEVICE){ a.wins.dash = (a.wins.dash||0) + 1; o.notes.push(`Doodle Dash champion! +50 XP, +${GB.champ} Gbucks`, ...reward(a.id, {xp:50, gb:GB.champ})); }
   }
   if (ROOM.game === "tsunami" && r.gained){
     markRewarded(r.id);
     if (!a) return;
     const p = r.gained[DEVICE] || 0;
+    stat(a, "games"); if (p >= 4) stat(a, "splash");
     o.notes = [`${a.name}: +${10+p*2} XP`, ...reward(a.id, {xp: 10 + p*2})]; o.notesRound = r.id;
     if (p) addDaily("tsunami", a.id, p);
     if (r.champ === DEVICE){ a.wins.tsunami++; o.notes.push(`Tsunami champion! +50 XP, +${GB.champ} Gbucks`, ...reward(a.id, {xp:50, gb:GB.champ})); }
@@ -1682,6 +1989,7 @@ function applyOnlineRewards(){
 /* host-only game logic */
 function hostAutomation(){
   const r = ROOM.round, o = O();
+  if (ROOM.game === "dash") return dashAutomation();
   if (!r || ROOM.game !== "tsunami" || r.phase !== "guess") return;
   const guessers = r.players.filter(d => d !== r.giver && ROOM.players[d]); // skip anyone who left
   const pins = ROOM.pins || {};
@@ -1757,7 +2065,7 @@ function renderOnline(app){
   if (o.step === "who") return renderOnlineWho(app);
   if (o.step !== "room" || !ROOM) return renderOnlineMenu(app);
   if (!ROOM.round) return renderRoomLobby(app);
-  return ROOM.game === "lizard" ? renderLizOnline(app) : renderTsuOnline(app);
+  return ROOM.game === "lizard" ? renderLizOnline(app) : ROOM.game === "dash" ? renderDashOnline(app) : renderTsuOnline(app);
 }
 function renderOnlineWho(app){
   const accts = Object.values(DATA.accounts);
@@ -1765,7 +2073,7 @@ function renderOnlineWho(app){
     <div class="spread"><h2>🌐 Play online</h2><button class="ghost small" id="back">← Hub</button></div>
     <p class="small-print">Everyone plays on their own computer or phone. First, who's playing on this device?</p>
     <div class="card"><h3>Log in</h3>
-      ${accts.length ? `<div class="acct-grid">${accts.map(a => `<button data-acct="${a.id}">${avatarHtml(a.avatar,"md")}<span>${esc(a.name)}</span><small>Lv ${a.level}</small></button>`).join("")}</div>` : `<p class="small-print">No accounts yet.</p>`}
+      ${accts.length ? `<div class="acct-grid">${accts.map(a => `<button data-acct="${a.id}">${avatarHtml(a.avatar,"md")}<span>${nameHtml(a)}</span><small>${a.frozen ? "🧊 Frozen" : "Lv " + a.level}</small></button>`).join("")}</div>` : `<p class="small-print">No accounts yet.</p>`}
       <button class="ghost" id="new">+ Make a new account</button>
     </div>
     <div class="card"><h3>Play as a guest</h3>
@@ -1788,6 +2096,7 @@ function renderOnlineMenu(app){
     <div class="card"><h3>Host a room</h3>
       <button class="gamecard gc-liz" id="h-liz"><span class="ic">🦎</span><span><b>Lizard in the Room</b><span>3+ players</span></span></button>
       <button class="gamecard gc-tsu" id="h-tsu"><span class="ic">🌊</span><span><b>Tsunami Meter</b><span>2+ players</span></span></button>
+      <button class="gamecard gc-dash" id="h-dash"><span class="ic">🎨</span><span><b>Doodle Dash</b><span>2+ players</span></span></button>
       <p class="small-print">You get a 4-letter code. Everyone else opens Glitch Game Night, taps Play online and types it in.</p></div>`;
   $("#back").onclick = () => go("home");
   $("#switch").onclick = () => { o.step = "who"; o.err = ""; render(); };
@@ -1795,6 +2104,7 @@ function renderOnlineMenu(app){
   $("#code").onkeydown = e => { if (e.key === "Enter") joinRoom(e.target.value); };
   $("#h-liz").onclick = () => hostRoom("lizard");
   $("#h-tsu").onclick = () => hostRoom("tsunami");
+  $("#h-dash").onclick = () => hostRoom("dash");
 }
 function roomScores(){
   const ps = rPlayers(), sc = ROOM.scores || {};
@@ -1811,13 +2121,17 @@ function renderRoomLobby(app){
     settings = liz ? `
       <label for="cat">Category</label><select id="cat">${["Random", ...Object.keys(CATS)].map(c => `<option ${c===(st.cat||"Random")?"selected":""}>${esc(c)}</option>`).join("")}</select>
       <label for="liz">Lizards</label><select id="liz">${[["1","1 lizard"],["2","2 lizards"],["3","3 lizards"],["R","Random (secret)"]].map(([v,t]) => `<option value="${v}" ${String(st.lizards||1)===v?"selected":""}>${t}</option>`).join("")}</select>`
+      : ROOM.game === "dash" ? `
+      <label for="dcat">Words</label><select id="dcat">${["Random", ...Object.keys(DASH_WORDS)].map(c => `<option ${c===(st.cat||"Random")?"selected":""}>${esc(c)}</option>`).join("")}</select>
+      <label for="dtimesel">Drawing time</label><select id="dtimesel">${[45,60,80,100].map(t => `<option value="${t}" ${(st.time||80)==t?"selected":""}>${t} seconds</option>`).join("")}</select>
+      <label for="drounds">Turns</label><select id="drounds">${[1,2,3].map(v => `<option value="${v}" ${(st.rounds||1)==v?"selected":""}>Everyone draws ${v===1?"once":v===2?"twice":"3 times"}</option>`).join("")}</select>`
       : `<label for="rare">Rare modes</label><select id="rare">${[["off","Off"],["rare","Rare (1 in 6 rounds)"],["chaos","Chaos (every other round)"]].map(([v,t]) => `<option value="${v}" ${(st.rare||"rare")===v?"selected":""}>${t}</option>`).join("")}</select>
       <label for="scoring">Scoring</label><select id="scoring"><option value="wta" ${(st.scoring||"wta")==="wta"?"selected":""}>Winner takes all</option><option value="all" ${st.scoring==="all"?"selected":""}>Everyone scores</option></select>
       <label for="win">Play to</label><select id="win">${[10,15,20,30].map(v => `<option value="${v}" ${(st.win||15)==v?"selected":""}>${v} points</option>`).join("")}</select>`;
   }
   app.innerHTML = `
     <div class="card center">
-      <div class="eyebrow">${liz ? "🦎 Lizard in the Room" : "🌊 Tsunami Meter"} · online room</div>
+      <div class="eyebrow">${GAME_TITLE[ROOM.game]} · online room</div>
       <div class="who" style="letter-spacing:.25em">${esc(O().code)}</div>
       <p class="small-print">Everyone else: open Glitch Game Night, tap 🌐 Play online and type this code.</p>
     </div>
@@ -1832,8 +2146,9 @@ function renderRoomLobby(app){
   if (!host) return;
   const set = (k, v) => roomRef("settings/" + k).set(v);
   if (liz){ $("#cat").onchange = e => set("cat", e.target.value); $("#liz").onchange = e => set("lizards", e.target.value === "R" ? "R" : +e.target.value); }
+  else if (ROOM.game === "dash"){ $("#dcat").onchange = e => set("cat", e.target.value); $("#dtimesel").onchange = e => set("time", +e.target.value); $("#drounds").onchange = e => set("rounds", +e.target.value); }
   else { $("#rare").onchange = e => set("rare", e.target.value); $("#scoring").onchange = e => set("scoring", e.target.value); $("#win").onchange = e => set("win", +e.target.value); }
-  $("#start").onclick = () => liz ? lizStartOnline() : tsuStartOnline(true);
+  $("#start").onclick = () => liz ? lizStartOnline() : ROOM.game === "dash" ? dashStartOnline(true) : tsuStartOnline(true);
 }
 function scarePicker(r){
   const o = O(); if (!o.acct || !DATA.accounts[o.acct] || !(DATA.accounts[o.acct].power.scare > 0)) return "";
@@ -2013,6 +2328,358 @@ function renderTsuOnline(app){
   const ag = $("#again"); if (ag) ag.onclick = () => tsuStartOnline(true);
   bindFoot();
 }
+
+/* ================= DOODLE DASH: one player draws, everyone else guesses ================= */
+const DASH_WORDS = {
+  "Animals":["Cat","Dog","Fish","Snake","Lizard","Elephant","Giraffe","Penguin","Shark","Octopus","Spider","Turtle","Bunny","Frog","Owl","Crab","Snail","Bat","Monkey","Pig","Dinosaur","Bee","Unicorn","Jellyfish"],
+  "Food":["Pizza","Banana","Taco","Donut","Ice Cream","Burger","Hot Dog","Popcorn","Cake","Watermelon","Cookie","Apple","Cheese","Egg","Carrot","Pancakes","Spaghetti","Sushi","Lollipop","Fries","Pineapple","Cupcake"],
+  "Things":["Phone","Umbrella","Glasses","Scissors","Ladder","Key","Clock","Lamp","Guitar","Backpack","Toothbrush","Balloon","Rocket","Robot","Crown","Sword","Candle","Trophy","Headphones","Controller","Skateboard","Kite","Light Bulb","Camera","Magnet","Bicycle"],
+  "Places":["Beach","Volcano","Castle","School","House","Island","Bridge","Moon","Desert","Igloo","Lighthouse","Waterfall","Pyramid","Rainbow","Tornado","Snowman","Treehouse","Campfire"],
+  "Actions":["Sleeping","Swimming","Dancing","Sneezing","Fishing","Juggling","Crying","Running","Climbing","Flying","Painting","Bowling","Surfing","Yawning"],
+  "Classic Roger":["Rooster","Locked Door","Shopping Cart","Snoring","Salad","Shelf","Robot","Monkey","Cookie","Alarm Clock","Checklist"],
+  "Memes":["Skibidi Toilet","Grimace Shake","Among Us","Trollface","Doge","Nyan Cat","Stonks","Banana Cat","Rickroll","Sigma"]
+};
+const DASH_COLORS = [["Black","#1b1b1f"],["Red","#e5484d"],["Orange","#f76b15"],["Yellow","#ffc53d"],["Green","#30a46c"],["Blue","#0090ff"],["Purple","#8e4ec6"],["Brown","#8b5a2b"],["Pink","#ff8fc7"],["Eraser","#ffffff"]];
+const DASH_SIZES = [["S",5],["M",12],["L",28]];
+const DW = 800, DH = 600; // every drawing uses this size, then gets scaled to the screen
+const PEN = {color:"#1b1b1f", size:12, cur:null};
+const dashPts = rank => Math.max(2, 5 - rank);           // 1st 5, 2nd 4, 3rd 3, then 2
+const dashArtist = n => Math.min(6, n*2);                 // artist gets 2 per correct guesser, up to 6
+const ordinal = i => ["1st","2nd","3rd"][i] || (i+1) + "th";
+const dashNorm = t => String(t).toLowerCase().replace(/[^a-z0-9]/g, "");
+function dashMatch(guess, word){
+  const g = dashNorm(guess), w = dashNorm(word);
+  return !!g && (g === w || g === w + "s" || g + "s" === w || g === w + "es");
+}
+function dashClose(guess, word){ // off by one letter
+  const a = dashNorm(guess), b = dashNorm(word);
+  if (b.length < 4 || Math.abs(a.length - b.length) > 1) return false;
+  const d = Array.from({length:a.length+1}, (_,i) => [i]);
+  for (let j=1;j<=b.length;j++) d[0][j] = j;
+  for (let i=1;i<=a.length;i++) for (let j=1;j<=b.length;j++)
+    d[i][j] = Math.min(d[i-1][j]+1, d[i][j-1]+1, d[i-1][j-1] + (a[i-1]===b[j-1]?0:1));
+  return d[a.length][b.length] === 1;
+}
+function dashChoices(cat){
+  const pool = !cat || cat === "Random" ? [...new Set(Object.values(DASH_WORDS).flat())] : DASH_WORDS[cat] || DASH_WORDS.Things;
+  return shuffle(pool).slice(0, 3);
+}
+// "_ _ _ _" with a letter or two revealed as time runs out
+function dashMask(word, frac, seed){
+  const idx = [...word].map((ch,i) => /[a-z0-9]/i.test(ch) ? i : -1).filter(i => i >= 0);
+  const show = new Set();
+  if (frac >= .5 && idx.length > 2) show.add(idx[seed % idx.length]);
+  if (frac >= .75 && idx.length > 4) show.add(idx[(seed*7 + 3) % idx.length]);
+  return [...word].map((ch,i) => ch === " " ? "  " : !/[a-z0-9]/i.test(ch) ? ch : show.has(i) ? ch.toUpperCase() : "_").join(" ");
+}
+function drawStrokes(cv, strokes, live){
+  if (!cv) return;
+  const c = cv.getContext("2d");
+  c.fillStyle = "#ffffff"; c.fillRect(0, 0, DW, DH);
+  c.lineCap = "round"; c.lineJoin = "round";
+  [...(strokes || []), live].forEach(s => {
+    if (!s || !s.p || s.p.length < 2) return;
+    c.strokeStyle = s.c; c.lineWidth = s.w; c.beginPath(); c.moveTo(s.p[0], s.p[1]);
+    if (s.p.length === 2) c.lineTo(s.p[0] + .1, s.p[1]);
+    for (let i=2;i<s.p.length;i+=2) c.lineTo(s.p[i], s.p[i+1]);
+    c.stroke();
+  });
+}
+// lets the artist draw on the canvas; onMove gets the stroke so far, onEnd the finished stroke
+function bindDrawPad(cv, onEnd, onMove){
+  const c = cv.getContext("2d");
+  const pt = e => { const r = cv.getBoundingClientRect();
+    return [Math.round(Math.max(0, Math.min(DW, (e.clientX - r.left) / r.width * DW))), Math.round(Math.max(0, Math.min(DH, (e.clientY - r.top) / r.height * DH)))]; };
+  cv.onpointerdown = e => { e.preventDefault(); try { cv.setPointerCapture(e.pointerId); } catch(_){}
+    PEN.cur = {c:PEN.color, w:PEN.size, p:pt(e)};
+    c.fillStyle = PEN.color; c.beginPath(); c.arc(PEN.cur.p[0], PEN.cur.p[1], PEN.size/2, 0, Math.PI*2); c.fill();
+    if (onMove) onMove(PEN.cur); };
+  cv.onpointermove = e => { const s = PEN.cur; if (!s) return;
+    const [x,y] = pt(e), n = s.p.length;
+    if (Math.abs(x - s.p[n-2]) + Math.abs(y - s.p[n-1]) < 3) return;
+    c.strokeStyle = s.c; c.lineWidth = s.w; c.lineCap = "round"; c.beginPath(); c.moveTo(s.p[n-2], s.p[n-1]); c.lineTo(x, y); c.stroke();
+    s.p.push(x, y); if (onMove) onMove(s); };
+  const end = () => { const s = PEN.cur; if (!s) return; PEN.cur = null; onEnd(s); };
+  cv.onpointerup = end; cv.onpointercancel = end;
+}
+const dashToolsHtml = () => `
+  <div class="dtools" role="group" aria-label="Drawing tools">
+    ${DASH_COLORS.map(([n,c]) => `<button class="dsw ${c==="#ffffff"?"erase":""}" data-col="${c}" style="--sw:${c}" aria-label="${n}" aria-pressed="${PEN.color===c}">${c==="#ffffff"?"🧽":""}</button>`).join("")}
+  </div>
+  <div class="row" style="flex-wrap:nowrap">
+    ${DASH_SIZES.map(([n,w]) => `<button class="small dsz" data-sz="${w}" aria-pressed="${PEN.size===w}" aria-label="${n==="S"?"Thin":n==="M"?"Medium":"Thick"} pen">${n}</button>`).join("")}
+    <button class="small ghost" id="dundo">↶ Undo</button><button class="small ghost" id="dclear">Clear</button>
+  </div>`;
+function bindDashTools(onUndo, onClear){
+  document.querySelectorAll("[data-col]").forEach(b => b.onclick = () => { PEN.color = b.dataset.col;
+    document.querySelectorAll("[data-col]").forEach(x => x.setAttribute("aria-pressed", x === b)); });
+  document.querySelectorAll("[data-sz]").forEach(b => b.onclick = () => { PEN.size = +b.dataset.sz;
+    document.querySelectorAll("[data-sz]").forEach(x => x.setAttribute("aria-pressed", x === b)); });
+  $("#dundo").onclick = onUndo; $("#dclear").onclick = () => { if (confirm("Clear the whole drawing?")) onClear(); };
+}
+const dashLeft = r => Math.max(0, Math.ceil((r.deadline - Date.now()) / 1000));
+const dashFrac = r => r.dur ? 1 - (r.deadline - Date.now()) / (r.dur * 1000) : 0;
+const DASH_MEMES = [["Me drawing a cat","everyone: \"is that a potato?\""],["The artist","pointing at the canvas harder"],["Nobody:","Me: draws one circle and gives up"],["When you guess it","with 1 second left"]];
+
+/* ----- pass-and-play ----- */
+function dashNewTurn(){
+  const l = S.lobby.dash, G = S.dash, n = l.players.length;
+  G.drawer = G.turn % n;
+  G.r = {phase:"pass", choices:dashChoices(l.cat), strokes:[], got:[], notes:[], seed:rint(1, 999)};
+  go("dash");
+}
+function renderDash(app){
+  const l = S.lobby.dash, P = l.players, n = P.length, G = S.dash, r = G.r, total = n * l.rounds;
+  const nm = i => playerName(P[i]), d = G.drawer, dn = nm(d);
+  const scoreCard = () => { const rows = [...Array(n).keys()].map(i => [i, G.scores[i]||0]).sort((a,b) => b[1]-a[1]);
+    return `<div class="card"><div class="eyebrow">Scores · turn ${Math.min(G.turn+1, total)} of ${total}</div><div class="log">${rows.map(([i,s]) => `<div><span class="row">${avatarHtml(playerAv(P[i]),"sm")} ${esc(nm(i))}</span><b>${s}</b></div>`).join("")}</div></div>`; };
+  if (r.phase === "pass"){
+    app.innerHTML = `<div class="eyebrow">Turn ${G.turn+1} of ${total}</div>
+      <div class="card center" style="min-height:260px;justify-content:center">
+        <div class="eyebrow">Artist this turn</div>${avatarHtml(playerAv(P[d]),"md")}<div class="who">${esc(dn)}</div>
+        <p class="small-print">Everyone else look away while ${esc(dn)} picks a word.</p>
+        <button class="big" id="go">I'm ${esc(dn)}, show my words</button></div>${scoreCard()}<button class="ghost" id="quit">Quit to hub</button>`;
+    $("#go").onclick = () => { r.phase = "pick"; render(); };
+    $("#quit").onclick = () => go("home");
+    return;
+  }
+  if (r.phase === "pick"){
+    app.innerHTML = `<div class="card center"><div class="eyebrow">${esc(dn)} only · secret</div><h2>Pick something to draw</h2>
+        <div class="dpick">${r.choices.map((w,i) => `<button class="big" data-w="${i}">${esc(w)}</button>`).join("")}</div>
+        <p class="small-print">No letters or numbers in your drawing! You have ${l.time} seconds.</p></div>`;
+    app.querySelectorAll("[data-w]").forEach(b => b.onclick = () => {
+      r.word = r.choices[+b.dataset.w]; r.dur = l.time; r.deadline = Date.now() + l.time*1000; r.phase = "draw"; PEN.color = DASH_COLORS[0][1]; render(); });
+    return;
+  }
+  if (r.phase === "draw"){
+    const guessers = [...Array(n).keys()].filter(i => i !== d);
+    const end = () => { stopTimer(); r.phase = "reveal"; render(); };
+    if (dashLeft(r) <= 0 || r.got.length >= guessers.length){ end(); return; }
+    app.innerHTML = `
+      <div class="dhead"><span><span class="eyebrow">${esc(dn)} is drawing</span><span class="dmask" id="dmask">${esc(dashMask(r.word, dashFrac(r), r.seed))}</span></span>
+        <span class="dtime" id="dtime">${dashLeft(r)}</span></div>
+      <canvas id="dcv" class="dcv" width="${DW}" height="${DH}" aria-label="Drawing canvas"></canvas>
+      ${dashToolsHtml()}
+      <button class="ghost small" id="peek">👁 Hold to peek at your word</button>
+      <div class="card"><h3>Who guessed it?</h3><p class="small-print">Everyone shouts guesses. Tap people in the order they get it right.</p>
+        <div class="row">${guessers.map(i => { const k = r.got.indexOf(i);
+          return `<button class="small ${k<0?"ghost":""}" data-g="${i}" ${k>=0 && k !== r.got.length-1 ? "disabled" : ""}>${k>=0 ? "✓ " + ordinal(k) + " · " : ""}${esc(nm(i))}</button>`; }).join("")}</div></div>
+      <button class="big" id="end">End turn</button>`;
+    const cv = $("#dcv");
+    drawStrokes(cv, r.strokes);
+    bindDrawPad(cv, s => r.strokes.push(s));
+    bindDashTools(() => { r.strokes.pop(); drawStrokes(cv, r.strokes); }, () => { r.strokes = []; drawStrokes(cv, r.strokes); });
+    const pk = $("#peek"), word = r.word;
+    const show = e => { e.preventDefault(); pk.textContent = "🤫 " + word; }, hide = () => { pk.textContent = "👁 Hold to peek at your word"; };
+    pk.onpointerdown = show; pk.onpointerup = hide; pk.onpointerleave = hide; pk.onpointercancel = hide;
+    pk.onkeydown = e => { if (e.key === " " || e.key === "Enter") show(e); }; pk.onkeyup = hide;
+    app.querySelectorAll("[data-g]").forEach(b => b.onclick = () => { const i = +b.dataset.g, k = r.got.indexOf(i);
+      if (k < 0) r.got.push(i); else if (k === r.got.length-1) r.got.pop(); render(); });
+    $("#end").onclick = end;
+    timer = setInterval(() => { const left = dashLeft(r); $("#dtime").textContent = left; $("#dmask").textContent = dashMask(r.word, dashFrac(r), r.seed);
+      $("#dtime").classList.toggle("low", left <= 10); if (left <= 0) end(); }, 250);
+    return;
+  }
+  if (r.phase === "reveal"){
+    if (!r.scored) dashScoreLocal();
+    app.innerHTML = `
+      <div class="card center"><div class="eyebrow">The word was</div><div class="word">${esc(r.word)}</div></div>
+      <canvas id="dcv" class="dcv" width="${DW}" height="${DH}" aria-label="${esc(dn)}'s drawing of ${esc(r.word)}"></canvas>
+      <div class="card"><div class="log">${r.lines.map(([who,txt,cls]) => `<div><span>${esc(who)}</span><span class="${cls||""}">${esc(txt)}</span></div>`).join("")}</div></div>
+      ${rewardLines(r.notes)}
+      ${!r.got.length ? memeHtml(pick(DASH_MEMES), "🎨") : ""}
+      ${scoreCard()}
+      <button class="big" id="next">${r.champ !== null ? "See the champion" : "Next turn"}</button>
+      <button class="ghost" id="lobby">Back to the lobby</button>`;
+    drawStrokes($("#dcv"), r.strokes);
+    $("#next").onclick = () => { if (r.champ !== null){ r.phase = "champ"; render(); } else { G.turn++; dashNewTurn(); } };
+    $("#lobby").onclick = () => go("lobby", {game:"dash"});
+    return;
+  }
+  // champion
+  const c = r.champ;
+  app.innerHTML = `
+    <div class="card center"><div class="eyebrow">Doodle Dash champion</div>${avatarHtml(playerAv(P[c]),"lg")}<div class="who">🎨 ${esc(nm(c))}</div>
+      <p>finished with ${G.scores[c]||0} points.</p>${P[c].acct ? `<p class="gb">+50 XP and +${GB.champ} Gbucks for the win</p>` : ""}</div>
+    ${rewardLines(r.champNotes||[])}
+    ${memeHtml(["Everyone else","looking at their stick figures"], "🖍️")}
+    ${scoreCard()}
+    <button class="big" id="again">Play again</button>
+    <button class="ghost" id="hub">Back to the hub</button>`;
+  $("#again").onclick = () => { S.dash = {scores:{}, turn:0}; dashNewTurn(); };
+  $("#hub").onclick = () => go("home");
+}
+function dashScoreLocal(){
+  const l = S.lobby.dash, P = l.players, n = P.length, G = S.dash, r = G.r, d = G.drawer, nm = i => playerName(P[i]);
+  const gained = {};
+  r.lines = [];
+  r.got.forEach((i,k) => { const p = dashPts(k); gained[i] = p; r.lines.push([nm(i), `+${p} · got it ${ordinal(k)}`, "plus"]); });
+  [...Array(n).keys()].filter(i => i !== d && !r.got.includes(i)).forEach(i => r.lines.push([nm(i), "didn't get it"]));
+  const ap = dashArtist(r.got.length);
+  if (ap) gained[d] = ap;
+  r.lines.push([nm(d) + " (artist)", ap ? "+" + ap : "nobody got it", ap ? "plus" : "minus"]);
+  Object.entries(gained).forEach(([i,p]) => G.scores[i] = (G.scores[i]||0) + p);
+  for (let i=0;i<n;i++){
+    const pl = P[i]; if (!pl.acct || !DATA.accounts[pl.acct]) continue;
+    const a = DATA.accounts[pl.acct], p = gained[i] || 0;
+    stat(a, "games"); if (i === d && ap) stat(a, "drawn"); if (r.got[0] === i) stat(a, "firsts");
+    r.notes.push(`${a.name}: +${10+p*2} XP`, ...reward(pl.acct, {xp: 10 + p*2}));
+    if (p) addDaily("dash", pl.acct, p);
+  }
+  const last = G.turn + 1 >= n * l.rounds;
+  r.champ = last ? [...Array(n).keys()].sort((a,b) => (G.scores[b]||0) - (G.scores[a]||0))[0] : null;
+  if (r.champ !== null && P[r.champ].acct && DATA.accounts[P[r.champ].acct]){
+    const a = DATA.accounts[P[r.champ].acct]; a.wins.dash = (a.wins.dash||0) + 1;
+    r.champNotes = reward(a.id, {xp:50, gb:GB.champ});
+  }
+  r.scored = true;
+}
+
+/* ----- online ----- */
+function dashStartOnline(reset){
+  const ps = rPlayers().map(p => p.dev), st = ROOM.settings || {};
+  if (ps.length < 2) return;
+  const prev = !reset && ROOM.round ? ROOM.round : null;
+  const drawer = prev ? ps[(ps.indexOf(prev.drawer) + 1) % ps.length] : ps[0];
+  const upd = {round:{id:Date.now(), n:prev ? (prev.n||0) + 1 : 1, total:prev && prev.total ? prev.total : ps.length * (st.rounds || 1),
+    drawer, players:ps, phase:"pick", choices:dashChoices(st.cat), seed:rint(1, 999)}, strokes:null, live:null, correct:null, chat:null, scares:null};
+  if (reset) upd.scores = null;
+  roomRef().update(clean(upd));
+}
+function dashAutomation(){
+  const r = ROOM.round, o = O();
+  if (!r || r.phase !== "draw" || o.scored === r.id) return;
+  const cor = ROOM.correct || {}, guessers = r.players.filter(d => d !== r.drawer && ROOM.players[d]);
+  const allGot = guessers.length > 0 && guessers.every(d => cor[d]);
+  if (allGot || r.endNow || !ROOM.players[r.drawer] || Date.now() > r.deadline + 500){ o.scored = r.id; dashScoreOnline(); }
+}
+function dashScoreOnline(){
+  const r = ROOM.round, sc = Object.assign({}, ROOM.scores || {}), cor = ROOM.correct || {};
+  const order = Object.entries(cor).filter(([d]) => r.players.includes(d) && d !== r.drawer).sort((a,b) => a[1]-b[1]).map(x => x[0]);
+  const gained = {_:0}, lines = [];
+  order.forEach((d,k) => { const p = dashPts(k); gained[d] = p; sc[d] = (sc[d]||0) + p; lines.push([rName(d), `+${p} · got it ${ordinal(k)}`, "plus"]); });
+  r.players.filter(d => d !== r.drawer && !cor[d]).forEach(d => lines.push([rName(d), "didn't get it", "-"]));
+  const ap = dashArtist(order.length);
+  if (ap){ gained[r.drawer] = ap; sc[r.drawer] = (sc[r.drawer]||0) + ap; }
+  lines.push([rName(r.drawer) + " (artist)", ap ? "+" + ap : "nobody got it", ap ? "plus" : "minus"]);
+  const champ = r.n >= r.total ? r.players.slice().sort((a,b) => (sc[b]||0) - (sc[a]||0))[0] : null;
+  roomRef().update(clean({"round/phase":"reveal", "round/lines":lines, "round/gained":gained, "round/first":order[0] || null, "round/champ":champ, scores:sc, live:null}));
+}
+// the countdown, hints and host checks keep running without redrawing the screen
+setInterval(() => {
+  if (S.view !== "online" || !ROOM || ROOM.game !== "dash" || !ROOM.round) return;
+  const r = ROOM.round;
+  if (isHost()) dashAutomation();
+  if (r.phase !== "draw") return;
+  const t = $("#dtime"), m = $("#dmask");
+  if (t){ t.textContent = dashLeft(r); t.classList.toggle("low", dashLeft(r) <= 10); }
+  if (m) m.textContent = dashMask(r.word, dashFrac(r), r.seed);
+}, 400);
+const dashStrokeList = () => { const s = ROOM.strokes || {}; return Object.keys(s).sort().map(k => s[k]); };
+function dashChatHtml(r){
+  const c = ROOM.chat || {}, rows = Object.keys(c).sort().slice(-40).map(k => c[k]);
+  return rows.length ? rows.map(x => x.ok ? `<div class="ok">✅ ${esc(rName(x.d))} guessed it!</div>` : `<div><b>${esc(rName(x.d))}:</b> ${esc(x.t)}</div>`).join("")
+    : `<div class="small-print">Guesses show up here.</div>`;
+}
+function renderDashOnline(app){
+  const r = ROOM.round, o = O(), host = isHost(), me = DEVICE, st = ROOM.settings || {}, cor = ROOM.correct || {};
+  const artist = r.drawer === me, an = rName(r.drawer);
+  if (!r.players.includes(me)){
+    app.dataset.dkey = "";
+    app.innerHTML = `<div class="card center"><h3>You joined mid-round</h3><p class="small-print">You'll be in the next round.</p></div>${roomScores()}${roomFoot()}`;
+    bindFoot(); return;
+  }
+  const key = [r.id, r.phase, artist, !!cor[me]].join(":");
+  // same screen as before: just refresh the drawing, guesses and scores so typing and drawing aren't interrupted
+  if (app.dataset.dkey === key && $("#dcv")){
+    drawStrokes($("#dcv"), dashStrokeList(), artist ? PEN.cur : ROOM.live);
+    const ch = $("#dchat"); if (ch){ const atBottom = ch.scrollTop + ch.clientHeight >= ch.scrollHeight - 8; ch.innerHTML = dashChatHtml(r); if (atBottom) ch.scrollTop = ch.scrollHeight; }
+    const ds = $("#dscores"); if (ds) ds.innerHTML = roomScores();
+    const gs = $("#dgot"); if (gs) gs.textContent = dashGotText(r);
+    return;
+  }
+  app.dataset.dkey = key;
+  const head = `<div class="spread"><span class="eyebrow">Turn ${r.n} of ${r.total} · Room ${esc(o.code)}</span><span class="row" style="gap:6px">${avatarHtml(rAv(r.drawer),"sm")}<b>${esc(an)}</b></span></div>`;
+  if (r.phase === "pick"){
+    app.innerHTML = head + (artist ? `
+      <div class="card center"><div class="eyebrow">Only you can see this</div><h2>Pick something to draw</h2>
+        <div class="dpick">${(r.choices||[]).map((w,i) => `<button class="big" data-w="${i}">${esc(w)}</button>`).join("")}</div>
+        <p class="small-print">No letters or numbers in your drawing! You'll have ${st.time || 80} seconds.</p></div>`
+      : `<div class="card center" style="min-height:220px;justify-content:center"><div class="who">🎨</div><h3>${esc(an)} is picking a word…</h3><p class="small-print">Get ready to guess. Type your guesses as fast as you can.</p></div>
+        ${host ? `<button class="ghost small" id="skip">Skip ${esc(an)}'s turn</button>` : ""}`) + `<div id="dscores">${roomScores()}</div>${roomFoot()}`;
+    app.querySelectorAll("[data-w]").forEach(b => b.onclick = () => { const t = st.time || 80;
+      PEN.color = DASH_COLORS[0][1]; roomRef("round").update({phase:"draw", word:r.choices[+b.dataset.w], dur:t, deadline:Date.now() + t*1000}); });
+    const sk = $("#skip"); if (sk) sk.onclick = () => dashStartOnline(false);
+    bindFoot(); return;
+  }
+  if (r.phase === "draw"){
+    const timeBar = `<div class="dhead"><span><span class="eyebrow">${artist ? "You're drawing" : esc(an) + " is drawing"}</span>
+        <span class="dmask" id="dmask">${artist ? esc(r.word.toUpperCase()) : esc(dashMask(r.word, dashFrac(r), r.seed))}</span></span>
+      <span class="dtime" id="dtime">${dashLeft(r)}</span></div>`;
+    const chat = `<div class="card"><div class="spread"><h3>Guesses</h3><span class="tag" id="dgot">${esc(dashGotText(r))}</span></div><div class="dchat" id="dchat">${dashChatHtml(r)}</div></div>`;
+    if (artist){
+      app.innerHTML = timeBar + `<canvas id="dcv" class="dcv" width="${DW}" height="${DH}" aria-label="Drawing canvas"></canvas>${dashToolsHtml()}${chat}
+        <button class="ghost" id="dend">End my turn</button><div id="dscores">${roomScores()}</div>${roomFoot()}`;
+      const cv = $("#dcv");
+      drawStrokes(cv, dashStrokeList());
+      let lastSend = 0;
+      bindDrawPad(cv, s => { roomRef("strokes").push(s); roomRef("live").remove(); },
+        s => { const t = Date.now(); if (t - lastSend > 120){ lastSend = t; roomRef("live").set(s); } });
+      bindDashTools(() => { const k = Object.keys(ROOM.strokes || {}).sort().pop(); if (k) roomRef("strokes/" + k).remove(); },
+        () => roomRef("strokes").remove());
+      $("#dend").onclick = () => roomRef("round/endNow").set(true);
+    } else {
+      const got = !!cor[me];
+      app.innerHTML = timeBar + `<canvas id="dcv" class="dcv view" width="${DW}" height="${DH}" aria-label="${esc(an)}'s drawing"></canvas>
+        ${got ? `<div class="toast">✅ You got it! The word is <b>${esc(r.word)}</b>. Waiting for everyone else…</div>`
+          : `<div class="row" style="flex-wrap:nowrap"><input type="text" id="dguess" maxlength="40" placeholder="Type your guess" autocomplete="off" aria-label="Your guess"><button id="dsend">Guess</button></div>
+             <p class="small-print" id="dnote" aria-live="polite"></p>`}
+        ${chat}${host ? `<button class="ghost small" id="dskipdraw">End this turn now</button>` : ""}<div id="dscores">${roomScores()}</div>${roomFoot()}`;
+      drawStrokes($("#dcv"), dashStrokeList(), ROOM.live);
+      const inp = $("#dguess");
+      if (inp){
+        const send = () => { const v = inp.value.trim(); if (!v) return; inp.value = ""; inp.focus();
+          if (dashMatch(v, r.word)){ roomRef("correct/" + me).set(firebase.database.ServerValue.TIMESTAMP); roomRef("chat").push({d:me, ok:true}); return; }
+          if (dashClose(v, r.word)){ $("#dnote").textContent = `"${v}" is so close! Check the spelling.`; return; }
+          $("#dnote").textContent = "";
+          roomRef("chat").push({d:me, t:v.slice(0, 40)}); };
+        $("#dsend").onclick = send;
+        inp.onkeydown = e => { if (e.key === "Enter") send(); };
+        inp.focus();
+      }
+      const sd = $("#dskipdraw"); if (sd) sd.onclick = () => roomRef("round/endNow").set(true);
+    }
+    const ch = $("#dchat"); if (ch) ch.scrollTop = ch.scrollHeight;
+    bindFoot(); return;
+  }
+  if (r.phase === "reveal"){
+    app.innerHTML = `
+      <div class="card center"><div class="eyebrow">${esc(an)} drew</div><div class="word">${esc(r.word || "?")}</div></div>
+      <canvas id="dcv" class="dcv view" width="${DW}" height="${DH}" aria-label="${esc(an)}'s drawing of ${esc(r.word || "")}"></canvas>
+      <div class="card"><div class="log">${(r.lines || []).map(([who,txt,cls]) => `<div><span>${esc(who)}</span><span class="${cls==="-"?"":cls}">${esc(txt)}</span></div>`).join("")}</div></div>
+      ${notesHtml(r)}
+      ${!r.first ? memeHtml(DASH_MEMES[r.id % DASH_MEMES.length], "🎨") : ""}
+      <div id="dscores">${roomScores()}</div>
+      ${host ? `<button class="big" id="next">${r.champ ? "See the champion" : "Next turn"}</button>` : `<p class="small-print" style="text-align:center">${esc(rName(ROOM.host))} starts the next turn.</p>`}
+      ${roomFoot()}`;
+    drawStrokes($("#dcv"), dashStrokeList());
+    const nx = $("#next"); if (nx) nx.onclick = () => r.champ ? roomRef("round/phase").set("champ") : dashStartOnline(false);
+    bindFoot(); return;
+  }
+  // champion
+  app.innerHTML = `
+    <div class="card center"><div class="eyebrow">Doodle Dash champion</div>${avatarHtml(rAv(r.champ),"lg")}<div class="who">🎨 ${esc(rName(r.champ))}</div>
+      <p>finished with ${(ROOM.scores||{})[r.champ] || 0} points.</p></div>
+    ${notesHtml(r)}
+    ${memeHtml(["Everyone else","looking at their stick figures"], "🖍️")}
+    ${roomScores()}
+    ${host ? `<button class="big" id="again">Play again</button>` : ""}
+    ${roomFoot()}`;
+  const ag = $("#again"); if (ag) ag.onclick = () => dashStartOnline(true);
+  bindFoot();
+}
+const dashGotText = r => { const cor = ROOM.correct || {}, g = r.players.filter(d => d !== r.drawer && ROOM.players[d]);
+  return `${g.filter(d => cor[d]).length}/${g.length} got it`; };
 
 /* ================= boot ================= */
 window.claude?.hot?.snapshot?.(() => ({S}));
