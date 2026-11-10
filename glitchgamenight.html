@@ -146,6 +146,8 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid 
 .gbux{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;padding:16px 8px 12px;border-radius:14px;background:linear-gradient(160deg,#1e3a8a,#7c3aed);color:#fff}
 .gbux b{font-size:1.3rem}.gbux small{opacity:.8}
 .gbux .price{margin-top:6px;background:#fff;color:#1e3a8a;border-radius:999px;padding:3px 12px;font-weight:700}
+.giftcard{display:flex;flex-direction:column;gap:2px;padding:18px;border-radius:16px;color:#fff;background:linear-gradient(135deg,#7c3aed,#db2777 60%,#f59e0b);aspect-ratio:1.7/1;justify-content:flex-end;box-shadow:0 8px 20px rgba(0,0,0,.25)}
+.giftcard b{font-size:1.3rem}.giftcard small{opacity:.85}.giftcard span{font-family:monospace;letter-spacing:.15em;opacity:.8}
 .gbux em{position:absolute;top:-8px;font-style:normal;font-size:.7rem;font-weight:700;background:#f59e0b;color:#111;border-radius:999px;padding:2px 8px;white-space:nowrap}
 .toast{background:var(--rare-bg);border:2px solid var(--accent);border-radius:14px;padding:12px 14px;font-weight:600}
 
@@ -784,6 +786,50 @@ function myRequestsHtml(){
   const st = {pending:"⏳ Waiting for Gavin", approved:"✅ Added", denied:"❌ Denied"};
   return `<label>Your purchases</label>${list.map(q => `<div class="spread small-print"><span>${fmt(q.gbux)} Gbux · ${money(q.price)}</span><span>${st[q.status] || q.status}</span></div>`).join("")}`;
 }
+/* gift cards: Gavin makes codes on admin.html (stored at giftcards/{CODE}); each one works once */
+const normGift = t => { const c = String(t).toUpperCase().replace(/[^A-Z0-9]/g, ""); return c.length === 8 ? c.slice(0,4) + "-" + c.slice(4) : null; };
+function redeemGift(a, raw){
+  const code = normGift(raw);
+  if (!code) return Promise.resolve({msg:"Gift card codes look like ABCD-EFGH."});
+  if (!fdb) return Promise.resolve({msg:"Gift cards only work when the game is online."});
+  // mark it used inside a transaction so the same card can never be spent twice
+  return ref("giftcards/" + code).transaction(cur => {
+    if (cur === null) return null;   // not loaded yet or doesn't exist; the server decides
+    if (cur.used) return;            // already spent: abort
+    return {...cur, used:a.id, usedBy:a.name, usedAt:Date.now()};
+  }).then(({committed, snapshot}) => {
+    const v = snapshot.val();
+    if (!v) return {msg:"That gift card code doesn't exist."};
+    if (!committed || v.used !== a.id) return {msg:"That gift card was already redeemed."};
+    a.gbucks += v.amount; saveAccount(a);
+    return {ok:true, amount:v.amount};
+  }).catch(() => ({msg:"Something went wrong. Try again."}));
+}
+function openGiftCard(a, msg){
+  const o = $("#overlay");
+  const close = () => { o.innerHTML = ""; render(); };
+  o.innerHTML = `<div class="paywrap" role="dialog" aria-label="Redeem gift card"><div class="paysheet">
+    <div class="spread"><b>🎁 Redeem gift card</b><button class="ghost small" id="pc">✕</button></div>
+    <div class="giftcard"><small>Glitch Game Night</small><b>Gbux Gift Card</b><span>XXXX-XXXX</span></div>
+    <label for="gc">Gift card code</label>
+    <input id="gc" placeholder="ABCD-EFGH" autocomplete="off" maxlength="9" style="text-transform:uppercase;letter-spacing:.12em;font-size:1.2rem;text-align:center">
+    ${msg ? `<p class="minus" role="alert">${esc(msg)}</p>` : `<p class="small-print">Get gift cards from Gavin.</p>`}
+    <button class="big" id="gcgo">Redeem</button></div></div>`;
+  o.querySelector(".paywrap").onclick = e => { if (e.target.classList.contains("paywrap")) close(); };
+  $("#pc").onclick = close;
+  const gc = $("#gc"); gc.focus();
+  gc.oninput = () => { const c = gc.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0,8); gc.value = c.length > 4 ? c.slice(0,4) + "-" + c.slice(4) : c; };
+  const go2 = () => { const btn = $("#gcgo"); btn.disabled = true; btn.innerHTML = `<span class="spin"></span> Checking…`;
+    redeemGift(a, gc.value).then(r => {
+      if (!r.ok){ openGiftCard(a, r.msg); return; }
+      o.querySelector(".paysheet").innerHTML = `<div class="center" style="display:flex;flex-direction:column;align-items:center;gap:8px">
+        <div style="font-size:3rem">🎉</div><h3>+${fmt(r.amount)} Gbux!</h3><p class="small-print">Gift card redeemed. You now have ${fmt(a.gbucks)} Gbux.</p>
+        <button class="big" id="pd">Nice!</button></div>`;
+      $("#pd").onclick = close;
+    }); };
+  $("#gcgo").onclick = go2;
+  gc.onkeydown = e => { if (e.key === "Enter") go2(); };
+}
 function openCheckout(a, b){
   const o = $("#overlay");
   const close = () => { o.innerHTML = ""; render(); };
@@ -887,11 +933,13 @@ function renderShop(app){
     <div class="card">
       <div class="spread"><h3>💎 Get Gbux</h3><span class="tag">Instant after approval</span></div>
       <div class="gbuxgrid">${GBUX_BUNDLES.map((b,k) => `<button class="gbux" data-bundle="${k}">${b.tag ? `<em>${esc(b.tag)}</em>` : ""}<span class="payicon">${b.icon}</span><b>${fmt(b.g)}</b><small>Gbux</small><span class="price">${money(b.price)}</span></button>`).join("")}</div>
+      <button class="ghost" id="giftcard" style="width:100%;margin-top:10px">🎁 Redeem a gift card</button>
       ${myRequestsHtml()}
     </div>
     <p class="small-print">Gbucks are free to earn but rare: +${GB.daily} daily bonus for your first round each day, +${GB.levelUp} every level up, +${GB.champ} for winning Tsunami Meter, +${GB.double} for pack doubles.</p>`;
   watchRequests(a.id);
   app.querySelectorAll("[data-bundle]").forEach(b => b.onclick = () => openCheckout(a, GBUX_BUNDLES[+b.dataset.bundle]));
+  $("#giftcard").onclick = () => openGiftCard(a);
   $("#back").onclick = () => S.verified.includes(a.id) ? go("profile", {profile:{id:a.id, tab:"avatar"}}) : go("home");
   app.querySelectorAll("[data-sel]").forEach(b => b.onclick = () => { sh.sel = b.dataset.sel; render(); window.scrollTo(0,0); });
   const c = $("#cancel"); if (c) c.onclick = () => { sh.sel = null; render(); };

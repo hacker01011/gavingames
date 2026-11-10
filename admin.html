@@ -263,6 +263,20 @@
       <div class="status" id="gbux-give-status"></div>
     </div>
     <div class="card">
+      <h2>🎁 Make a gift card</h2>
+      <p class="token-note" style="margin-top:-8px;margin-bottom:12px">Give the code to someone (written down, texted, whatever). They type it in Item Shop → Get Gbux → Redeem a gift card. Each code works once.</p>
+      <label>Amount</label>
+      <div class="btn-row" style="margin-top:0">
+        <button class="btn" onclick="makeGift(500)">500</button><button class="btn" onclick="makeGift(1100)">1,100</button>
+        <button class="btn" onclick="makeGift(5000)">5,000</button><button class="btn" onclick="makeGift(11000)">11,000</button>
+      </div>
+      <div class="token-row" style="margin-top:10px"><input type="number" id="gift-amt" min="1" placeholder="Other amount">
+        <button class="btn" onclick="makeGift(+document.getElementById('gift-amt').value)" style="flex:0;white-space:nowrap;padding:9px 14px;">Make</button></div>
+      <div class="status" id="gift-status"></div>
+      <label>Unused gift cards</label>
+      <div id="gift-list"></div>
+    </div>
+    <div class="card">
       <h2>Recent history</h2>
       <div id="gbux-history"></div>
     </div>
@@ -726,6 +740,33 @@ function loadGbux(){
   } catch(e){ showStatus('gbux-status','✗ Could not connect: '+e.message,'error'); return; }
   gref("accounts").on("value", s => { ggnAccounts = s.val() || {}; drawAcctSelect(); drawGbux(); });
   gref("requests").on("value", s => { ggnReqs = s.val() || {}; drawGbux(); });
+  gref("giftcards").on("value", s => { ggnGifts = s.val() || {}; drawGifts(); drawGbux(); });
+}
+// ── GIFT CARDS ──
+let ggnGifts = {};
+const GIFT_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // no 0/O or 1/I mixups
+async function makeGift(amount){
+  amount = Math.floor(amount);
+  if (!(amount > 0 && amount <= 1000000)) { showStatus('gift-status','Pick an amount.','error'); return; }
+  let c = ""; for (let i = 0; i < 8; i++) c += GIFT_CHARS[Math.floor(Math.random()*GIFT_CHARS.length)];
+  const code = c.slice(0,4) + "-" + c.slice(4);
+  try {
+    await gref("giftcards/" + code).set({amount, made: Date.now()});
+    const el = document.getElementById('gift-status');
+    el.className = 'status success';
+    el.innerHTML = `New gift card: <b style="font-family:monospace;font-size:18px;letter-spacing:2px">${code}</b> for ${amount.toLocaleString()} Gbux`;
+    document.getElementById('gift-amt').value = "";
+  } catch(e){ showStatus('gift-status','✗ '+e.message,'error'); }
+}
+function drawGifts(){
+  const unused = Object.entries(ggnGifts).filter(([,g]) => !g.used).sort((a,b) => b[1].made - a[1].made);
+  document.getElementById('gift-list').innerHTML = unused.length ? unused.map(([code,g]) => `
+    <div class="manage-item" style="font-size:13px"><span style="flex:1"><b style="font-family:monospace;letter-spacing:1px">${esc(code)}</b> · ${Number(g.amount).toLocaleString()} Gbux</span>
+      <button class="btn btn-danger" style="flex:0;padding:6px 10px" onclick="cancelGift('${esc(code)}')">Cancel</button></div>`).join("")
+    : `<div style="color:var(--muted);font-size:13px;">None right now.</div>`;
+}
+function cancelGift(code){
+  askConfirm('Cancel gift card?', `${code} will stop working.`, async () => { await gref("giftcards/" + code).remove(); });
 }
 function drawAcctSelect(){
   const sel = document.getElementById('gbux-acct'), cur = sel.value;
@@ -744,10 +785,11 @@ function drawGbux(){
       <button class="btn" style="flex:0;padding:7px 12px;color:var(--success)" onclick="decideReq('${esc(r.acct)}','${esc(r.rid)}',true)">Approve</button>
       <button class="btn btn-danger" style="flex:0;padding:7px 12px" onclick="decideReq('${esc(r.acct)}','${esc(r.rid)}',false)">Deny</button>
     </div>`).join("") : `<div style="color:var(--muted);font-size:13px;">No pending requests. 🎉</div>`;
-  const hist = all.filter(r => r.status !== "pending").sort((a,b) => (b.doneAt||b.at) - (a.doneAt||a.at)).slice(0, 15);
+  const gifts = Object.entries(ggnGifts).filter(([,g]) => g.used).map(([code,g]) => ({name:g.usedBy || "someone", gbux:g.amount, status:"gift card " + code, doneAt:g.usedAt, gift:true}));
+  const hist = all.filter(r => r.status !== "pending").concat(gifts).sort((a,b) => (b.doneAt||b.at) - (a.doneAt||a.at)).slice(0, 15);
   document.getElementById('gbux-history').innerHTML = hist.length ? hist.map(r => `
-    <div class="manage-item" style="font-size:13px"><span style="flex:1">${esc(r.name)} · ${Number(r.gbux).toLocaleString()} G · $${Number(r.price).toFixed(2)}</span>
-      <span style="color:${r.status === "approved" ? "var(--success)" : "var(--danger)"}">${esc(r.status)}</span></div>`).join("")
+    <div class="manage-item" style="font-size:13px"><span style="flex:1">${esc(r.name)} · ${Number(r.gbux).toLocaleString()} G${r.gift ? "" : " · $" + Number(r.price).toFixed(2)}</span>
+      <span style="color:${r.status === "denied" ? "var(--danger)" : "var(--success)"}">${esc(r.status)}</span></div>`).join("")
     : `<div style="color:var(--muted);font-size:13px;">Nothing yet.</div>`;
 }
 // flips the request out of "pending" exactly once, then adds the Gbux, so a double click can't pay out twice
