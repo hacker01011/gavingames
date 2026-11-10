@@ -148,6 +148,19 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid 
 .gbux .price{margin-top:6px;background:#fff;color:#1e3a8a;border-radius:999px;padding:3px 12px;font-weight:700}
 .giftcard{display:flex;flex-direction:column;gap:2px;padding:18px;border-radius:16px;color:#fff;background:linear-gradient(135deg,#7c3aed,#db2777 60%,#f59e0b);aspect-ratio:1.7/1;justify-content:flex-end;box-shadow:0 8px 20px rgba(0,0,0,.25)}
 .giftcard b{font-size:1.3rem}.giftcard small{opacity:.85}.giftcard span{font-family:monospace;letter-spacing:.15em;opacity:.8}
+.paysteps{display:flex;gap:4px}.paysteps span{flex:1;text-align:center;font-size:.7rem;padding-top:6px;border-top:3px solid var(--line);opacity:.6}
+.paysteps span.on{border-color:var(--accent);opacity:1;font-weight:700}
+.paymethods{display:grid;gap:8px}
+.paymethod{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:10px;text-align:left;background:var(--bg);color:var(--ink);border:2px solid var(--line);padding:12px}
+.paymethod span{grid-row:1/3;font-size:1.6rem;align-self:center}.paymethod small{opacity:.7;font-weight:400}
+.paymethod[aria-pressed="true"]{border-color:var(--accent)}
+.agree{display:flex;gap:8px;align-items:center;font-size:.9rem;margin:4px 0}
+.agree input{width:20px;height:20px}
+.hold{position:relative;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none}
+.hold i{position:absolute;inset:0;width:0;background:rgba(255,255,255,.35);transition:width 0s}
+.hold.on i{width:100%;transition:width 2s linear}
+.hold span{position:relative}
+.receipt{border:1px dashed var(--line);border-radius:12px;padding:10px 12px}
 .gbux em{position:absolute;top:-8px;font-style:normal;font-size:.7rem;font-weight:700;background:#f59e0b;color:#111;border-radius:999px;padding:2px 8px;white-space:nowrap}
 .toast{background:var(--rare-bg);border:2px solid var(--accent);border-radius:14px;padding:12px 14px;font-weight:600}
 
@@ -776,6 +789,7 @@ let reqWatch = null;
 function watchRequests(id){
   if (!fdb || (reqWatch && reqWatch.id === id)) return;
   if (reqWatch) reqWatch.r.off();
+  S.myReqs = {}; // forget the last account's requests
   const r = ref("requests/" + id);
   reqWatch = {id, r};
   r.on("value", s => { S.myReqs = s.val() || {}; if (S.view === "shop" && !$("#overlay").innerHTML) render(); });
@@ -830,37 +844,119 @@ function openGiftCard(a, msg){
   $("#gcgo").onclick = go2;
   gc.onkeydown = e => { if (e.key === "Enter") go2(); };
 }
+// Checkout takes a few steps on purpose so nobody sends Gavin a request by accident:
+// review -> pick how to pay (and agree to really pay) -> prove it's you (one color question) -> hold to confirm -> receipt.
+// Only one request can be waiting at a time per account. Nothing is ever charged.
+const pendingCount = () => Object.values(S.myReqs || {}).filter(q => q.status === "pending").length;
 function openCheckout(a, b){
   const o = $("#overlay");
   const close = () => { o.innerHTML = ""; render(); };
-  const sheet = inner => { o.innerHTML = `<div class="paywrap" role="dialog" aria-label="Checkout"><div class="paysheet">${inner}</div></div>`;
-    o.querySelector(".paywrap").onclick = e => { if (e.target.classList.contains("paywrap")) close(); }; };
-  sheet(`
-    <div class="spread"><b>Gbux Store</b><button class="ghost small" id="pc">✕</button></div>
-    <div class="payitem"><span class="payicon">${b.icon}</span><div><b>${fmt(b.g)} Gbux</b><small>Glitch Game Night</small></div><b>${money(b.price)}</b></div>
-    <div class="payrow"><span>Account</span><span>${esc(a.name)}</span></div>
-    <div class="payrow"><span>Payment</span><span>Pay Gavin in person</span></div>
-    <div class="payrow"><span>Subtotal</span><span>${money(b.price)}</span></div>
-    <div class="payrow total"><span>Total</span><span>${money(b.price)}</span></div>
-    <button class="big" id="pay">Buy for ${money(b.price)}</button>
-    <p class="small-print">Your Gbux are added after Gavin approves the purchase.</p>`);
-  $("#pc").onclick = close;
-  $("#pay").onclick = () => {
-    const btn = $("#pay"); btn.disabled = true; btn.innerHTML = `<span class="spin"></span> Processing…`;
-    const done = ok => { sheet(ok ? `
-      <div class="center" style="display:flex;flex-direction:column;align-items:center;gap:8px">
-        <div style="font-size:3rem">✅</div><h3>Purchase requested!</h3>
-        <p class="small-print">Pay Gavin <b>${money(b.price)}</b>. Your <b>${fmt(b.g)} Gbux</b> show up as soon as he approves it.</p>
-        <button class="big" id="pd">Done</button></div>` : `
-      <div class="center" style="display:flex;flex-direction:column;align-items:center;gap:8px">
+  const sheet = (inner, step) => {
+    o.innerHTML = `<div class="paywrap" role="dialog" aria-label="Checkout"><div class="paysheet">
+      <div class="spread"><b>Gbux Store</b><button class="ghost small" id="pc" aria-label="Close">✕</button></div>
+      ${step ? `<div class="paysteps">${["Review","Payment","Verify","Confirm"].map((t,k) => `<span class="${k < step ? "on" : ""}">${t}</span>`).join("")}</div>` : ""}
+      ${inner}</div></div>`;
+    o.querySelector(".paywrap").onclick = e => { if (e.target.classList.contains("paywrap")) close(); };
+    $("#pc").onclick = close;
+  };
+  const summary = `<div class="payitem"><span class="payicon">${b.icon}</span><div><b>${fmt(b.g)} Gbux</b><small>Glitch Game Night</small></div><b>${money(b.price)}</b></div>`;
+
+  if (pendingCount() > 0){
+    sheet(`<div class="center" style="display:flex;flex-direction:column;align-items:center;gap:8px">
+      <div style="font-size:3rem">⏳</div><h3>You already have a purchase waiting</h3>
+      <p class="small-print">Gavin has to approve or deny it before you can start another one.</p>
+      <button class="big" id="pd">OK</button></div>`);
+    $("#pd").onclick = close; return;
+  }
+
+  // step 1: review
+  const review = () => {
+    sheet(`${summary}
+      <div class="payrow"><span>Account</span><span>${esc(a.name)}</span></div>
+      <div class="payrow"><span>Subtotal</span><span>${money(b.price)}</span></div>
+      <div class="payrow total"><span>Total</span><span>${money(b.price)}</span></div>
+      <button class="big" id="next">Continue to payment</button>`, 1);
+    $("#next").onclick = payment;
+  };
+  // step 2: payment method + agreement
+  const payment = () => {
+    sheet(`${summary}
+      <label>Payment method</label>
+      <div class="paymethods">
+        <button class="paymethod" id="m-gavin" aria-pressed="true"><span>💵</span><b>Pay Gavin in person</b><small>Cash or whatever you agree on</small></button>
+        <button class="paymethod" id="m-gift"><span>🎁</span><b>Gift card</b><small>Have a code? Redeem it instead</small></button>
+      </div>
+      <label class="agree"><input type="checkbox" id="agree"> I'll actually pay Gavin ${money(b.price)} for this</label>
+      <button class="big" id="next" disabled>Continue</button>
+      <button class="ghost small" id="back">Back</button>`, 2);
+    $("#agree").onchange = e => { $("#next").disabled = !e.target.checked; };
+    $("#m-gift").onclick = () => openGiftCard(a);
+    $("#next").onclick = () => verify();
+    $("#back").onclick = review;
+  };
+  // step 3: prove it's really this account's owner with one of their color answers
+  let tries = 0;
+  const verify = (msg) => {
+    const keys = keysFor(a).filter(k => a.colors && a.colors[k]);
+    if (!keys.length){ holdStep(); return; }
+    const k = pick(keys);
+    sheet(`<h3>Make sure it's you</h3>
+      <div class="qbig" style="font-size:1.3rem;text-align:center">${esc(qText(k))}</div>
+      <div class="swatches">${COLORS.map(([n,h]) => `<button class="sw" data-c="${n}" style="background:${h};color:${["yellow","white"].includes(n)?"#111":"#fff"}" aria-label="${n}">${n}</button>`).join("")}</div>
+      ${msg ? `<p class="minus" role="alert">${esc(msg)}</p>` : `<p class="small-print">Answer with the colors you picked for your account.</p>`}`, 3);
+    o.querySelectorAll("[data-c]").forEach(btn => btn.onclick = () => {
+      if (a.colors[k] === btn.dataset.c){ holdStep(); return; }
+      tries++;
+      if (tries >= 3){
+        sheet(`<div class="center" style="display:flex;flex-direction:column;align-items:center;gap:8px">
+          <div style="font-size:3rem">🔒</div><h3>Checkout canceled</h3>
+          <p class="small-print">Too many wrong answers.</p><button class="big" id="pd">OK</button></div>`);
+        $("#pd").onclick = close; return;
+      }
+      verify(`That didn't match. ${3 - tries} ${3 - tries === 1 ? "try" : "tries"} left.`);
+    });
+  };
+  // step 4: press and hold to confirm
+  const holdStep = () => {
+    sheet(`${summary}
+      <div class="payrow"><span>Payment</span><span>Pay Gavin in person</span></div>
+      <div class="payrow total"><span>Total</span><span>${money(b.price)}</span></div>
+      <button class="big hold" id="hold"><i></i><span>Hold to buy for ${money(b.price)}</span></button>
+      <p class="small-print">Keep holding until the bar fills up.</p>`, 4);
+    const h = $("#hold"); let t = null;
+    const start = e => { e.preventDefault(); if (t) return; h.classList.add("on"); t = setTimeout(send, 2000); };
+    const stop = () => { if (!t) return; clearTimeout(t); t = null; h.classList.remove("on"); };
+    h.addEventListener("pointerdown", start); h.addEventListener("pointerup", stop); h.addEventListener("pointerleave", stop);
+    h.addEventListener("keydown", e => { if ((e.key === " " || e.key === "Enter") && !e.repeat) start(e); });
+    h.addEventListener("keyup", e => { if (e.key === " " || e.key === "Enter") stop(); });
+  };
+  const send = () => {
+    const btn = $("#hold"); if (!btn) return;
+    btn.disabled = true; btn.innerHTML = `<span class="spin"></span> Contacting Gavin…`;
+    const fail = () => { sheet(`<div class="center" style="display:flex;flex-direction:column;align-items:center;gap:8px">
         <div style="font-size:3rem">⚠️</div><h3>Couldn't send that</h3>
         <p class="small-print">The store needs the game to be online. Try again in a bit.</p>
         <button class="big" id="pd">OK</button></div>`); $("#pd").onclick = close; };
-    if (!fdb){ setTimeout(() => done(false), 900); return; }
+    if (!fdb){ setTimeout(fail, 900); return; }
     const req = {acct:a.id, name:a.name, gbux:b.g, price:b.price, at:Date.now(), status:"pending"};
-    Promise.all([ref("requests/" + a.id).push(req), new Promise(r => setTimeout(r, 1300))])
-      .then(() => done(true)).catch(() => done(false));
+    const node = ref("requests/" + a.id).push();
+    Promise.all([node.set(req), new Promise(r => setTimeout(r, 1500))]).then(() => {
+      const order = node.key.slice(-6).toUpperCase().replace(/[^A-Z0-9]/g, "X");
+      sheet(`<div class="center" style="display:flex;flex-direction:column;align-items:center;gap:6px">
+          <div style="font-size:3rem">✅</div><h3>Purchase requested!</h3></div>
+        <div class="receipt">
+          <div class="payrow"><span>Order</span><span>#${order}</span></div>
+          <div class="payrow"><span>Date</span><span>${new Date().toLocaleDateString()}</span></div>
+          <div class="payrow"><span>Item</span><span>${fmt(b.g)} Gbux</span></div>
+          <div class="payrow total"><span>Total</span><span>${money(b.price)}</span></div>
+          <div class="payrow"><span>Status</span><span>⏳ Pending until Gavin approves</span></div>
+        </div>
+        <p class="small-print">Pay Gavin <b>${money(b.price)}</b>. Your Gbux show up as soon as he approves it.</p>
+        <button class="big" id="pd">Done</button>`);
+      $("#pd").onclick = close;
+    }).catch(fail);
   };
+  review();
 }
 
 /* ================= item shop: commons + rares always in stock, epic/legendary featured weekly ================= */

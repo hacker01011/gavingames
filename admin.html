@@ -276,10 +276,6 @@
       <label>Unused gift cards</label>
       <div id="gift-list"></div>
     </div>
-    <div class="card">
-      <h2>Recent history</h2>
-      <div id="gbux-history"></div>
-    </div>
   </div>
 </div>
 
@@ -785,12 +781,6 @@ function drawGbux(){
       <button class="btn" style="flex:0;padding:7px 12px;color:var(--success)" onclick="decideReq('${esc(r.acct)}','${esc(r.rid)}',true)">Approve</button>
       <button class="btn btn-danger" style="flex:0;padding:7px 12px" onclick="decideReq('${esc(r.acct)}','${esc(r.rid)}',false)">Deny</button>
     </div>`).join("") : `<div style="color:var(--muted);font-size:13px;">No pending requests. 🎉</div>`;
-  const gifts = Object.entries(ggnGifts).filter(([,g]) => g.used).map(([code,g]) => ({name:g.usedBy || "someone", gbux:g.amount, status:"gift card " + code, doneAt:g.usedAt, gift:true}));
-  const hist = all.filter(r => r.status !== "pending").concat(gifts).sort((a,b) => (b.doneAt||b.at) - (a.doneAt||a.at)).slice(0, 15);
-  document.getElementById('gbux-history').innerHTML = hist.length ? hist.map(r => `
-    <div class="manage-item" style="font-size:13px"><span style="flex:1">${esc(r.name)} · ${Number(r.gbux).toLocaleString()} G${r.gift ? "" : " · $" + Number(r.price).toFixed(2)}</span>
-      <span style="color:${r.status === "denied" ? "var(--danger)" : "var(--success)"}">${esc(r.status)}</span></div>`).join("")
-    : `<div style="color:var(--muted);font-size:13px;">Nothing yet.</div>`;
 }
 // flips the request out of "pending" exactly once, then adds the Gbux, so a double click can't pay out twice
 async function decideReq(acct, rid, approve){
