@@ -216,7 +216,7 @@ function addItems(list, extra){ list.forEach(([id,type,v,name]) => ITEMS[id] = {
 addItems([["f-frog","face","🐸","Frog"],["f-cat","face","🐱","Cat"],["f-dog","face","🐶","Dog"],["f-fox","face","🦊","Fox"],
   ["f-panda","face","🐼","Panda"],["f-monkey","face","🐵","Monkey"],["f-lizard","face","🦎","Lizard"],["f-octo","face","🐙","Octopus"],
   ["bg-sky","bg","#4fa3e0","Sky"],["bg-grass","bg","#4caf6a","Grass"],["bg-sun","bg","#f2b134","Sun"],["bg-rose","bg","#e0607e","Rose"],["bg-slate","bg","#5d6d7e","Slate"]], {free:true});
-// Item shop catalog. Gbucks are rare, so prices are high; a few items rotate in each day.
+// Item shop catalog. Gbucks are rare, so prices are high; commons and rares are always sold, epics and legendaries rotate weekly.
 const RARITY = {
   common:{label:"Common", price:150, color:"#6b8796"},
   rare:{label:"Rare", price:300, color:"#2f80ed"},
@@ -262,8 +262,13 @@ Object.entries(PACKS).forEach(([pid,p]) => addItems(p.items, {pack:pid}));
 const POWERS = {
   hint:{name:"Lizard Hint", icon:"🔍", price:75, text:"If you're the lizard, see a vague hint about the word."},
   radio:{name:"Radio", icon:"📻", price:75, text:"Tsunami Meter: shows which quarter of the meter the target is in."},
-  scare:{name:"Jumpscare", icon:"👻", price:50, text:"Troll the next person: their secret screen opens with a jumpscare."}
+  scare:{name:"Jumpscare", icon:"👻", price:50, text:"Troll the next person: their secret screen opens with a jumpscare."},
+  letter:{name:"First Letter", icon:"🔤", price:80, text:"If you're the lizard, see the first letter of the secret word."},
+  radar:{name:"Lizard Radar", icon:"📡", price:100, text:"If you're NOT the lizard, find out one player who is definitely safe."},
+  sonar:{name:"Sonar", icon:"🔊", price:150, text:"Tsunami Meter: narrows the target down to a 10-point window."}
 };
+// how far off a Sonar window can start from the target (window is 10 wide)
+function sonarWindow(target){ const s = Math.max(0, Math.min(90, target - Math.floor(Math.random()*11))); return s; }
 const xpNeed = lvl => 40 + lvl*20;
 const PACK_EVERY = 2;
 // Gbucks are rare: you only get them from leveling up, the daily bonus, winning a Tsunami game and pack doubles.
@@ -281,7 +286,7 @@ const today = () => { const d = new Date(); return d.getFullYear()+"-"+String(d.
 const ref = path => fdb.ref(ROOT + "/" + path);
 // Firebase drops empty arrays/objects, so fill them back in when an account loads
 function fixAccount(a){
-  a.items = a.items || []; a.power = Object.assign({hint:0, radio:0, scare:0}, a.power || {});
+  a.items = a.items || []; a.power = Object.assign({hint:0, radio:0, scare:0, letter:0, radar:0, sonar:0}, a.power || {});
   a.wins = Object.assign({lizard:0, tsunami:0}, a.wins || {}); a.colors = a.colors || {};
   a.avatar = Object.assign({face:"f-frog", bg:"bg-sky", hat:null, badge:null, outfit:null}, a.avatar || {});
   a.xp = a.xp || 0; a.level = a.level || 1; a.gbucks = a.gbucks || 0; a.packs = a.packs || 0;
@@ -403,7 +408,7 @@ function renderHome(app){
       ${accts.length ? `<div class="acct-grid">${accts.map(a => `<button data-acct="${a.id}">${avatarHtml(a.avatar,"md")}<span>${esc(a.name)}</span><small>Lv ${a.level}</small></button>`).join("")}</div>`
         : `<p class="small-print">No accounts yet. Make one to start earning XP and Gbucks. Guests can still play without one.</p>`}
     </div>
-    <button class="big" id="shop">🛒 Item Shop <span style="font-weight:400">· new items in ${untilMidnight()}</span></button>
+    <button class="big" id="shop">🛒 Item Shop <span style="font-weight:400">· new featured in ${untilReset()}</span></button>
     <div class="card">
       <div class="spread"><h3>🏆 Today's leaders</h3><span class="tag">resets at midnight</span></div>
       <div class="mini">${["lizard","tsunami"].map(gm => {
@@ -714,17 +719,21 @@ function renderProfile(app){
   const ok = $("#ok"); if (ok) ok.onclick = () => { p.opened = null; p.tab = "avatar"; render(); };
 }
 
-/* ================= item shop (rotates daily) ================= */
+/* ================= item shop: commons + rares always in stock, epic/legendary featured weekly ================= */
 function seeded(seed){
   let h = 2166136261; for (const c of seed) h = Math.imul(h ^ c.charCodeAt(0), 16777619);
   return () => { h += 0x6D2B79F5; let t = h; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296; };
 }
-function shopToday(){
-  const rnd = seeded("shop-" + today());
+// the shop resets every Monday at midnight
+function weekStart(){ const d = new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate() - (d.getDay()+6)%7); return d; }
+function shopFeatured(){
+  const w = weekStart(), rnd = seeded("shop-week-" + w.getFullYear()+"-"+(w.getMonth()+1)+"-"+w.getDate());
   const take = (list, n) => { const a = list.slice(), out = []; while (out.length < n && a.length) out.push(a.splice(Math.floor(rnd()*a.length), 1)[0][0]); return out; };
-  return [...take(SHOP.legendary,1), ...take(SHOP.epic,2), ...take(SHOP.rare,2), ...take(SHOP.common,3)];
+  return [...take(SHOP.legendary,2), ...take(SHOP.epic,4)];
 }
-function untilMidnight(){ const n = new Date(), m = new Date(n); m.setHours(24,0,0,0); const mins = Math.ceil((m-n)/60000); return `${Math.floor(mins/60)}h ${mins%60}m`; }
+const shopAlways = () => [...SHOP.rare, ...SHOP.common].map(x => x[0]);
+function untilReset(){ const m = weekStart(); m.setDate(m.getDate()+7); const mins = Math.ceil((m-new Date())/60000), d = Math.floor(mins/1440), h = Math.floor(mins%1440/60);
+  return d ? `${d}d ${h}h` : `${h}h ${mins%60}m`; }
 function renderShop(app){
   const sh = S.shop || (S.shop = {id:null, sel:null});
   const a = sh.id && DATA.accounts[sh.id];
@@ -765,8 +774,13 @@ function renderShop(app){
     <h1>🛒 Item Shop</h1>
     ${toast}${detail}
     <div class="card">
-      <div class="spread"><h3>Today's items</h3><span class="tag">New items in ${untilMidnight()}</span></div>
-      <div class="shopgrid">${shopToday().map(card).join("")}</div>
+      <div class="spread"><h3>⭐ Featured this week</h3><span class="tag">New featured in ${untilReset()}</span></div>
+      <p class="small-print">Epic and Legendary items rotate in every Monday.</p>
+      <div class="shopgrid">${shopFeatured().map(card).join("")}</div>
+    </div>
+    <div class="card">
+      <h3>Always in stock</h3>
+      <div class="shopgrid">${shopAlways().map(card).join("")}</div>
     </div>
     <div class="card">
       <h3>Power-ups · always in stock</h3>
@@ -876,6 +890,14 @@ function powerBtn(pl, kind, id, label){
   const a = DATA.accounts[pl.acct]; if (!a || !(a.power[kind] > 0)) return "";
   return `<button class="power" id="${id}">${POWERS[kind].icon} ${label} <span class="tag">have ${a.power[kind]}</span></button>`;
 }
+// what First Letter / Lizard Radar revealed, shown inside the role card
+// word: the secret word if First Letter was used; radar: undefined = not used, null = nobody else is safe, else a name
+function extraPowerInfo(isLiz, word, radar){
+  let out = "";
+  if (isLiz && word) out += `<p class="hintbox"><b>🔤 First Letter:</b><br>The word starts with "${esc(word.replace(/^[^A-Za-z0-9]+/, "")[0].toUpperCase())}"</p>`;
+  if (!isLiz && radar !== undefined) out += `<p class="hintbox"><b>📡 Lizard Radar:</b><br>${radar === null ? "Nobody else is safe. Everyone else is a lizard 😬" : `<b>${esc(radar)}</b> is definitely NOT the lizard.`}</p>`;
+  return out;
+}
 function spendPower(pl, kind){ const a = DATA.accounts[pl.acct]; if (!a || !(a.power[kind] > 0)) return false; a.power[kind]--; saveAccount(a); return true; }
 function jumpscare(by, then){
   const o = $("#overlay");
@@ -969,7 +991,7 @@ function lizNewRound(){
   const liz = shuffle([...Array(n).keys()]).slice(0, Math.min(+count, n));
   const start = Math.floor(Math.random()*n);
   S.liz.r = { cat, word:pick(CATS[cat]), liz, turn:0, phase:"blank", order:[...Array(n).keys()].map(k => (start+k)%n),
-    memeA:pick(LIZ_MEMES), memeB:pick(LIZ_END), outcome:null, hint:{}, scareBy:null, notes:[] };
+    memeA:pick(LIZ_MEMES), memeB:pick(LIZ_END), outcome:null, hint:{}, letter:{}, radar:{}, scareBy:null, notes:[] };
   go("liz");
 }
 function renderLizard(app){
@@ -998,12 +1020,19 @@ function renderLizard(app){
         ${isLiz ? `<div class="word">🦎 THE LIZARD</div><p>You don't know the word. Fake it. Blend in.</p>
             ${showHint ? `<p class="hintbox"><b>${r.order[0]===i ? "You're giving the first clue, so here's a hint:" : "🔍 Lizard Hint:"}</b><br>"${esc(hintFor(r.cat, r.word))}"</p>` : ""}`
           : `<p>In on it. The secret word is</p><div class="word">${esc(r.word)}</div>`}
+        ${extraPowerInfo(isLiz, r.letter[i] ? r.word : null, r.radar[i])}
       </div>
       ${isLiz && !showHint ? powerBtn(P[i], "hint", "usehint", "Use Lizard Hint") : ""}
+      ${isLiz && !r.letter[i] ? powerBtn(P[i], "letter", "useletter", "Use First Letter") : ""}
+      ${!isLiz && r.radar[i] === undefined ? powerBtn(P[i], "radar", "useradar", "Use Lizard Radar") : ""}
       ${i < n-1 && !r.scareSet ? powerBtn(P[i], "scare", "usescare", "Jumpscare " + esc(nm(i+1))) : ""}
       ${isLiz ? memeHtml(r.memeA, "🦎") : ""}
       <button class="big" id="hide">I'm done, hide it</button>`;
     const uh = $("#usehint"); if (uh) uh.onclick = () => { if (spendPower(P[i], "hint")){ r.hint[i] = true; render(); } };
+    const ul = $("#useletter"); if (ul) ul.onclick = () => { if (spendPower(P[i], "letter")){ r.letter[i] = true; render(); } };
+    const ur = $("#useradar"); if (ur) ur.onclick = () => { if (spendPower(P[i], "radar")){
+      const safe = [...Array(n).keys()].filter(k => k !== i && !r.liz.includes(k));
+      r.radar[i] = safe.length ? nm(pick(safe)) : null; render(); } };
     const us = $("#usescare"); if (us) us.onclick = () => { if (spendPower(P[i], "scare")){ r.scareSet = nm(i); us.outerHTML = `<p class="small-print">👻 Set! ${esc(nm(i+1))} is getting jumpscared.</p>`; } };
     $("#hide").onclick = () => { r.phase = "after"; r.hiddenAt = Date.now(); render(); };
     return;
@@ -1119,13 +1148,14 @@ function tsuNewRound(){
   const scale = mode && mode.id === "whirlpool" ? [pick(tpool())[0], pick(tpool())[1]] : pick(tpool());
   G.giver = G.giver % n;
   const guessers = [...Array(n).keys()].filter(i => i !== G.giver);
-  G.r = { scale, target:rint(3,97), mode, guessers, gi:0, pins:{}, radio:{}, phase:"pass", meme:pick(TSU_MEMES), scored:false, scareSet:null, scareBy:null, notes:[] };
+  G.r = { scale, target:rint(3,97), mode, guessers, gi:0, pins:{}, radio:{}, sonar:{}, phase:"pass", meme:pick(TSU_MEMES), scored:false, scareSet:null, scareBy:null, notes:[] };
   G.round++;
   go("tsu");
 }
-function meterHtml({target=null, k=1, pins=[], zone=null}){
+function meterHtml({target=null, k=1, pins=[], zone=null, sonar=null}){
   let inner = `<div class="water" id="water"></div>`;
   if (zone !== null) inner += `<div class="zone" style="left:${zone*25}%;width:25%"></div>`;
+  if (sonar !== null) inner += `<div class="zone" style="left:${sonar}%;width:10%"></div>`;
   if (target !== null){
     inner += `<div class="band b2" style="left:${target}%;width:${34*k}%"></div><div class="band b3" style="left:${target}%;width:${20*k}%"></div>
       <div class="band b4" style="left:${target}%;width:${8*k}%"><span>${k<1?"":"4"}</span></div>`;
@@ -1198,19 +1228,22 @@ function renderTsunami(app){
       <div class="card">
         <div class="eyebrow">${solo ? "Guess" : esc(wn) + "'s secret guess"}${speed ? ` · <span id="spd">10</span>s left` : ""}</div>
         <h2>${esc(wn)}, ${m && m.id==="reverse" ? "where is the REAL target?" : "where does the clue land?"}</h2>
-        ${endsHtml(r.scale)}${meterHtml({pins:[{v:cur,label:wn}], zone})}
+        ${endsHtml(r.scale)}${meterHtml({pins:[{v:cur,label:wn}], zone, sonar:r.sonar[who] ?? null})}
         ${zone !== null ? `<p class="small-print">📻 Radio says the target is somewhere between <b>${zone*25}</b> and <b>${zone*25+25}</b>.</p>` : ""}
+        ${r.sonar[who] !== undefined ? `<p class="small-print">🔊 Sonar says the target is between <b>${r.sonar[who]}</b> and <b>${r.sonar[who]+10}</b>.</p>` : ""}
         <label for="pin" class="small-print">Drag to place your pin</label>
         <input type="range" id="pin" min="0" max="100" value="${cur}">
         <div class="readout" id="ro">${cur}</div>
       </div>
       ${zone === null ? powerBtn(P[who], "radio", "useradio", "Use Radio") : ""}
+      ${r.sonar[who] === undefined ? powerBtn(P[who], "sonar", "usesonar", "Use Sonar") : ""}
       ${nx !== undefined && !r.scareSet ? powerBtn(P[who], "scare", "usescare", "Jumpscare " + esc(nm(nx))) : ""}
       <button class="big" id="lock">Lock in${r.gi < r.guessers.length-1 ? ", next guesser" : ", reveal"}</button>
       ${solo ? "" : `<p class="small-print">Other guessers: don't look at the pin. Pass the device after locking in.</p>`}`;
     const pin = $("#pin"), pinEl = app.querySelector(".pin");
     pin.oninput = () => { r.cur = +pin.value; $("#ro").textContent = pin.value; pinEl.style.left = pin.value + "%"; pinEl.classList.toggle("right", pin.value>70); };
     const ur = $("#useradio"); if (ur) ur.onclick = () => { if (spendPower(P[who], "radio")){ r.radio[who] = true; r.cur = +pin.value; render(); } };
+    const un = $("#usesonar"); if (un) un.onclick = () => { if (spendPower(P[who], "sonar")){ r.sonar[who] = sonarWindow(r.target); r.cur = +pin.value; render(); } };
     const us = $("#usescare"); if (us) us.onclick = () => { if (spendPower(P[who], "scare")){ r.scareSet = wn; us.outerHTML = `<p class="small-print">👻 Set! ${esc(nm(nx))} is getting jumpscared.</p>`; } };
     const lock = () => {
       r.pins[who] = +pin.value; r.cur = null;
@@ -1579,7 +1612,7 @@ function renderLizOnline(app){
     app.innerHTML = bar + `<div class="card center"><h3>You joined mid-round</h3><p class="small-print">You'll get a role next round.</p></div>${roomScores()}${roomFoot()}`;
     bindFoot(); return;
   }
-  if (o.showRound !== r.id){ o.showRound = r.id; o.show = false; o.hint = false; }
+  if (o.showRound !== r.id){ o.showRound = r.id; o.show = false; o.hint = false; o.letter = false; o.radar = undefined; }
   if (r.phase === "roles"){
     const ready = ROOM.ready || {}, isLiz = r.liz.includes(me), showHint = isLiz && (r.order[0] === me || o.hint);
     const nReady = r.players.filter(d => ready[d]).length;
@@ -1589,8 +1622,11 @@ function renderLizOnline(app){
         ${isLiz ? `<div class="word">🦎 THE LIZARD</div><p>You don't know the word. Fake it. Blend in.</p>
             ${showHint ? `<p class="hintbox"><b>${r.order[0]===me ? "You're giving the first clue, so here's a hint:" : "🔍 Lizard Hint:"}</b><br>"${esc(hintFor(r.cat, r.word))}"</p>` : ""}`
           : `<p>In on it. The secret word is</p><div class="word">${esc(r.word)}</div>`}
+        ${extraPowerInfo(isLiz, o.letter ? r.word : null, o.radar)}
       </div>
       ${isLiz && !showHint ? powerBtn({acct:o.acct}, "hint", "usehint", "Use Lizard Hint") : ""}
+      ${isLiz && !o.letter ? powerBtn({acct:o.acct}, "letter", "useletter", "Use First Letter") : ""}
+      ${!isLiz && o.radar === undefined ? powerBtn({acct:o.acct}, "radar", "useradar", "Use Lizard Radar") : ""}
       <button class="ghost" id="hide">Hide my role</button>`
       : `<div class="card center" style="min-height:200px;justify-content:center"><h3>Your role is hidden</h3><p class="small-print">Make sure nobody can see your screen.</p><button class="big" id="show">Show my role</button></div>`;
     app.innerHTML = bar + role + scarePicker(r) + `
@@ -1601,6 +1637,10 @@ function renderLizOnline(app){
     const sh = $("#show"); if (sh) sh.onclick = () => { o.show = true; render(); };
     const hd = $("#hide"); if (hd) hd.onclick = () => { o.show = false; render(); };
     const uh = $("#usehint"); if (uh) uh.onclick = () => { if (spendPower({acct:o.acct}, "hint")){ o.hint = true; render(); } };
+    const ul = $("#useletter"); if (ul) ul.onclick = () => { if (spendPower({acct:o.acct}, "letter")){ o.letter = true; render(); } };
+    const ua = $("#useradar"); if (ua) ua.onclick = () => { if (spendPower({acct:o.acct}, "radar")){
+      const safe = r.players.filter(d => d !== me && !r.liz.includes(d));
+      o.radar = safe.length ? rName(pick(safe)) : null; render(); } };
     const rd = $("#ready"); if (rd) rd.onclick = () => { o.show = false; roomRef("ready/" + me).set(true); };
     const g = $("#go"); if (g) g.onclick = () => roomRef("round/phase").set("clues");
     bindScare(); bindFoot(); return;
@@ -1645,7 +1685,7 @@ function renderTsuOnline(app){
     app.innerHTML = `<div class="card center"><h3>You joined mid-round</h3><p class="small-print">You'll be in the next round.</p></div>${roomScores()}${roomFoot()}`;
     bindFoot(); return;
   }
-  if (o.curRound !== r.id){ o.curRound = r.id; o.cur = 50; o.radio = false; o.deadline = null; }
+  if (o.curRound !== r.id){ o.curRound = r.id; o.cur = 50; o.radio = false; o.sonar = null; o.deadline = null; }
   const head = `<div class="spread"><span class="eyebrow">Round ${r.n} · Room ${esc(o.code)}</span>${avatarHtml(rAv(r.giver),"sm")}</div>${modeHtml(m)}`;
   if (r.phase === "clue"){
     if (r.giver === me){
@@ -1683,13 +1723,15 @@ function renderTsuOnline(app){
       <div class="card">
         <div class="eyebrow">Your guess${speed ? ` · <span id="spd">${Math.max(0, Math.ceil((o.deadline - Date.now())/1000))}</span>s left` : ""}</div>
         <h2>${m && m.id==="reverse" ? "Where is the REAL target?" : "Where does " + esc(giverName) + "'s clue land?"}</h2>
-        ${endsHtml(r.scale)}${meterHtml({pins:[{v:o.cur, label:rName(me)}], zone})}
+        ${endsHtml(r.scale)}${meterHtml({pins:[{v:o.cur, label:rName(me)}], zone, sonar:o.sonar})}
         ${zone !== null ? `<p class="small-print">📻 Radio says the target is somewhere between <b>${zone*25}</b> and <b>${zone*25+25}</b>.</p>` : ""}
+        ${o.sonar !== null ? `<p class="small-print">🔊 Sonar says the target is between <b>${o.sonar}</b> and <b>${o.sonar+10}</b>.</p>` : ""}
         <label for="pin" class="small-print">Drag to place your pin</label>
         <input type="range" id="pin" min="0" max="100" value="${o.cur}">
         <div class="readout" id="ro">${o.cur}</div>
       </div>
       ${zone === null ? powerBtn({acct:o.acct}, "radio", "useradio", "Use Radio") : ""}
+      ${o.sonar === null ? powerBtn({acct:o.acct}, "sonar", "usesonar", "Use Sonar") : ""}
       <button class="big" id="lock">Lock in</button>
       <div class="card">${status}</div>${roomFoot()}`;
     const pin = $("#pin"), pinEl = app.querySelector(".pin");
@@ -1697,6 +1739,7 @@ function renderTsuOnline(app){
     const lock = () => { stopTimer(); roomRef("pins/" + me).set(o.cur); };
     $("#lock").onclick = lock;
     const ur = $("#useradio"); if (ur) ur.onclick = () => { if (spendPower({acct:o.acct}, "radio")){ o.radio = true; render(); } };
+    const un = $("#usesonar"); if (un) un.onclick = () => { if (spendPower({acct:o.acct}, "sonar")){ o.sonar = sonarWindow(r.target); render(); } };
     if (speed) timer = setInterval(() => { const left = Math.max(0, Math.ceil((o.deadline - Date.now())/1000)); const el = $("#spd"); if (el) el.textContent = left; if (left <= 0) lock(); }, 250);
     bindFoot(); return;
   }
