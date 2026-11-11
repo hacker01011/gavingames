@@ -146,6 +146,12 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid 
 .pack b{font:400 1.2rem var(--display)}
 .pack span{font-weight:400;font-size:.8rem;opacity:.9}
 .pk-pirate{background:linear-gradient(140deg,#c0392b,#1f4e79)}
+.pk-stage{background:linear-gradient(140deg,#db2777,#7c3aed)}
+.pk-elf{background:linear-gradient(140deg,#15803d,#a16207)}
+.pk-runway{background:linear-gradient(140deg,#be185d,#f59e0b)}
+.pk-snow{background:linear-gradient(140deg,#1d4ed8,#38bdf8)}
+.pk-arcade{background:linear-gradient(140deg,#0e7490,#7e22ce)}
+.pk-cafe{background:linear-gradient(140deg,#78350f,#b45309)}
 .pk-idol{background:linear-gradient(140deg,#d63384,#3b1d6e)}
 .pk-cursed{background:linear-gradient(140deg,#3d1a6e,#0d0d14)}
 .pk-glitch{background:linear-gradient(140deg,#118a4e,#0b2a3a)}
@@ -364,6 +370,78 @@ const FROST_SKINS = [
   ["se-skater","skin",SKIN_SVG["se-skater"],"Ice Skater","rare"],
   ["se-pengusuit","skin",SKIN_SVG["se-pengusuit"],"Penguin Suit","rare"]
 ];
+/* ================= SEASON 2 SHOP + PACKS (only live while Season 2 is the current season) ================= */
+Object.assign(SKIN_SVG, {
+"s2-frostknight":`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M16 100 Q50 72 84 100Z" fill="#5b8fb9"/><circle cx="50" cy="46" r="18" fill="#cfe8f7"/><path d="M50 28 a18 18 0 0 0 0 36Z" fill="#e6f4fc"/><rect x="48" y="30" width="4" height="34" fill="#8fb8d6"/><rect x="36" y="43" width="28" height="5" rx="2" fill="#1e3a5f"/><circle cx="44" cy="45.5" r="1.6" fill="#7dd3fc"/><circle cx="56" cy="45.5" r="1.6" fill="#7dd3fc"/><path d="M50 10 l5 9 l-5 7 l-5 -7Z" fill="#bae6fd"/><path d="M41 17 l3 7 M59 17 l-3 7" stroke="#bae6fd" stroke-width="2.5" stroke-linecap="round"/></svg>`,
+"s2-snowfox":`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M16 100 Q50 72 84 100Z" fill="#bfdbfe"/><path d="M30 38 L34 15 L47 32Z M70 38 L66 15 L53 32Z" fill="#f8fafc"/><path d="M33 33 L35 21 L42 31Z M67 33 L65 21 L58 31Z" fill="#93c5fd"/><path d="M27 44 Q50 22 73 44 Q71 64 50 71 Q29 64 27 44Z" fill="#f8fafc"/><path d="M38 54 Q50 70 62 54 Q56 64 50 66 Q44 64 38 54Z" fill="#e2e8f0"/><circle cx="42" cy="47" r="2.6" fill="#1e293b"/><circle cx="58" cy="47" r="2.6" fill="#1e293b"/><ellipse cx="50" cy="57" rx="3.5" ry="2.5" fill="#1e293b"/><path d="M50 29 l2.5 4.5 h-5Z" fill="#7dd3fc"/></svg>`,
+"s2-hockey":`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M14 100 Q50 70 86 100Z" fill="#dc2626"/><path d="M34 100 Q50 86 66 100Z" fill="#fff"/><rect x="45" y="56" width="10" height="12" fill="#eab688"/><circle cx="50" cy="47" r="17" fill="#f3c79b"/><path d="M31 46 Q31 26 50 26 Q69 26 69 46 L64 44 Q50 36 36 44Z" fill="#1e3a8a"/><circle cx="44" cy="48" r="2.3" fill="#26323a"/><circle cx="56" cy="48" r="2.3" fill="#26323a"/><path d="M38 46 v14 M44 46 v16 M50 46 v17 M56 46 v16 M62 46 v14 M37 52 h26 M38 58 h24" stroke="#cbd5e1" stroke-width="1.6" fill="none"/></svg>`,
+"s2-cocoa":`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M16 100 Q50 74 84 100Z" fill="#a16207"/><rect x="45" y="56" width="10" height="12" fill="#eab688"/><circle cx="50" cy="47" r="17" fill="#f3c79b"/><path d="M32 42 Q32 24 50 24 Q68 24 68 42Z" fill="#16a34a"/><rect x="31" y="38" width="38" height="7" rx="3" fill="#f8fafc"/><circle cx="50" cy="21" r="5" fill="#f8fafc"/><circle cx="44" cy="50" r="2.3" fill="#26323a"/><circle cx="56" cy="50" r="2.3" fill="#26323a"/><circle cx="40" cy="55" r="3" fill="#f6a6b6" opacity=".7"/><circle cx="60" cy="55" r="3" fill="#f6a6b6" opacity=".7"/><path d="M45 57 q5 3 10 0" stroke="#a65a38" stroke-width="2" fill="none" stroke-linecap="round"/><rect x="58" y="76" width="14" height="14" rx="3" fill="#fff"/><path d="M72 80 q5 3 0 7" stroke="#fff" stroke-width="2.5" fill="none"/><path d="M61 73 q2 -4 0 -7 M67 73 q2 -4 0 -7" stroke="#cbd5e1" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>`
+});
+// Season 2 shop catalog: brand new items, no "always in stock" — everything rotates
+const S2_SHOP = [
+  ["s2-f-hamster","face","🐹","Hamster","common"],["s2-f-chick","face","🐥","Chick","common"],["s2-b-dice","badge","🎲","Lucky Dice","common"],
+  ["s2-b-balloon","badge","🎈","Balloon","common"],["s2-b-music","badge","🎵","Music Note","common"],["s2-o-top","outfit","👚","Cozy Top","common"],
+  ["s2-o-jeans","outfit","👖","Jeans","common"],["s2-bg-peach","bg","#fdba74","Peach","common"],["s2-bg-lilac","bg","#c4b5fd","Lilac","common"],
+  ["s2-f-hedgehog","face","🦔","Hedgehog","rare"],["s2-f-raccoon","face","🦝","Raccoon","rare"],["s2-b-paint","badge","🎨","Paint Palette","rare"],
+  ["s2-b-camera","badge","📸","Snapshot","rare"],["s2-b-kite","badge","🪁","Kite","rare"],["s2-o-shorts","outfit","🩳","Board Shorts","rare"],
+  ["s2-nt-mint","nametag","linear-gradient(90deg,#6ee7b7,#14b8a6)","Minty","rare"],["s2-nt-cherry","nametag","linear-gradient(90deg,#fb7185,#e11d48)","Cherry","rare"],
+  ["s2-bg-cotton","bg","linear-gradient(135deg,#7dd3fc,#c4b5fd)","Cotton Sky","rare"],
+  ["s2-f-flamingo","face","🦩","Flamingo","epic"],["s2-f-swan","face","🦢","Swan","epic"],["s2-b-sakura","badge","🌸","Sakura","epic"],
+  ["s2-sk-hockey","skin",SKIN_SVG["s2-hockey"],"Hockey Star","epic"],["s2-sk-cocoa","skin",SKIN_SVG["s2-cocoa"],"Cocoa Kid","epic"],
+  ["s2-nt-magma","nametag","linear-gradient(90deg,#f97316,#dc2626,#fbbf24,#dc2626,#f97316)","Magma","epic",true],
+  ["s2-bg-sunset","bg","linear-gradient(135deg,#f97316,#db2777,#7c3aed)","Sunset Drive","epic"],
+  ["s2-sk-frostknight","skin",SKIN_SVG["s2-frostknight"],"Frost Knight","legendary"],["s2-sk-snowfox","skin",SKIN_SVG["s2-snowfox"],"Snow Fox","legendary"],
+  ["s2-nt-holo","nametag","linear-gradient(90deg,#f0abfc,#93c5fd,#86efac,#fde047,#f0abfc)","Hologram","legendary",true],
+  ["s2-bg-starlight","bg","linear-gradient(135deg,#0f172a,#7c3aed,#ec4899)","Starlight","legendary"]
+];
+S2_SHOP.forEach(([id,type,v,name,rarity,shine]) => addItems([[id,type,v,name]], {rarity, price:RARITY[rarity].price, shine:!!shine, s2shop:true}));
+// each season can have its own rotating shop: {rarity: [item ids]}
+const SEASON_SHOPS = {2: ["common","rare","epic","legendary"].reduce((o,r) => (o[r] = S2_SHOP.filter(x => x[4] === r).map(x => x[0]), o), {})};
+const SHOP_ROT_HOURS = 4, SHOP_SLOTS = 6;
+const ROT_ODDS = [["legendary",5],["epic",15],["rare",30],["common",50]]; // % chance per slot
+function curShop(){ return SEASON_SHOPS[seasonMeta().id] || null; }
+// the same 6 items for everyone, re-rolled every few hours; each slot rolls its rarity, so legendaries are rare
+function rotatingShop(){
+  const cfg = curShop(); if (!cfg) return [];
+  const idx = Math.floor(Date.now() / (SHOP_ROT_HOURS * 36e5));
+  const rnd = seeded("ggn-rot-" + seasonMeta().id + "-" + idx), out = [];
+  for (let s = 0; s < SHOP_SLOTS; s++){
+    let roll = rnd() * 100, rar = "common";
+    for (const [r,w] of ROT_ODDS){ if (roll < w){ rar = r; break; } roll -= w; }
+    let pool = cfg[rar].filter(id => !out.includes(id));
+    if (!pool.length) pool = Object.values(cfg).flat().filter(id => !out.includes(id));
+    out.push(pool[Math.floor(rnd() * pool.length)]);
+  }
+  return out;
+}
+function untilRotation(){ const span = SHOP_ROT_HOURS * 36e5, ms = span - Date.now() % span, h = Math.floor(ms / 36e5), m = Math.ceil(ms % 36e5 / 6e4);
+  return h ? `${h}h ${m}m` : `${m}m`; }
+const shopRefreshText = () => curShop() ? `new items in ${untilRotation()}` : `new featured in ${untilReset()}`;
+
+// Season 2 packs replace the old packs while Season 2 is live (items people already own stay theirs)
+const SEASON_PACKS = {2: {
+  stage:{name:"Stage Idols", css:"pk-stage", blurb:"Mics, spotlights and a sold-out show", items:[
+    ["s2p-mic","badge","🎙️","Stage mic"],["s2p-lights","badge","💡","Spotlight"],["s2p-star","face","🤩","Star struck"],["s2p-heart","badge","🫶","Heart hands"],
+    ["s2p-wand","badge","🪄","Light wand"],["s2p-disc","badge","💿","Debut album"],["s2p-dancer","face","💃","Dancer"],["s2p-concert","bg","linear-gradient(135deg,#ec4899,#8b5cf6)","Concert Lights"]]},
+  elf:{name:"Elf Mage Journey", css:"pk-elf", blurb:"Old spells, wildflowers and a very long walk", items:[
+    ["s2p-elf","face","🧝","Elf mage"],["s2p-book","badge","📖","Spellbook"],["s2p-flower","badge","🌼","Wildflower"],["s2p-ring","badge","💍","Old ring"],
+    ["s2p-scroll","badge","📜","Ancient scroll"],["s2p-friend","face","🧔","Old friend"],["s2p-moon","badge","🌙","Night sky"],["s2p-meadow","bg","linear-gradient(135deg,#86efac,#fde68a)","Flower Field"]]},
+  runway:{name:"Runway Dress-Up", css:"pk-runway", blurb:"Get the theme, strike a pose, win the vote", items:[
+    ["s2p-heels","badge","👠","Heels"],["s2p-bag","badge","👜","Handbag"],["s2p-lips","badge","💄","Lipstick"],["s2p-gown","outfit","🥻","Gown"],
+    ["s2p-medal","badge","🏅","Top vote"],["s2p-model","face","💁","Model pose"],["s2p-mirror","badge","🪞","Mirror"],["s2p-catwalk","bg","linear-gradient(135deg,#f9a8d4,#fde68a)","Catwalk"]]},
+  snowday:{name:"Snow Day", css:"pk-snow", blurb:"School's closed. Sleds out.", items:[
+    ["s2p-snowball","badge","⚪","Snowball"],["s2p-ski","badge","⛷️","Skier"],["s2p-board","badge","🏂","Snowboard"],["s2p-bunny","face","🐇","Snow bunny"],
+    ["s2p-cabin","badge","🛖","Cabin"],["s2p-pine","badge","🌲","Pine"],["s2p-boots","badge","🥾","Snow boots"],["s2p-fresh","bg","linear-gradient(135deg,#bfdbfe,#f8fafc)","Fresh Snow"]]},
+  arcade:{name:"Arcade Night", css:"pk-arcade", blurb:"Tokens, high scores and one more try", items:[
+    ["s2p-token","badge","🪙","Token"],["s2p-ticket","badge","🎟️","Prize ticket"],["s2p-claw","badge","🧸","Claw prize"],["s2p-cherry","badge","🍒","Cherry bonus"],
+    ["s2p-gamer","face","😎","Pro gamer"],["s2p-jackpot","badge","🎰","Jackpot"],["s2p-bowl","badge","🎳","Strike"],["s2p-neon","bg","linear-gradient(135deg,#22d3ee,#a855f7)","Neon Arcade"]]},
+  cafe:{name:"Cozy Café", css:"pk-cafe", blurb:"Latte art and a rainy window seat", items:[
+    ["s2p-boba","badge","🧋","Boba"],["s2p-croissant","badge","🥐","Croissant"],["s2p-cake","badge","🍰","Cake slice"],["s2p-pancake","badge","🥞","Pancakes"],
+    ["s2p-cat","face","😺","Café cat"],["s2p-plant","badge","🪴","Houseplant"],["s2p-rain","badge","🌧️","Rainy day"],["s2p-coffee","bg","linear-gradient(135deg,#d6a77a,#7c4a2d)","Coffee House"]]}
+}};
+Object.values(SEASON_PACKS).forEach(set => Object.entries(set).forEach(([pid,p]) => addItems(p.items, {pack:pid})));
+function curPacks(){ return SEASON_PACKS[seasonMeta().id] || PACKS; }
+function allPacks(){ return Object.assign({}, PACKS, ...Object.values(SEASON_PACKS)); }
 
 // free outfits and items for reaching a level
 const LEVEL_REWARDS = {2:["o-tee","outfit","👕","T-shirt"],3:["b-clover","badge","🍀","Lucky clover"],5:["o-coat","outfit","🧥","Coat"],
@@ -573,7 +651,7 @@ function reward(acctId, {xp=0, gb=0}){
 /* ================= achievements ================= */
 const stat = (a, k, n=1) => { a.stats = a.stats || {}; a.stats[k] = (a.stats[k]||0) + n; };
 const st = (a, k) => (a.stats && a.stats[k]) || 0;
-const packDone = a => Object.values(PACKS).some(p => p.items.every(([id]) => a.items.includes(id)));
+const packDone = a => Object.values(allPacks()).some(p => p.items.every(([id]) => a.items.includes(id)));
 const ACHIEVEMENTS = [
   ["first","🎮","First game","Play your first round", a => st(a,"games") >= 1, 25],
   ["games25","🕹️","Regular","Play 25 rounds", a => st(a,"games") >= 25, 50],
@@ -650,7 +728,7 @@ function renderHome(app){
         : `<p class="small-print">No accounts yet. Make one to start earning XP and Gbucks. Guests can still play without one.</p>`}
     </div>
     <button class="big" id="pass" style="background:linear-gradient(135deg,#7c3aed,#db2777,#f59e0b);color:#fff">🎟️ Battle Pass <span style="font-weight:400">· ${esc(seasonMeta().name)}${passEndsShort(seasonMeta()) ? " · " + esc(passEndsShort(seasonMeta())) : ""}</span></button>
-    <button class="big" id="shop">🛒 Item Shop <span style="font-weight:400">· new featured in ${untilReset()}</span></button>
+    <button class="big" id="shop">🛒 Item Shop <span style="font-weight:400">· ${shopRefreshText()}</span></button>
     <div class="card">
       <div class="spread"><h3>🏆 Today's leaders</h3><span class="tag">resets at midnight</span></div>
       <div class="mini">${["lizard","tsunami","dash"].map(gm => {
@@ -931,15 +1009,15 @@ function renderProfile(app){
   if (p.tab === "trade") body = tradeTabHtml(a, p);
   if (p.tab === "packs"){
     const opened = p.opened;
-    body = opened ? `<div class="card center"><div class="eyebrow">${esc(PACKS[opened.pack].name)} opened!</div>
+    body = opened ? `<div class="card center"><div class="eyebrow">${esc(allPacks()[opened.pack].name)} opened!</div>
         ${opened.got.length ? `<div class="items" style="width:100%">${opened.got.map(id => { const i = ITEMS[id]; return `<div class="item">${swatch(i)}${esc(i.name)}</div>`; }).join("")}</div>` : ""}
         ${opened.bonus ? `<p class="gb">+${opened.bonus} Gbucks for doubles</p>` : ""}
         <button class="big" id="ok">Nice!</button></div>`
       : `<div class="card">
         <h3>${a.packs ? `You have ${a.packs} free pack${a.packs>1?"s":""} 🎁` : "No free packs right now"}</h3>
-        <p class="small-print">You get a free pack every ${PACK_EVERY} levels. Each pack has 3 random items. Doubles turn into ${GB.double} Gbucks each.</p>
+        <p class="small-print">Free packs come from the Battle Pass every 5 tiers. Each pack has 3 random items. Doubles turn into ${GB.double} Gbucks each.</p>
         ${a.gbucks >= PACK_PRICE ? `<button class="small" id="buypack">Buy a pack for ${PACK_PRICE} Gbucks</button>` : `<p class="small-print">Or buy one for ${PACK_PRICE} Gbucks (you have ${a.gbucks}).</p>`}
-        <div class="packs4">${Object.entries(PACKS).map(([pid,pk]) => {
+        <div class="packs4">${Object.entries(curPacks()).map(([pid,pk]) => {
           const left = pk.items.filter(([id]) => !a.items.includes(id)).length;
           return `<button class="pack ${pk.css}" data-pack="${pid}" ${a.packs?"":"disabled"}><b>${esc(pk.name)}</b><span>${esc(pk.blurb)}</span><span>${left} of ${pk.items.length} left to find</span></button>`; }).join("")}</div>
       </div>`;
@@ -973,7 +1051,7 @@ function renderProfile(app){
   app.querySelectorAll("[data-eq]").forEach(b => b.onclick = () => { const [t,id] = b.dataset.eq.split(":"); a.avatar[t] = id || null; saveAccount(a); render(); });
   app.querySelectorAll("[data-pack]").forEach(b => b.onclick = () => {
     if (!a.packs) return;
-    const pid = b.dataset.pack, all = PACKS[pid].items.map(x => x[0]);
+    const pid = b.dataset.pack; if (!curPacks()[pid]) return; const all = curPacks()[pid].items.map(x => x[0]);
     const rolls = [pick(all), pick(all), pick(all)];
     const got = [], seen = new Set(); let bonus = 0;
     rolls.forEach(id => { if (a.items.includes(id) || seen.has(id)) bonus += GB.double; else { got.push(id); seen.add(id); a.items.push(id); } });
@@ -1370,10 +1448,18 @@ function renderShop(app){
         a.gbucks >= price ? `<button class="big" id="buy">Buy for ${price} Gbucks</button>` : `<p class="minus">You need ${price - a.gbucks} more Gbucks.</p>`}
       <button class="ghost small" id="cancel">Close</button></div>`;
   }
-  const stab = sh.tab || "items";
-  const shopTabs = [["items","Items"],["names","Names"],["powers","Power-ups"],["gbux","💎 Gbux"]];
+  const sshop = curShop();
+  const shopTabs = sshop ? [["items","🎰 Season Shop"],["powers","Power-ups"],["gbux","💎 Gbux"]] : [["items","Items"],["names","Names"],["powers","Power-ups"],["gbux","💎 Gbux"]];
+  const stab = shopTabs.some(t => t[0] === sh.tab) ? sh.tab : "items";
   let panel = "";
-  if (stab === "items"){
+  if (stab === "items" && sshop){
+    panel = `<div class="card">
+      <div class="spread"><h3>🎰 ${esc(seasonMeta().name)} Shop</h3><span class="tag">New items in ${untilRotation()}</span></div>
+      <p class="small-print">${SHOP_SLOTS} random items every ${SHOP_ROT_HOURS} hours, the same for everyone. Each slot rolls its own rarity, so you have to get lucky to catch a Legendary.</p>
+      <div class="shopgrid">${rotatingShop().map(card).join("")}</div>
+      <p class="small-print">Odds per slot: ${ROT_ODDS.slice().reverse().map(([r,w]) => `${RARITY[r].label} ${w}%`).join(" · ")}</p>
+    </div>`;
+  } else if (stab === "items"){
     panel = `
     <div class="card">
       <div class="spread"><h3>⭐ Featured</h3><span class="tag">New in ${untilReset()}</span></div>
