@@ -382,6 +382,7 @@ const S2_SHOP = [
   ["s2-f-hamster","face","🐹","Hamster","common"],["s2-f-chick","face","🐥","Chick","common"],["s2-b-dice","badge","🎲","Lucky Dice","common"],
   ["s2-b-balloon","badge","🎈","Balloon","common"],["s2-b-music","badge","🎵","Music Note","common"],["s2-o-top","outfit","👚","Cozy Top","common"],
   ["s2-o-jeans","outfit","👖","Jeans","common"],["s2-bg-peach","bg","#fdba74","Peach","common"],["s2-bg-lilac","bg","#c4b5fd","Lilac","common"],
+  ["s2-f-bunny","face","🐰","Bunny","common"],["s2-b-snowpal","badge","⛄","Snowpal","common"],["s2-b-lolly","badge","🍭","Lollipop","common"],
   ["s2-f-hedgehog","face","🦔","Hedgehog","rare"],["s2-f-raccoon","face","🦝","Raccoon","rare"],["s2-b-paint","badge","🎨","Paint Palette","rare"],
   ["s2-b-camera","badge","📸","Snapshot","rare"],["s2-b-kite","badge","🪁","Kite","rare"],["s2-o-shorts","outfit","🩳","Board Shorts","rare"],
   ["s2-nt-mint","nametag","linear-gradient(90deg,#6ee7b7,#14b8a6)","Minty","rare"],["s2-nt-cherry","nametag","linear-gradient(90deg,#fb7185,#e11d48)","Cherry","rare"],
@@ -398,7 +399,9 @@ S2_SHOP.forEach(([id,type,v,name,rarity,shine]) => addItems([[id,type,v,name]], 
 // each season can have its own rotating shop: {rarity: [item ids]}
 const SEASON_SHOPS = {2: ["common","rare","epic","legendary"].reduce((o,r) => (o[r] = S2_SHOP.filter(x => x[4] === r).map(x => x[0]), o), {})};
 const SHOP_ROT_HOURS = 4, SHOP_SLOTS = 6;
-const ROT_ODDS = [["legendary",5],["epic",15],["rare",30],["common",50]]; // % chance per slot
+// Featured rotates rares, epics and legendaries; commons are the always-available Season Shop
+const ROT_ODDS = [["legendary",8],["epic",27],["rare",65]]; // % chance per Featured slot
+const seasonStock = () => { const cfg = curShop(); return cfg ? cfg.common : []; };
 function curShop(){ return SEASON_SHOPS[seasonMeta().id] || null; }
 // the same 6 items for everyone, re-rolled every few hours; each slot rolls its rarity, so legendaries are rare
 function rotatingShop(){
@@ -406,17 +409,17 @@ function rotatingShop(){
   const idx = Math.floor(Date.now() / (SHOP_ROT_HOURS * 36e5));
   const rnd = seeded("ggn-rot-" + seasonMeta().id + "-" + idx), out = [];
   for (let s = 0; s < SHOP_SLOTS; s++){
-    let roll = rnd() * 100, rar = "common";
+    let roll = rnd() * 100, rar = "rare";
     for (const [r,w] of ROT_ODDS){ if (roll < w){ rar = r; break; } roll -= w; }
     let pool = cfg[rar].filter(id => !out.includes(id));
-    if (!pool.length) pool = Object.values(cfg).flat().filter(id => !out.includes(id));
+    if (!pool.length) pool = ["rare","epic","legendary"].flatMap(r => cfg[r]).filter(id => !out.includes(id));
     out.push(pool[Math.floor(rnd() * pool.length)]);
   }
   return out;
 }
 function untilRotation(){ const span = SHOP_ROT_HOURS * 36e5, ms = span - Date.now() % span, h = Math.floor(ms / 36e5), m = Math.ceil(ms % 36e5 / 6e4);
   return h ? `${h}h ${m}m` : `${m}m`; }
-const shopRefreshText = () => curShop() ? `new items in ${untilRotation()}` : `new featured in ${untilReset()}`;
+const shopRefreshText = () => curShop() ? `new featured in ${untilRotation()}` : `new featured in ${untilReset()}`;
 
 // Season 2 packs replace the old packs while Season 2 is live (items people already own stay theirs)
 const SEASON_PACKS = {2: {
@@ -1449,15 +1452,20 @@ function renderShop(app){
       <button class="ghost small" id="cancel">Close</button></div>`;
   }
   const sshop = curShop();
-  const shopTabs = sshop ? [["items","🎰 Season Shop"],["powers","Power-ups"],["gbux","💎 Gbux"]] : [["items","Items"],["names","Names"],["powers","Power-ups"],["gbux","💎 Gbux"]];
+  const shopTabs = sshop ? [["items","Items"],["powers","Power-ups"],["gbux","💎 Gbux"]] :[["items","Items"],["names","Names"],["powers","Power-ups"],["gbux","💎 Gbux"]];
   const stab = shopTabs.some(t => t[0] === sh.tab) ? sh.tab : "items";
   let panel = "";
   if (stab === "items" && sshop){
     panel = `<div class="card">
-      <div class="spread"><h3>🎰 ${esc(seasonMeta().name)} Shop</h3><span class="tag">New items in ${untilRotation()}</span></div>
-      <p class="small-print">${SHOP_SLOTS} random items every ${SHOP_ROT_HOURS} hours, the same for everyone. Each slot rolls its own rarity, so you have to get lucky to catch a Legendary.</p>
+      <div class="spread"><h3>🎰 Featured</h3><span class="tag">New in ${untilRotation()}</span></div>
+      <p class="small-print">${SHOP_SLOTS} random Rare, Epic and Legendary items every ${SHOP_ROT_HOURS} hours, the same for everyone. Each slot rolls its own rarity, so you have to get lucky to catch a Legendary.</p>
       <div class="shopgrid">${rotatingShop().map(card).join("")}</div>
       <p class="small-print">Odds per slot: ${ROT_ODDS.slice().reverse().map(([r,w]) => `${RARITY[r].label} ${w}%`).join(" · ")}</p>
+    </div>
+    <div class="card">
+      <div class="spread"><h3>❄️ Season Shop</h3><span class="tag">All ${esc(seasonMeta().name)} long</span></div>
+      <p class="small-print">Always here until the season ends, then it's replaced by next season's shop.</p>
+      <div class="shopgrid">${seasonStock().map(card).join("")}</div>
     </div>`;
   } else if (stab === "items"){
     panel = `
@@ -1466,7 +1474,7 @@ function renderShop(app){
       <p class="small-print">Epic and Legendary items rotate in every Monday.</p>
       <div class="shopgrid">${shopFeatured().map(card).join("")}</div>
     </div>
-    <div class="card"><h3>Always in stock</h3><div class="shopgrid">${shopAlways().map(card).join("")}</div></div>`;
+    <div class="card"><h3>Season Shop</h3><div class="shopgrid">${shopAlways().map(card).join("")}</div></div>`;
   } else if (stab === "names"){
     panel = `<div class="card"><h3>🏷️ Name colors</h3><p class="small-print">Changes how your name looks on the hub, leaderboards and your profile.</p><div class="shopgrid">${NAMETAGS.map(x => card(x[0])).join("")}</div></div>`;
   } else if (stab === "powers"){
