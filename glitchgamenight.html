@@ -89,6 +89,12 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid 
 .av .h{position:absolute;top:calc(var(--s)*-.30);left:50%;transform:translateX(-50%);font-size:calc(var(--s)*.42);line-height:1}
 .av .b{position:absolute;right:calc(var(--s)*-.12);top:calc(var(--s)*.02);font-size:calc(var(--s)*.32);line-height:1}
 .av .o{position:absolute;bottom:calc(var(--s)*-.26);left:50%;transform:translateX(-50%);font-size:calc(var(--s)*.44);line-height:1}
+.av .sk{position:absolute;inset:0;border-radius:50%;overflow:hidden;display:block}
+.av .sk svg{width:100%;height:100%;display:block}
+.sksw{width:40px;height:40px;border-radius:9px;overflow:hidden;display:inline-grid;background:var(--bg);flex:none}
+.sksw svg{width:100%;height:100%;display:block}
+.pcell .sksw{width:48px;height:48px}
+.item .sksw{width:32px;height:32px}
 .shopgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
 .sitem{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 8px 12px;border-radius:16px;color:#fff;text-align:center;
   background:linear-gradient(160deg,var(--rc),color-mix(in srgb,var(--rc) 45%,#000));border:2px solid transparent;min-width:0}
@@ -188,6 +194,29 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid 
 .gbux em{position:absolute;top:-8px;font-style:normal;font-size:.7rem;font-weight:700;background:#f59e0b;color:#111;border-radius:999px;padding:2px 8px;white-space:nowrap}
 .toast{background:var(--rare-bg);border:2px solid var(--accent);border-radius:14px;padding:12px 14px;font-weight:600}
 
+/* battle pass */
+.passhero{background:linear-gradient(135deg,#7c3aed,#db2777,#f59e0b);color:#fff;border:0;border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:12px}
+.passhero .eyebrow{color:#fff;opacity:.9}
+.passhero h1{font-size:2rem}
+.passhero small{opacity:.9;font-weight:700}
+.pbar{height:14px;border-radius:999px;background:rgba(0,0,0,.28);overflow:hidden}
+.pbar i{display:block;height:100%;background:#fff;border-radius:999px;transition:width .4s}
+.ptrack{display:flex;flex-direction:column;gap:8px}
+.ptier{display:grid;grid-template-columns:46px 1fr 1fr;gap:8px;align-items:stretch;border:1px solid var(--line);border-radius:14px;padding:8px;background:var(--surface)}
+.ptier.cur{border-color:var(--main);box-shadow:0 0 0 2px var(--main)}
+.ptier .tnum{display:flex;flex-direction:column;align-items:center;justify-content:center;font:400 1.4rem var(--display);background:var(--bg);border-radius:10px;line-height:1}
+.ptier .tnum small{font-size:.55rem;font-family:var(--body);color:var(--muted);letter-spacing:.1em}
+.pcell{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;border:2px solid var(--rc,var(--line));border-radius:10px;padding:8px 6px;min-height:84px}
+.pcell small{font-size:.72rem;line-height:1.15}
+.pcell.done{opacity:.5}
+.pcell .e{font-size:1.7rem;line-height:1}
+.pcell .chipc{width:30px;height:30px;border-radius:7px}
+.pcell .nt{font-size:1.1rem}
+.pcell button.small{padding:5px 12px}
+.ptag{font-size:1.2rem}
+.ptag.done{color:var(--ok)}
+.ptracklabel{display:grid;grid-template-columns:46px 1fr 1fr;gap:8px;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);padding:2px 8px}
+.ptracklabel span{text-align:center}
 /* lizard */
 .public{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--leaf);color:var(--leaf-ink);border-radius:14px;padding:12px 16px}
 .public b{font:400 1.4rem var(--display)}
@@ -297,6 +326,45 @@ const SHOP = {
     ["b-planet","badge","🪐","Planet"],["b-trophy","badge","🏆","Trophy"],["bg-rainbow","bg","linear-gradient(135deg,#ff5f6d,#ffc371,#47e891,#3fa7ff,#b06cff)","Rainbow"]]
 };
 Object.entries(SHOP).forEach(([rar,list]) => addItems(list, {rarity:rar, price:RARITY[rar].price}));
+/* ================= illustrated character skins (original art) ================= */
+const SKIN_SVG = {
+"sk-pirate":`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M14 100 Q50 68 86 100Z" fill="#b5352a"/><path d="M34 100 Q50 86 66 100Z" fill="#f6e3c0"/><rect x="45" y="55" width="10" height="13" fill="#eab688"/><circle cx="50" cy="45" r="18" fill="#f3c79b"/><path d="M32 42 Q36 29 50 29 Q64 29 68 42 Q60 35 50 35 Q40 35 32 42Z" fill="#20160f"/><circle cx="44" cy="46" r="2.4" fill="#2a2320"/><circle cx="56" cy="46" r="2.4" fill="#2a2320"/><path d="M45 53 Q50 57 55 53" stroke="#a65a38" stroke-width="2.2" fill="none" stroke-linecap="round"/><path d="M57 39l3 7" stroke="#c15c46" stroke-width="2" stroke-linecap="round"/><ellipse cx="50" cy="31" rx="31" ry="9" fill="#e7c477"/><ellipse cx="50" cy="29" rx="17" ry="8" fill="#f0d79c"/><path d="M33 28h34v4H33z" fill="#b5352a"/></svg>`,
+"sk-samurai":`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M14 100 Q50 70 86 100Z" fill="#3a2f26"/><path d="M26 100 Q50 84 74 100Z" fill="#241c16"/><rect x="45" y="56" width="10" height="12" fill="#e7b488"/><circle cx="50" cy="50" r="15" fill="#f0c398"/><circle cx="45" cy="51" r="2.3" fill="#26323a"/><circle cx="55" cy="51" r="2.3" fill="#26323a"/><path d="M44 58 h12" stroke="#9c5b3b" stroke-width="2" stroke-linecap="round"/><path d="M26 44 Q50 18 74 44 Q50 34 26 44Z" fill="#1f2a36"/><path d="M22 44 Q50 40 78 44 L74 48 Q50 44 26 48Z" fill="#2c3a4a"/><path d="M38 21 Q50 9 62 21 Q50 16 38 21Z" fill="#e0b73a"/><rect x="47" y="15" width="6" height="9" rx="1" fill="#e0b73a"/></svg>`,
+"sk-ninja":`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M16 100 Q50 72 84 100Z" fill="#23262b"/><circle cx="50" cy="46" r="18" fill="#2d3138"/><path d="M32 42 Q50 30 68 42 L68 50 Q50 44 32 50Z" fill="#101316"/><rect x="31" y="40" width="40" height="7" fill="#c0392b"/><path d="M71 40 l14 4 l-14 3Z" fill="#c0392b"/><rect x="38" y="48" width="24" height="7" rx="3.5" fill="#f0c398"/><circle cx="44" cy="51.5" r="2.4" fill="#1b1b1f"/><circle cx="56" cy="51.5" r="2.4" fill="#1b1b1f"/></svg>`,
+"sk-knight":`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M16 100 Q50 72 84 100Z" fill="#6b7682"/><circle cx="50" cy="46" r="18" fill="#aeb8c2"/><path d="M50 28 a18 18 0 0 0 0 36Z" fill="#c3ccd5"/><rect x="48" y="30" width="4" height="34" fill="#7d8894"/><rect x="36" y="43" width="28" height="5" rx="2" fill="#2a2f36"/><path d="M50 60 l-3 7 h6Z" fill="#7d8894"/><rect x="40" y="24" width="20" height="6" rx="2" fill="#c0392b"/><path d="M50 18 l3 6 h-6Z" fill="#c0392b"/></svg>`,
+"sk-astro":`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M16 100 Q50 74 84 100Z" fill="#e9edf2"/><circle cx="50" cy="45" r="19" fill="#f4f6f9"/><circle cx="50" cy="46" r="13" fill="#1b2a3a"/><path d="M41 42 a9 9 0 0 1 10 -5" stroke="#8fd0ff" stroke-width="3" fill="none" stroke-linecap="round"/><rect x="29" y="43" width="5" height="7" rx="2" fill="#c7ced6"/><rect x="66" y="43" width="5" height="7" rx="2" fill="#c7ced6"/><rect x="44" y="25" width="12" height="4" rx="2" fill="#d44"/></svg>`,
+"sk-robot":`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M20 100 Q50 78 80 100Z" fill="#53606b"/><rect x="33" y="33" width="34" height="30" rx="7" fill="#9aa6b1"/><rect x="38" y="40" width="24" height="12" rx="4" fill="#1b2730"/><circle cx="45" cy="46" r="3" fill="#36e0c6"/><circle cx="56" cy="46" r="3" fill="#36e0c6"/><rect x="47" y="24" width="6" height="9" fill="#9aa6b1"/><circle cx="50" cy="22" r="3" fill="#ffd23d"/><rect x="42" y="56" width="16" height="3" rx="1.5" fill="#1b2730"/></svg>`,
+"sk-hero":`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M14 100 Q50 70 86 100Z" fill="#2457d6"/><path d="M28 100 Q50 82 72 100 L64 100 Q50 90 36 100Z" fill="#ffd23d"/><rect x="45" y="56" width="10" height="12" fill="#e7b488"/><circle cx="50" cy="45" r="18" fill="#f0c398"/><path d="M30 34 Q50 24 70 34 L70 44 Q60 40 50 40 Q40 40 30 44Z" fill="#20160f"/><path d="M33 44 h13 l-2 5 h-9Z M54 44 h13 l-2 5 h-9Z" fill="#2457d6"/><circle cx="43" cy="46" r="2.3" fill="#1b1b1f"/><circle cx="57" cy="46" r="2.3" fill="#1b1b1f"/><path d="M45 53 Q50 56 55 53" stroke="#a65a38" stroke-width="2" fill="none" stroke-linecap="round"/></svg>`,
+"sk-vampire":`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M14 100 Q50 72 86 100Z" fill="#1b1b22"/><path d="M30 72 Q50 100 70 72 Q50 86 30 72Z" fill="#7a1420"/><rect x="45" y="56" width="10" height="12" fill="#dfe6e6"/><circle cx="50" cy="45" r="18" fill="#e9eeee"/><path d="M33 38 Q50 22 67 38 L62 29 Q50 25 50 34 Q50 25 38 29Z" fill="#17171c"/><circle cx="44" cy="46" r="2.4" fill="#8a1322"/><circle cx="56" cy="46" r="2.4" fill="#8a1322"/><path d="M45 54 h10 l-2 4 l-3-2 l-3 2Z" fill="#fff"/></svg>`,
+"sk-wizard":`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M16 100 Q50 74 84 100Z" fill="#3b2d7a"/><rect x="45" y="57" width="10" height="11" fill="#e7b488"/><circle cx="50" cy="48" r="16" fill="#f0c398"/><path d="M38 53 q12 8 24 0 l-2 8 q-10 6 -20 0Z" fill="#e8e8f0"/><circle cx="44" cy="49" r="2.2" fill="#26323a"/><circle cx="56" cy="49" r="2.2" fill="#26323a"/><path d="M26 42 L50 8 L74 42 Q50 32 26 42Z" fill="#4833a0"/><path d="M50 8 L74 42 Q62 36 50 34Z" fill="#3b2a85"/><circle cx="50" cy="24" r="2" fill="#ffd23d"/><circle cx="44" cy="33" r="1.5" fill="#ffd23d"/><circle cx="58" cy="32" r="1.5" fill="#ffd23d"/></svg>`,
+"se-icemage":`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M14 100 Q50 70 86 100Z" fill="#2b6cb0"/><path d="M26 100 Q50 78 74 100Z" fill="#3b8fd4"/><path d="M30 46 Q30 24 50 24 Q70 24 70 46 L66 50 Q50 40 34 50Z" fill="#5aa9e6"/><circle cx="50" cy="48" r="15" fill="#eaf6ff"/><circle cx="45" cy="48" r="2.2" fill="#2b6cb0"/><circle cx="55" cy="48" r="2.2" fill="#2b6cb0"/><path d="M40 58 q10 6 20 0" stroke="#b8d9f0" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M50 62 l0 9 M46 66 l8 0" stroke="#dff1ff" stroke-width="2" stroke-linecap="round"/><circle cx="50" cy="24" r="3" fill="#bfe6ff"/></svg>`,
+"se-snowqueen":`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M14 100 Q50 72 86 100Z" fill="#9fd6f0"/><path d="M28 100 Q50 82 72 100Z" fill="#cdeaf8"/><rect x="45" y="56" width="10" height="12" fill="#f4e0e6"/><circle cx="50" cy="46" r="17" fill="#fbeef2"/><path d="M33 40 Q50 30 67 40 L70 60 Q60 54 50 54 Q40 54 30 60Z" fill="#dff2ff"/><circle cx="44" cy="46" r="2.2" fill="#3a6ea5"/><circle cx="56" cy="46" r="2.2" fill="#3a6ea5"/><path d="M46 53 q4 3 8 0" stroke="#d98aa6" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M34 31 l4 -11 l5 8 l7 -13 l7 13 l5 -8 l4 11 Q50 25 34 31Z" fill="#bfe9ff"/></svg>`,
+"se-explorer":`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M10 100 Q50 70 90 100Z" fill="#2f6e4f"/><circle cx="50" cy="47" r="24" fill="#355f8a"/><circle cx="50" cy="47" r="20" fill="#d9c49a"/><circle cx="50" cy="48" r="15" fill="#f0c398"/><circle cx="44" cy="48" r="2.3" fill="#26323a"/><circle cx="56" cy="48" r="2.3" fill="#26323a"/><circle cx="41" cy="53" r="2.6" fill="#f6a6b6" opacity=".7"/><circle cx="59" cy="53" r="2.6" fill="#f6a6b6" opacity=".7"/><path d="M45 55 q5 3 10 0" stroke="#a65a38" stroke-width="2" fill="none" stroke-linecap="round"/></svg>`,
+"se-yetikid":`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M14 100 Q50 68 86 100Z" fill="#eaf4fb"/><circle cx="50" cy="46" r="20" fill="#f3fbff"/><path d="M34 32 l-4 -12 l10 8Z M66 32 l4 -12 l-10 8Z" fill="#dcebf5"/><circle cx="44" cy="44" r="2.6" fill="#2a3b4a"/><circle cx="56" cy="44" r="2.6" fill="#2a3b4a"/><ellipse cx="50" cy="51" rx="4" ry="3" fill="#6fb7e0"/><path d="M42 57 q8 6 16 0" stroke="#9cc5de" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>`,
+"se-skater":`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M16 100 Q50 74 84 100Z" fill="#d6456b"/><path d="M34 74 Q50 84 66 74 L70 82 Q50 94 30 82Z" fill="#e86a88"/><rect x="45" y="56" width="10" height="12" fill="#eab688"/><circle cx="50" cy="46" r="17" fill="#f3c79b"/><path d="M34 40 Q50 30 66 40 L66 46 Q50 40 34 46Z" fill="#6b3f2a"/><circle cx="44" cy="46" r="2.3" fill="#26323a"/><circle cx="56" cy="46" r="2.3" fill="#26323a"/><circle cx="41" cy="51" r="3" fill="#f6a6b6" opacity=".7"/><circle cx="59" cy="51" r="3" fill="#f6a6b6" opacity=".7"/><path d="M45 54 q5 3 10 0" stroke="#a65a38" stroke-width="2" fill="none" stroke-linecap="round"/><rect x="27" y="40" width="9" height="11" rx="4.5" fill="#2b6cb0"/><rect x="64" y="40" width="9" height="11" rx="4.5" fill="#2b6cb0"/><rect x="30" y="33" width="40" height="4" rx="2" fill="#2b6cb0"/></svg>`,
+"se-pengusuit":`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M16 100 Q50 72 84 100Z" fill="#1f2730"/><path d="M34 80 Q50 100 66 80 Q50 90 34 80Z" fill="#f6f6f6"/><circle cx="50" cy="44" r="20" fill="#1f2730"/><circle cx="50" cy="50" r="13" fill="#f6f6f6"/><circle cx="45" cy="47" r="2.6" fill="#1b1b1f"/><circle cx="55" cy="47" r="2.6" fill="#1b1b1f"/><path d="M47 51 l6 0 l-3 5Z" fill="#f5a623"/></svg>`
+};
+// character skins sold in the item shop (rotate in the featured slots; rares are always in stock)
+const SHOP_SKINS = {
+  legendary:[["sk-pirate","Straw Captain"],["sk-samurai","Samurai"]],
+  epic:[["sk-ninja","Shadow Ninja"],["sk-knight","Iron Knight"],["sk-astro","Astronaut"]],
+  rare:[["sk-robot","Mech Unit"],["sk-hero","Comet Hero"],["sk-vampire","Vampire"],["sk-wizard","Star Wizard"]]
+};
+Object.entries(SHOP_SKINS).forEach(([rar,list]) => {
+  const defs = list.map(([id,name]) => [id,"skin",SKIN_SVG[id],name]);
+  SHOP[rar].push(...defs);
+  addItems(defs, {rarity:rar, price:RARITY[rar].price});
+});
+// winter character skins that join the Frostbite (Season 2) battle pass pool
+const FROST_SKINS = [
+  ["se-icemage","skin",SKIN_SVG["se-icemage"],"Ice Mage","legendary"],
+  ["se-snowqueen","skin",SKIN_SVG["se-snowqueen"],"Snow Queen","legendary"],
+  ["se-explorer","skin",SKIN_SVG["se-explorer"],"Polar Explorer","epic"],
+  ["se-yetikid","skin",SKIN_SVG["se-yetikid"],"Yeti Kid","epic"],
+  ["se-skater","skin",SKIN_SVG["se-skater"],"Ice Skater","rare"],
+  ["se-pengusuit","skin",SKIN_SVG["se-pengusuit"],"Penguin Suit","rare"]
+];
+
 // free outfits and items for reaching a level
 const LEVEL_REWARDS = {2:["o-tee","outfit","👕","T-shirt"],3:["b-clover","badge","🍀","Lucky clover"],5:["o-coat","outfit","🧥","Coat"],
   7:["h-bow","hat","🎀","Bow"],10:["o-gi","outfit","🥋","Martial arts gi"],13:["b-rainbow","badge","🌈","Rainbow"],
@@ -351,11 +419,11 @@ addItems([["nt-trophy","nametag","linear-gradient(90deg,#f59e0b,#fde68a,#f59e0b)
 Object.entries(PACKS).forEach(([pid,p]) => addItems(p.items, {pack:pid}));
 
 const POWERS = {
-  hint:{name:"Lizard Hint", icon:"🔍", price:75, text:"If you're the lizard, see a vague hint about the word."},
-  radio:{name:"Radio", icon:"📻", price:75, text:"Tsunami Meter: shows which quarter of the meter the target is in."},
-  scare:{name:"Jumpscare", icon:"👻", price:50, text:"Troll the next person: their secret screen opens with a jumpscare."},
-  letter:{name:"First Letter", icon:"🔤", price:80, text:"If you're the lizard, see the first letter of the secret word."},
-  radar:{name:"Lizard Radar", icon:"📡", price:100, text:"If you're NOT the lizard, find out one player who is definitely safe."}
+  hint:{name:"Lizard Hint", icon:"🔍", price:150, text:"If you're the lizard, see a vague hint about the word."},
+  radio:{name:"Radio", icon:"📻", price:150, text:"Tsunami Meter: shows which quarter of the meter the target is in."},
+  scare:{name:"Jumpscare", icon:"👻", price:120, text:"Troll the next person: their secret screen opens with a jumpscare."},
+  letter:{name:"First Letter", icon:"🔤", price:160, text:"If you're the lizard, see the first letter of the secret word."},
+  radar:{name:"Lizard Radar", icon:"📡", price:220, text:"If you're NOT the lizard, find out one player who is definitely safe."}
 };
 const xpNeed = lvl => 40 + lvl*20;
 const PACK_EVERY = 2;
@@ -376,8 +444,11 @@ const ref = path => fdb.ref(ROOT + "/" + path);
 function fixAccount(a){
   a.items = a.items || []; a.power = Object.assign({hint:0, radio:0, scare:0, letter:0, radar:0}, a.power || {});
   a.wins = Object.assign({lizard:0, tsunami:0, dash:0}, a.wins || {}); a.colors = a.colors || {};
-  a.avatar = Object.assign({face:"f-frog", bg:"bg-sky", hat:null, badge:null, outfit:null, nametag:null}, a.avatar || {});
+  a.avatar = Object.assign({face:"f-frog", bg:"bg-sky", hat:null, badge:null, outfit:null, nametag:null, skin:null}, a.avatar || {});
   a.stats = a.stats || {}; a.ach = a.ach || {};
+  a.season = a.season || {id:1, xp:0, prem:false, claimed:[]}; a.season.claimed = a.season.claimed || [];
+  // the Battle Pass replaced leveling: seed Season 1 from any old account level, just once, so nobody drops to Tier 0 today
+  if (a.season.id === 1 && !a.season.migrated){ a.season.xp = Math.max(a.season.xp || 0, Math.max(0, (a.level || 1) - 1) * SEASON_XP_PER); a.season.migrated = true; }
   a.xp = a.xp || 0; a.level = a.level || 1; a.gbucks = a.gbucks || 0; a.packs = a.packs || 0;
   return a;
 }
@@ -426,10 +497,13 @@ function announceHtml(){
 }
 const curSale = () => { const x = DATA.settings && DATA.settings.sale; return x && liveUntil(x) ? x : null; };
 const gbuxBonus = () => (curSale() && +curSale().gbux) || 0;   // % extra Gbux on every bundle
-const shopSaleOff = () => (curSale() && +curSale().shop) || 0; // % off items and power-ups
+const shopSaleOff = () => (curSale() && +curSale().shop) || 0; // % off shop items only
+const powerSaleOff = () => (curSale() && +curSale().power) || 0; // % off power-ups (set separately)
 const saleGbux = g => Math.round(g * (1 + gbuxBonus()/100));
 const salePrice = p => Math.max(1, Math.ceil(p * (1 - shopSaleOff()/100)));
 const priceTag = p => shopSaleOff() ? `<s style="opacity:.6">${p}</s> ${salePrice(p)} G` : p + " G";
+const powerSalePrice = p => Math.max(1, Math.ceil(p * (1 - powerSaleOff()/100)));
+const powerPriceTag = p => powerSaleOff() ? `<s style="opacity:.6">${p}</s> ${powerSalePrice(p)} G` : p + " G";
 const saleEnds = () => { const x = curSale(); return x && x.until ? " · ends " + new Date(x.until).toLocaleDateString([], {weekday:"short", month:"short", day:"numeric"}) : ""; };
 
 /* ================= helpers ================= */
@@ -444,10 +518,11 @@ const stopTimer = () => { if (timer){ clearInterval(timer); timer = null; } };
 function avatarHtml(av, size=""){
   av = av || {};
   const f = ITEMS[av.face] || ITEMS["f-frog"], bg = ITEMS[av.bg] || ITEMS["bg-sky"];
-  const h = ITEMS[av.hat], b = ITEMS[av.badge], o = ITEMS[av.outfit];
-  return `<span class="av ${size}" style="--avbg:${bg.v}" aria-hidden="true"><span class="f">${f.v}</span>${o?`<span class="o">${o.v}</span>`:""}${h?`<span class="h">${h.v}</span>`:""}${b?`<span class="b">${b.v}</span>`:""}</span>`;
+  const h = ITEMS[av.hat], b = ITEMS[av.badge], o = ITEMS[av.outfit], sk = ITEMS[av.skin];
+  return `<span class="av ${size}" style="--avbg:${bg.v}" aria-hidden="true">${sk ? `<span class="sk">${sk.v}</span>` : `<span class="f">${f.v}</span>${o?`<span class="o">${o.v}</span>`:""}`}${h?`<span class="h">${h.v}</span>`:""}${b?`<span class="b">${b.v}</span>`:""}</span>`;
 }
 const swatch = i => i.type==="bg" ? `<span class="chipc" style="background:${i.v}"></span>`
+  : i.type==="skin" ? `<span class="sksw">${i.v}</span>`
   : i.type==="nametag" ? `<span class="e nt ${i.shine?"shine":""}" style="--nt:${i.v}">Aa</span>` : `<span class="e">${i.v}</span>`;
 // a player's name in their name color (if they wear one)
 const nameHtml = a => { const t = a && a.avatar && ITEMS[a.avatar.nametag], n = esc(a ? a.name : "");
@@ -465,7 +540,7 @@ let S = window.claude?.hot?.data?.S || {
 };
 S.lobby.dash = S.lobby.dash || {players:[], cat:"Random", time:80, rounds:1};
 const GAME_TITLE = {lizard:"🦎 Lizard in the Room", tsunami:"🌊 Tsunami Meter", dash:"🎨 Doodle Dash"};
-const calmViews = ["home","leaderboard","profile","pickAccount","lobby","shop","online"];
+const calmViews = ["home","leaderboard","profile","pickAccount","lobby","shop","online","pass"];
 function rerenderIfCalm(){ if (calmViews.includes(S.view)) render(); }
 
 function go(view, extra){ Object.assign(S, extra||{}); S.view = view; render(); window.scrollTo(0,0); }
@@ -475,7 +550,7 @@ function render(){
   const app = $("#app");
   app.className = "stage" + (S.game ? " " + S.game : "");
   const views = {home:renderHome, leaderboard:renderLeaderboard, pickAccount:renderPickAccount, create:renderCreate, quiz:renderQuiz,
-    profile:renderProfile, shop:renderShop, lobby:renderLobby, online:renderOnline, liz:renderLizard, tsu:renderTsunami, dash:renderDash};
+    profile:renderProfile, shop:renderShop, lobby:renderLobby, online:renderOnline, liz:renderLizard, tsu:renderTsunami, dash:renderDash, pass:renderPass};
   (views[S.view] || renderHome)(app);
 }
 
@@ -483,14 +558,14 @@ function render(){
 function reward(acctId, {xp=0, gb=0}){
   const a = DATA.accounts[acctId]; if (!a) return [];
   const notes = [];
-  a.xp += xp; a.gbucks += gb;
+  a.gbucks += gb;
   if (a.lastBonus !== today()){ a.lastBonus = today(); a.gbucks += GB.daily; notes.push(`${a.name}: daily bonus +${GB.daily} Gbucks`); }
-  while (a.xp >= xpNeed(a.level)){
-    a.xp -= xpNeed(a.level); a.level++; a.gbucks += GB.levelUp;
-    notes.push(`${a.name} reached level ${a.level}! +${GB.levelUp} Gbucks`);
-    const lr = LEVEL_REWARDS[a.level];
-    if (lr && !a.items.includes(lr[0])){ a.items.push(lr[0]); notes.push(`${a.name} unlocked ${lr[2]} ${lr[3]}`); }
-    if (a.level % PACK_EVERY === 0){ a.packs++; notes.push(`${a.name} earned a free pack 🎁`); }
+  // the Battle Pass is the leveling system: XP climbs tiers, tiers hand out the rewards
+  if (xp){
+    fixSeason(a);
+    const before = seasonTier(a);
+    a.season.xp += xp; a.level = seasonTier(a);
+    if (a.level > before) notes.push(`${a.name} hit Tier ${a.level}! 🎟️ Claim rewards in the Battle Pass`);
   }
   saveAccount(a);
   return notes;
@@ -514,9 +589,11 @@ const ACHIEVEMENTS = [
   ["dashchamp","🎨","Doodle champion","Win a game of Doodle Dash", a => (a.wins.dash||0) >= 1, 50],
   ["artist","🖍️","Picasso","Get 10 of your drawings guessed", a => st(a,"drawn") >= 10, 75],
   ["quick","⚡","Quick draw","Guess a drawing first 5 times", a => st(a,"firsts") >= 5, 75],
-  ["lv5","⭐","Level 5","Reach level 5", a => a.level >= 5, 50],
-  ["lv10","🌟","Level 10","Reach level 10", a => a.level >= 10, 100],
-  ["lv20","💫","Level 20","Reach level 20", a => a.level >= 20, 250],
+  ["prem","🎟️","Season ticket","Unlock a premium Battle Pass", a => !!(a.season && a.season.prem), 50],
+  ["maxtier","🏆","Maxed out","Reach tier 30 on a Battle Pass", a => seasonTier(a) >= SEASON_TIERS, 150],
+  ["lv5","⭐","Tier 5","Reach tier 5 on a Battle Pass", a => seasonTier(a) >= 5, 50],
+  ["lv10","🌟","Tier 10","Reach tier 10 on a Battle Pass", a => seasonTier(a) >= 10, 100],
+  ["lv20","💫","Tier 20","Reach tier 20 on a Battle Pass", a => seasonTier(a) >= 20, 250],
   ["rich","💰","Rich","Have 1,000 Gbux at once", a => a.gbucks >= 1000, 50],
   ["spender","🛍️","Big spender","Spend 5,000 Gbux", a => st(a,"spent") >= 5000, 150],
   ["items25","🎒","Collector","Own 25 items", a => a.items.length >= 25, 75],
@@ -559,7 +636,7 @@ function renderHome(app){
     <div style="display:flex;flex-direction:column;gap:6px">
       <div class="eyebrow">Pass-and-play · one device</div>
       <h1>Glitch Game Night</h1>
-      ${announceHtml()}${curSale() ? `<div class="announce sale">🔥 Sale on now${gbuxBonus() ? ` · +${gbuxBonus()}% Gbux` : ""}${shopSaleOff() ? ` · ${shopSaleOff()}% off the shop` : ""}${saleEnds()}</div>` : ""}
+      ${announceHtml()}${curSale() ? `<div class="announce sale">🔥 Sale on now${gbuxBonus() ? ` · +${gbuxBonus()}% Gbux` : ""}${shopSaleOff() ? ` · ${shopSaleOff()}% off items` : ""}${powerSaleOff() ? ` · ${powerSaleOff()}% off power-ups` : ""}${saleEnds()}</div>` : ""}
       ${S.toasts && S.toasts.length ? `<div class="toast">${S.toasts.splice(0).map(esc).join("<br>")}</div>` : ""}
       <p class="small-print">Three games, one set of accounts. Play to earn XP, level up for Gbucks and free outfits, then spend Gbucks in the Item Shop.</p>
     </div>
@@ -569,9 +646,10 @@ function renderHome(app){
     <button class="big" id="g-online">🌐 Play online <span style="font-weight:400">· everyone on their own device</span></button>
     <div class="card">
       <div class="spread"><h3>Accounts</h3><button class="small" id="new">+ New account</button></div>
-      ${accts.length ? `<div class="acct-grid">${accts.map(a => `<button data-acct="${a.id}">${avatarHtml(a.avatar,"md")}<span>${nameHtml(a)}</span><small>${a.frozen ? "🧊 Frozen" : "Lv " + a.level}</small></button>`).join("")}</div>`
+      ${accts.length ? `<div class="acct-grid">${accts.map(a => `<button data-acct="${a.id}">${avatarHtml(a.avatar,"md")}<span>${nameHtml(a)}</span><small>${a.frozen ? "🧊 Frozen" : "Tier " + seasonTier(a)}</small></button>`).join("")}</div>`
         : `<p class="small-print">No accounts yet. Make one to start earning XP and Gbucks. Guests can still play without one.</p>`}
     </div>
+    <button class="big" id="pass" style="background:linear-gradient(135deg,#7c3aed,#db2777,#f59e0b);color:#fff">🎟️ Battle Pass <span style="font-weight:400">· ${esc(seasonMeta().name)}${passEndsShort(seasonMeta()) ? " · " + esc(passEndsShort(seasonMeta())) : ""}</span></button>
     <button class="big" id="shop">🛒 Item Shop <span style="font-weight:400">· new featured in ${untilReset()}</span></button>
     <div class="card">
       <div class="spread"><h3>🏆 Today's leaders</h3><span class="tag">resets at midnight</span></div>
@@ -589,6 +667,7 @@ function renderHome(app){
   $("#g-online").onclick = () => { const o = O(); if (o.code && ROOM) o.step = "room"; else o.step = (o.acct && DATA.accounts[o.acct]) || o.guest ? "menu" : "who"; go("online"); };
   $("#lb").onclick = () => go("leaderboard");
   $("#shop").onclick = () => go("shop", {shop:{id:null, sel:null}});
+  $("#pass").onclick = () => go("pass", {pass:{id:null}});
   $("#new").onclick = () => go("create", {create:{step:"name", name:"", face:"f-frog", bg:"bg-sky", qi:0, colors:{}, then:"home"}});
   app.querySelectorAll("[data-acct]").forEach(b => b.onclick = () => openAccount(b.dataset.acct));
 }
@@ -601,19 +680,19 @@ function openAccount(id){
 function renderLeaderboard(app){
   const accts = DATA.accounts, d = dailyToday();
   let rows;
-  if (S.lb === "levels") rows = Object.values(accts).map(a => [a, `Lv ${a.level}`, a.level*10000 + a.xp]);
+  if (S.lb === "tier") rows = Object.values(accts).map(a => [a, `Tier ${seasonTier(a)}`, (a.season && a.season.id === seasonMeta().id ? a.season.xp : 0)]);
   else rows = Object.entries(d[S.lb]||{}).filter(([id]) => accts[id]).map(([id,p]) => [accts[id], p + " pts", p]);
   rows.sort((a,b) => b[2]-a[2]);
   const medal = i => ["🥇","🥈","🥉"][i] || (i+1);
   app.innerHTML = `
     <div class="spread"><h2>🏆 Leaderboards</h2><button class="ghost small" id="back">Back</button></div>
     <div class="tabs">
-      ${[["lizard","🦎 Lizard"],["tsunami","🌊 Tsunami"],["dash","🎨 Doodle"],["levels","⭐ Levels"]].map(([k,t]) => `<button class="small" data-lb="${k}" aria-pressed="${S.lb===k}">${t}</button>`).join("")}
+      ${[["lizard","🦎 Lizard"],["tsunami","🌊 Tsunami"],["dash","🎨 Doodle"],["tier","🎟️ Tier"]].map(([k,t]) => `<button class="small" data-lb="${k}" aria-pressed="${S.lb===k}">${t}</button>`).join("")}
     </div>
     <div class="card">
-      <div class="eyebrow">${S.lb==="levels" ? "All time" : "Today only · resets at midnight"}</div>
+      <div class="eyebrow">${S.lb==="tier" ? esc(seasonMeta().name) + " · resets each season" : "Today only · resets at midnight"}</div>
       ${rows.length ? `<div class="log">${rows.map(([a,v],i) => `<div><span class="row" style="gap:10px"><b style="width:1.6em">${medal(i)}</b>${avatarHtml(a.avatar,"sm")} ${nameHtml(a)}</span><b>${esc(v)}</b></div>`).join("")}</div>`
-        : `<p class="small-print">Nobody has scored ${S.lb==="levels"?"yet":"in this game today"}. Play a round with an account to get on the board.</p>`}
+        : `<p class="small-print">Nobody has scored ${S.lb==="tier"?"yet this season":"in this game today"}. Play a round with an account to get on the board.</p>`}
     </div>`;
   $("#back").onclick = () => go("home");
   app.querySelectorAll("[data-lb]").forEach(b => b.onclick = () => { S.lb = b.dataset.lb; render(); });
@@ -758,6 +837,7 @@ function afterLogin(a, then){
   }
   if (then.view === "lobby"){ addPlayer({acct:a.id}); go("lobby"); }
   else if (then.view === "shop") go("shop", {shop:{id:a.id, sel:null}});
+  else if (then.view === "pass") go("pass", {pass:{id:a.id}});
   else if (then.view === "online"){ const o = O(); o.acct = a.id; o.guest = null; o.step = "menu"; go("online"); }
   else go("profile", {profile:{id:a.id, tab:"avatar"}});
 }
@@ -812,6 +892,7 @@ function renderQuiz(app){
 function renderProfile(app){
   const p = S.profile, a = DATA.accounts[p.id];
   if (!a){ go("home"); return; }
+  fixSeason(a);
   // pick up achievements earned from gifts or trades another player finished
   if (ACHIEVEMENTS.some(x => !a.ach[x.id] && (() => { try { return x.test(a); } catch(e){ return false; } })())) saveAccount(a);
   const toast = S.toasts.length ? `<div class="toast">${S.toasts.map(esc).join("<br>")}</div>` : "";
@@ -823,7 +904,7 @@ function renderProfile(app){
       const none = type!=="face"&&type!=="bg" ? `<button class="item" data-eq="${type}:" aria-pressed="${!a.avatar[type]}"><span class="e">∅</span>None</button>` : "";
       return `<label>${label}</label><div class="items">${none}${list.map(i => `<button class="item" data-eq="${type}:${i.id}" aria-pressed="${a.avatar[type]===i.id}">${swatch(i)}${esc(i.name)}</button>`).join("")}</div>`;
     };
-    body = `<div class="card">${slot("face","Face")}${slot("outfit","Outfit")}${slot("hat","Hat")}${slot("badge","Badge")}${slot("bg","Background")}${slot("nametag","Name color")}
+    body = `<div class="card">${slot("skin","Character")}${slot("face","Face")}${slot("outfit","Outfit")}${slot("hat","Hat")}${slot("badge","Badge")}${slot("bg","Background")}${slot("nametag","Name color")}
       <p class="small-print">Most outfits and items are in the Item Shop. Some unlock for free when you level up, and packs have more.</p></div>
       <div class="card"><h3>Login</h3>
         <p class="small-print">${a.pin ? "You can log in with your colors or your PIN." : "You log in with your colors. Add a PIN for a faster option."}</p>
@@ -867,14 +948,16 @@ function renderProfile(app){
     <div class="spread"><button class="ghost small" id="back">← Hub</button><button class="ghost small" id="out">Log out</button></div>
     ${announceHtml()}${toast}
     <div class="card center">${avatarHtml(a.avatar,"lg")}<h2>${nameHtml(a)}</h2>
-      <div class="stats" style="width:100%"><div><b>${a.level}</b>Level</div><div><b class="gb">${a.gbucks}</b>Gbucks</div><div><b>${a.wins.lizard + a.wins.tsunami + (a.wins.dash||0)}</b>Wins</div></div>
-      <div style="width:100%"><div class="progress"><i style="width:${(a.xp/xpNeed(a.level)*100).toFixed(1)}%"></i></div>
-      <p class="small-print">${a.xp} / ${xpNeed(a.level)} XP to level ${a.level+1}</p></div>
+      <div class="stats" style="width:100%"><div><b>${seasonTier(a)}</b>Tier</div><div><b class="gb">${a.gbucks}</b>Gbucks</div><div><b>${a.wins.lizard + a.wins.tsunami + (a.wins.dash||0)}</b>Wins</div></div>
+      <div style="width:100%"><div class="progress"><i style="width:${seasonTier(a)>=SEASON_TIERS?100:(((a.season.xp||0)%SEASON_XP_PER)/SEASON_XP_PER*100).toFixed(1)}%"></i></div>
+      <p class="small-print">${seasonTier(a)>=SEASON_TIERS?`Max tier · ${esc(seasonMeta().name)}`:`${(a.season.xp||0)%SEASON_XP_PER} / ${SEASON_XP_PER} XP to tier ${seasonTier(a)+1} · ${esc(seasonMeta().name)}`}</p></div>
     </div>
+    <button class="big" id="topass" style="background:linear-gradient(135deg,#7c3aed,#db2777,#f59e0b);color:#fff">🎟️ Battle Pass · Tier ${seasonTier(a)}</button>
     <button class="big" id="toshop">🛒 Item Shop</button>
-    <div class="tabs">${[["avatar","Avatar"],["packs","Packs"+(a.packs?" ("+a.packs+")":"")],["rewards","Levels"],["achievements","🏆 Awards"],["trade","💝 Trade"]].map(([k,t]) => `<button class="small" data-tab="${k}" aria-pressed="${p.tab===k}">${t}</button>`).join("")}</div>
+    <div class="tabs">${[["avatar","Avatar"],["packs","Packs"+(a.packs?" ("+a.packs+")":"")],["achievements","🏆 Awards"],["trade","💝 Trade"]].map(([k,t]) => `<button class="small" data-tab="${k}" aria-pressed="${p.tab===k}">${t}</button>`).join("")}</div>
     ${body}`;
   $("#toshop").onclick = () => go("shop", {shop:{id:a.id, sel:null}});
+  $("#topass").onclick = () => go("pass", {pass:{id:a.id}});
   const sp = $("#setpin"); if (sp) sp.onclick = () => go("create", {create:{step:"pin", redo:a.id, name:a.name, pinOnly:true, pin:"", pin1:null, next:{view:"profile"}}});
   const rd = $("#redo"); if (rd) rd.onclick = () => go("create", {create:{step:"colors", redo:a.id, name:a.name, qi:0, colors:{}, keys:keysFor(a), mode:a.keyMode||"simple", then:"redo", next:{view:"profile"}}});
   const ms = $("#m-simple"); if (ms) ms.onclick = () => { if (a.keyMode === "full"){ a.keyMode = "simple"; saveAccount(a); S.toasts = ["Simplified mode is on. Logins only ask the 11 simple questions."]; } render(); };
@@ -1276,7 +1359,7 @@ function renderShop(app){
   let detail = "";
   if (sh.sel){
     const isPow = sh.sel.startsWith("pw:"), key = sh.sel.slice(3);
-    const price = salePrice(isPow ? POWERS[key].price : ITEMS[sh.sel].price);
+    const price = isPow ? powerSalePrice(POWERS[key].price) : salePrice(ITEMS[sh.sel].price);
     const label = isPow ? `${POWERS[key].icon} ${POWERS[key].name}` : ITEMS[sh.sel].name;
     const own = !isPow && owns(a, sh.sel);
     detail = `<div class="card center">
@@ -1287,43 +1370,45 @@ function renderShop(app){
         a.gbucks >= price ? `<button class="big" id="buy">Buy for ${price} Gbucks</button>` : `<p class="minus">You need ${price - a.gbucks} more Gbucks.</p>`}
       <button class="ghost small" id="cancel">Close</button></div>`;
   }
-  app.innerHTML = `
-    <div class="spread"><button class="ghost small" id="back">← Back</button><span class="row">${avatarHtml(a.avatar,"sm")}<b class="gb">${a.gbucks} Gbucks</b></span></div>
-    <h1>🛒 Item Shop</h1>
-    ${announceHtml()}${shopSaleOff() ? `<div class="announce sale">🔥 SALE: ${shopSaleOff()}% off everything in the shop${saleEnds()}</div>` : ""}
-    ${toast}${detail}
+  const stab = sh.tab || "items";
+  const shopTabs = [["items","Items"],["names","Names"],["powers","Power-ups"],["gbux","💎 Gbux"]];
+  let panel = "";
+  if (stab === "items"){
+    panel = `
     <div class="card">
-      <div class="spread"><h3>⭐ Featured this week</h3><span class="tag">New featured in ${untilReset()}</span></div>
+      <div class="spread"><h3>⭐ Featured</h3><span class="tag">New in ${untilReset()}</span></div>
       <p class="small-print">Epic and Legendary items rotate in every Monday.</p>
       <div class="shopgrid">${shopFeatured().map(card).join("")}</div>
     </div>
-    <div class="card">
-      <h3>Always in stock</h3>
-      <div class="shopgrid">${shopAlways().map(card).join("")}</div>
-    </div>
-    <div class="card">
-      <h3>🏷️ Name colors · always in stock</h3>
-      <p class="small-print">Changes how your name looks on the hub, leaderboards and your profile.</p>
-      <div class="shopgrid">${NAMETAGS.map(x => card(x[0])).join("")}</div>
-    </div>
-    <div class="card">
-      <h3>Power-ups · always in stock</h3>
-      <div class="shopgrid">${Object.entries(POWERS).map(([k,pw]) => `<button class="sitem" style="--rc:#0e7fa6" data-sel="pw:${k}" aria-pressed="${sh.sel==="pw:"+k}"><span class="e">${pw.icon}</span><b>${esc(pw.name)}</b><small>have ${a.power[k]||0}</small><span class="price">${priceTag(pw.price)}</span></button>`).join("")}</div>
-    </div>
-    <div class="card">
+    <div class="card"><h3>Always in stock</h3><div class="shopgrid">${shopAlways().map(card).join("")}</div></div>`;
+  } else if (stab === "names"){
+    panel = `<div class="card"><h3>🏷️ Name colors</h3><p class="small-print">Changes how your name looks on the hub, leaderboards and your profile.</p><div class="shopgrid">${NAMETAGS.map(x => card(x[0])).join("")}</div></div>`;
+  } else if (stab === "powers"){
+    panel = `<div class="card"><h3>Power-ups</h3><p class="small-print">Handy boosts for Lizard and Tsunami rounds.</p><div class="shopgrid">${Object.entries(POWERS).map(([k,pw]) => `<button class="sitem" style="--rc:#0e7fa6" data-sel="pw:${k}" aria-pressed="${sh.sel==="pw:"+k}"><span class="e">${pw.icon}</span><b>${esc(pw.name)}</b><small>have ${a.power[k]||0}</small><span class="price">${powerPriceTag(pw.price)}</span></button>`).join("")}</div></div>`;
+  } else {
+    panel = `<div class="card">
       <div class="spread"><h3>💎 Get Gbux</h3><span class="tag">${gbuxBonus() ? `🔥 +${gbuxBonus()}% bonus${saleEnds()}` : "Instant after approval"}</span></div>
       <div class="gbuxgrid">${GBUX_BUNDLES.map((b,k) => `<button class="gbux" data-bundle="${k}">${gbuxBonus() ? `<em>SALE +${gbuxBonus()}%</em>` : b.tag ? `<em>${esc(b.tag)}</em>` : ""}<span class="payicon">${b.icon}</span>${gbuxBonus() ? `<s style="opacity:.6">${fmt(b.g)}</s>` : ""}<b>${fmt(saleGbux(b.g))}</b><small>Gbux</small><span class="price">${money(b.price)}</span></button>`).join("")}</div>
-      <button class="ghost" id="giftcard" style="width:100%;margin-top:10px">🎁 Redeem a gift card</button>    </div>
-    <p class="small-print">Gbucks are free to earn but rare: +${GB.daily} daily bonus for your first round each day, +${GB.levelUp} every level up, +${GB.champ} for winning Tsunami Meter, +${GB.double} for pack doubles.</p>`;
+      <button class="ghost" id="giftcard" style="width:100%;margin-top:10px">🎁 Redeem a gift card</button></div>`;
+  }
+  app.innerHTML = `
+    <div class="spread"><button class="ghost small" id="back">← Back</button><span class="row">${avatarHtml(a.avatar,"sm")}<b class="gb">${a.gbucks} Gbucks</b></span></div>
+    <h1>🛒 Item Shop</h1>
+    ${announceHtml()}${(shopSaleOff()||powerSaleOff()) ? `<div class="announce sale">🔥 SALE${shopSaleOff()?` · ${shopSaleOff()}% off items`:""}${powerSaleOff()?` · ${powerSaleOff()}% off power-ups`:""}${saleEnds()}</div>` : ""}
+    ${toast}${detail}
+    <div class="tabs">${shopTabs.map(([k,t]) => `<button class="small" data-stab="${k}" aria-pressed="${stab===k}">${t}</button>`).join("")}</div>
+    ${panel}
+    <p class="small-print">Gbucks are free to earn but rare: +${GB.daily} daily bonus for your first round each day, rewards on every Battle Pass tier, +${GB.champ} for winning, +${GB.double} for pack doubles.</p>`;
   watchRequests(a.id);
   app.querySelectorAll("[data-bundle]").forEach(b => b.onclick = () => { const x = GBUX_BUNDLES[+b.dataset.bundle]; openCheckout(a, {...x, g:saleGbux(x.g)}); });
-  $("#giftcard").onclick = () => openGiftCard(a);
+  const gc = $("#giftcard"); if (gc) gc.onclick = () => openGiftCard(a);
   $("#back").onclick = () => S.verified.includes(a.id) ? go("profile", {profile:{id:a.id, tab:"avatar"}}) : go("home");
+  app.querySelectorAll("[data-stab]").forEach(b => b.onclick = () => { sh.tab = b.dataset.stab; sh.sel = null; render(); window.scrollTo(0,0); });
   app.querySelectorAll("[data-sel]").forEach(b => b.onclick = () => { sh.sel = b.dataset.sel; render(); window.scrollTo(0,0); });
   const c = $("#cancel"); if (c) c.onclick = () => { sh.sel = null; render(); };
   const buy = $("#buy"); if (buy) buy.onclick = () => {
     const sel = sh.sel;
-    if (sel.startsWith("pw:")){ const k = sel.slice(3), pw = POWERS[k], cost = salePrice(pw.price); if (a.gbucks < cost) return;
+    if (sel.startsWith("pw:")){ const k = sel.slice(3), pw = POWERS[k], cost = powerSalePrice(pw.price); if (a.gbucks < cost) return;
       a.gbucks -= cost; stat(a, "spent", cost); a.power[k] = (a.power[k]||0) + 1; S.toasts = [`Bought ${pw.icon} ${pw.name}. You have ${a.power[k]}.`]; }
     else { const i = ITEMS[sel], cost = salePrice(i.price); if (a.gbucks < cost || owns(a, sel)) return;
       a.gbucks -= cost; stat(a, "spent", cost); a.items.push(sel); a.avatar[i.type] = sel; S.toasts = [`Bought ${i.name} and put it on!`]; sh.sel = null; }
@@ -1344,7 +1429,7 @@ function renderPickAccount(app){
     <div class="spread"><h2>Add a player</h2><button class="ghost small" id="back">Back</button></div>
     <div class="card">
       <h3>Log in</h3>
-      ${accts.length ? `<div class="acct-grid">${accts.map(a => `<button data-acct="${a.id}">${avatarHtml(a.avatar,"md")}<span>${nameHtml(a)}</span><small>${a.frozen ? "🧊 Frozen" : "Lv " + a.level}</small></button>`).join("")}</div>`
+      ${accts.length ? `<div class="acct-grid">${accts.map(a => `<button data-acct="${a.id}">${avatarHtml(a.avatar,"md")}<span>${nameHtml(a)}</span><small>${a.frozen ? "🧊 Frozen" : "Tier " + seasonTier(a)}</small></button>`).join("")}</div>`
         : `<p class="small-print">Every account is already in this game.</p>`}
       <button class="ghost" id="new">+ Make a new account</button>
     </div>
@@ -1365,7 +1450,7 @@ function renderPickAccount(app){
 function renderLobby(app){
   const l = L(), liz = S.game === "lizard", min = liz ? 3 : 2;
   const list = l.players.map((pl,i) => `<div class="player">${avatarHtml(playerAv(pl),"sm")}<span class="nm">${esc(playerName(pl))}</span>
-      ${pl.acct ? `<span class="tag">Lv ${DATA.accounts[pl.acct]?.level||1}</span>` : `<span class="tag">guest</span>`}
+      ${pl.acct ? `<span class="tag">Tier ${seasonTier(DATA.accounts[pl.acct])}</span>` : `<span class="tag">guest</span>`}
       <button class="ghost small" data-up="${i}" aria-label="Move up" ${i?"":"disabled"}>↑</button><button class="ghost small" data-rm="${i}" aria-label="Remove">✕</button></div>`).join("");
   let settings = "";
   if (liz){
@@ -2073,7 +2158,7 @@ function renderOnlineWho(app){
     <div class="spread"><h2>🌐 Play online</h2><button class="ghost small" id="back">← Hub</button></div>
     <p class="small-print">Everyone plays on their own computer or phone. First, who's playing on this device?</p>
     <div class="card"><h3>Log in</h3>
-      ${accts.length ? `<div class="acct-grid">${accts.map(a => `<button data-acct="${a.id}">${avatarHtml(a.avatar,"md")}<span>${nameHtml(a)}</span><small>${a.frozen ? "🧊 Frozen" : "Lv " + a.level}</small></button>`).join("")}</div>` : `<p class="small-print">No accounts yet.</p>`}
+      ${accts.length ? `<div class="acct-grid">${accts.map(a => `<button data-acct="${a.id}">${avatarHtml(a.avatar,"md")}<span>${nameHtml(a)}</span><small>${a.frozen ? "🧊 Frozen" : "Tier " + seasonTier(a)}</small></button>`).join("")}</div>` : `<p class="small-print">No accounts yet.</p>`}
       <button class="ghost" id="new">+ Make a new account</button>
     </div>
     <div class="card"><h3>Play as a guest</h3>
@@ -2680,6 +2765,197 @@ function renderDashOnline(app){
 }
 const dashGotText = r => { const cor = ROOM.correct || {}, g = r.players.filter(d => d !== r.drawer && ROOM.players[d]);
   return `${g.filter(d => cor[d]).length}/${g.length} got it`; };
+
+/* ================= BATTLE PASS + SEASONS ================= */
+// Season-exclusive cosmetics. These never show up in the shop — the only way to get them is the Battle Pass.
+const SEASON_ITEM_DEFS = [
+  ["se-phoenix","face","🦅","Phoenix","legendary"],
+  ["se-wolf","face","🐺","Lone Wolf","legendary"],
+  ["se-nt-inferno","nametag","linear-gradient(90deg,#f97316,#ef4444,#fb923c,#ef4444,#f97316)","Inferno","legendary",true],
+  ["se-nt-cosmic","nametag","linear-gradient(90deg,#7c3aed,#db2777,#2563eb,#7c3aed)","Cosmic","legendary",true],
+  ["se-rhino","face","🦏","Rhino","epic"],
+  ["se-whale","face","🐳","Whale","epic"],
+  ["se-swords","badge","⚔️","Crossed swords","epic"],
+  ["se-trident","badge","🔱","Trident","epic"],
+  ["se-disco","badge","🪩","Disco ball","epic"],
+  ["se-bg-neon","bg","linear-gradient(135deg,#f72585,#7209b7,#3a0ca3)","Neon Pulse","epic"],
+  ["se-nt-frost","nametag","linear-gradient(90deg,#38bdf8,#e0f2fe,#7dd3fc,#e0f2fe,#38bdf8)","Frostbite","epic",true],
+  ["se-shield","badge","🛡️","Shield","epic"],
+  ["se-deer","face","🦌","Deer","rare"],
+  ["se-otter","face","🦦","Otter","rare"],
+  ["se-sloth","face","🦥","Sloth","rare"],
+  ["se-bow","badge","🏹","Bow","rare"],
+  ["se-boom","badge","💥","Boom","rare"],
+  ["se-target","badge","🎯","Bullseye","rare"],
+  ["se-evil","badge","🧿","Evil eye","rare"],
+  ["se-frost","badge","❄️","Frost","rare"],
+  ["se-cyclone","badge","🌪️","Cyclone","rare"],
+  ["se-bg-aurora","bg","linear-gradient(135deg,#00c9ff,#92fe9d)","Aurora","rare"],
+  ["se-cloud","badge","☁️","Cloud","common"],
+  ["se-leaf","badge","🍃","Leaf","common"],
+  ["se-rock","badge","🪨","Rock","common"],
+  ["se-mushroom","badge","🍄","Mushroom","common"],
+  ["se-bg-ember","bg","linear-gradient(135deg,#f12711,#f5af19)","Ember","common"],
+  ["se-bg-abyss","bg","#0d1b2a","Abyss","common"]
+];
+// Season 2 — ❄️ Frostbite: a winter set of exclusive cosmetics
+const SEASON2_FROSTBITE = [
+  ["w2-nt-blizzard","nametag","linear-gradient(90deg,#e0f2fe,#38bdf8,#818cf8,#38bdf8,#e0f2fe)","Blizzard","legendary",true],
+  ["w2-nt-aurora","nametag","linear-gradient(90deg,#22d3ee,#a78bfa,#34d399,#22d3ee)","Aurora Veil","legendary",true],
+  ["w2-polar","face","🐻‍❄️","Polar Bear","legendary"],
+  ["w2-flake","badge","❄️","Grand Snowflake","legendary"],
+  ["w2-snowman","face","☃️","Snowman","epic"],
+  ["w2-seal","face","🦭","Seal","epic"],
+  ["w2-nt-icicle","nametag","linear-gradient(90deg,#bae6fd,#38bdf8,#e0f7ff,#38bdf8,#bae6fd)","Icicle","epic",true],
+  ["w2-bg-aurora","bg","linear-gradient(135deg,#00c9ff,#92fe9d,#a78bfa)","Northern Lights","epic"],
+  ["w2-bg-glacier","bg","linear-gradient(135deg,#e0f2fe,#7dd3fc,#38bdf8)","Glacier","epic"],
+  ["w2-mitten","badge","🧤","Mittens","epic"],
+  ["w2-skates","badge","⛸️","Ice Skates","epic"],
+  ["w2-scarf","badge","🧣","Scarf","epic"],
+  ["w2-cold","face","🥶","Freezing","rare"],
+  ["w2-ice","badge","🧊","Ice Cube","rare"],
+  ["w2-snow","badge","🌨️","Snow Cloud","rare"],
+  ["w2-star","badge","🌟","Winter Star","rare"],
+  ["w2-cocoa","badge","☕","Hot Cocoa","rare"],
+  ["w2-sled","badge","🛷","Sled","rare"],
+  ["w2-tree","badge","🎄","Pine Tree","rare"],
+  ["w2-bell","badge","🔔","Sleigh Bell","rare"],
+  ["w2-gift","badge","🎁","Wrapped Gift","rare"],
+  ["w2-bg-frost","bg","#dbeafe","Frozen Lake","rare"],
+  ["w2-socks","badge","🧦","Wool Socks","common"],
+  ["w2-candy","badge","🍬","Candy","common"],
+  ["w2-tea","badge","🍵","Warm Tea","common"],
+  ["w2-cloud","badge","☁️","Snow Flurry","common"],
+  ["w2-bg-snow","bg","#eef6ff","Snowfield","common"],
+  ["w2-bg-night","bg","#1e293b","Winter Night","common"]
+];
+// which item pool each season draws from; seasons with no set here reuse the default pool
+SEASON2_FROSTBITE.unshift(...FROST_SKINS);
+const SEASON_SETS = {2: SEASON2_FROSTBITE};
+// names/emojis shown for each season unless the admin page overrides them
+const SEASON_INFO = {1:{name:"Season 1", emoji:"🎟️"}, 2:{name:"Frostbite", emoji:"❄️"}};
+[SEASON_ITEM_DEFS, ...Object.values(SEASON_SETS)].forEach(set => set.forEach(([id,type,v,name,rarity,shine]) =>
+  addItems([[id,type,v,name]], {rarity, price:RARITY[rarity].price, season:true, shine:!!shine})));
+
+const SEASON_TIERS = 30, SEASON_XP_PER = 100, SEASON_PRICE = 800;
+// the current season comes from the admin page (settings/season); nothing set = default Season 1
+function seasonMeta(){ const s = (DATA.settings && DATA.settings.season) || {}; const id = s.id || 1, info = SEASON_INFO[id] || {};
+  return {id, name:s.name || info.name || ("Season " + id), emoji:s.emoji || info.emoji || "🎟️", until:s.until || null}; }
+// make sure an account's season progress matches the live season; a new season wipes progress but keeps unlocked items
+function fixSeason(a){ const id = seasonMeta().id; if (!a.season || a.season.id !== id) a.season = {id, xp:0, prem:false, claimed:[]}; a.season.claimed = a.season.claimed || []; return a.season; }
+function seasonTier(a){ const s = a && a.season && a.season.id === seasonMeta().id ? a.season : {xp:0}; return Math.min(SEASON_TIERS, Math.floor((s.xp||0)/SEASON_XP_PER)); }
+const seededShuffle = (arr, rnd) => { arr = arr.slice(); for (let i=arr.length-1;i>0;i--){ const j = Math.floor(rnd()*(i+1)); [arr[i],arr[j]] = [arr[j],arr[i]]; } return arr; };
+// the reward track is built fresh for each season number, so every season shuffles in different rewards
+function seasonTrack(id){
+  const rnd = seeded("ggn-season-" + id);
+  const pool = SEASON_SETS[id] || SEASON_ITEM_DEFS;
+  const byR = r => seededShuffle(pool.filter(x => x[4] === r).map(x => x[0]), rnd);
+  const big = byR("legendary"), pickE = byR("epic"), pickR = byR("rare"), pickC = byR("common");
+  let bi=0, ei=0, ri=0, ci=0;
+  const tiers = [];
+  for (let t=1;t<=SEASON_TIERS;t++){
+    let free, prem;
+    if (t === SEASON_TIERS) free = {gb:200};
+    else if (t % 5 === 0) free = {pack:1};
+    else if (t % 2 === 0 && ci < pickC.length) free = {item:pickC[ci++]};
+    else free = {gb: t % 3 === 0 ? 50 : 25};
+    if (t % 10 === 0 && bi < big.length) prem = {item:big[bi++]};
+    else if (t % 5 === 0 && ei < pickE.length) prem = {item:pickE[ei++]};
+    else if (t % 2 === 0 && ei < pickE.length) prem = {item:pickE[ei++]};
+    else if (ri < pickR.length) prem = {item:pickR[ri++]};
+    else prem = {gb:75};
+    tiers.push({free, prem});
+  }
+  return tiers;
+}
+const passLeft = meta => { if (!meta.until) return null; const ms = meta.until - Date.now(); if (ms <= 0) return "ended";
+  const d = Math.floor(ms/864e5), h = Math.floor(ms%864e5/36e5); return d ? `${d}d ${h}h` : `${h}h`; };
+const passEndsShort = meta => { const l = passLeft(meta); return l ? (l === "ended" ? "season over" : "ends in " + l) : ""; };
+const passEndsLong = meta => { const l = passLeft(meta); return l ? (l === "ended" ? "This season has ended — a new one is coming soon." : "Ends in " + l + ".") : "Play any game to climb the tiers and unlock rewards."; };
+
+const specFor = (track, key) => { const t = track[+key.slice(1) - 1]; return t && (key[0] === "p" ? t.prem : t.free); };
+function canClaim(a, track, key){ const T = +key.slice(1);
+  if (seasonTier(a) < T || a.season.claimed.includes(key)) return false;
+  if (key[0] === "p" && !a.season.prem) return false;
+  return !!specFor(track, key);
+}
+function grantReward(a, spec){
+  if (!spec) return "";
+  if (spec.item){ if (!a.items.includes(spec.item)) a.items.push(spec.item); return ITEMS[spec.item] ? ITEMS[spec.item].name : "an item"; }
+  if (spec.gb){ a.gbucks += spec.gb; return spec.gb + " Gbux"; }
+  if (spec.pack){ a.packs += spec.pack; return "a pack 🎁"; }
+  return "";
+}
+const countClaimable = (a, track) => { let n = 0; for (let T=1;T<=SEASON_TIERS;T++) for (const p of ["f","p"]) if (canClaim(a, track, p+T)) n++; return n; };
+function claimTier(a, track, key){ if (!canClaim(a, track, key)) return; const got = grantReward(a, specFor(track, key)); a.season.claimed.push(key); saveAccount(a); S.toasts = [`Claimed ${got}!`]; render(); }
+function claimAll(a, track){
+  const got = [];
+  for (let T=1;T<=SEASON_TIERS;T++) for (const p of ["f","p"]){ const key = p+T; if (canClaim(a, track, key)){ got.push(grantReward(a, specFor(track, key))); a.season.claimed.push(key); } }
+  if (got.length){ saveAccount(a); S.toasts = [`Claimed ${got.length} reward${got.length>1?"s":""}!`]; }
+  render();
+}
+function buyPremium(a){ fixSeason(a); if (a.season.prem || a.gbucks < SEASON_PRICE) return;
+  a.gbucks -= SEASON_PRICE; a.season.prem = true; stat(a, "spent", SEASON_PRICE); saveAccount(a);
+  S.toasts = ["⭐ Premium unlocked! Claim your rewards below."]; render();
+}
+function passCell(a, spec, trackName, T){
+  if (!spec) return `<div class="pcell" style="--rc:var(--line)"><small>—</small></div>`;
+  const unlocked = seasonTier(a) >= T, key = (trackName === "prem" ? "p" : "f") + T;
+  const claimed = a.season.claimed.includes(key), needPrem = trackName === "prem" && !a.season.prem;
+  let inner = "", rc = "var(--line)";
+  if (spec.item){ const i = ITEMS[spec.item]; if (i){ inner = `${swatch(i)}<small>${esc(i.name)}</small>`; rc = (RARITY[i.rarity] || {}).color || "var(--line)"; } else inner = `<small>?</small>`; }
+  else if (spec.gb) inner = `<span class="e">💰</span><small>${spec.gb} G</small>`;
+  else if (spec.pack) inner = `<span class="e">🎁</span><small>Pack</small>`;
+  let tag;
+  if (claimed) tag = `<span class="ptag done">✓</span>`;
+  else if (!unlocked) tag = `<span class="ptag">🔒</span>`;
+  else if (needPrem) tag = `<span class="ptag" title="Needs Premium">⭐</span>`;
+  else tag = `<button class="small" data-claim="${key}">Claim</button>`;
+  return `<div class="pcell ${claimed?"done":""}" style="--rc:${rc}">${inner}${tag}</div>`;
+}
+function renderPass(app){
+  const ps = S.pass || (S.pass = {id:null});
+  const meta = seasonMeta(), a = ps.id && DATA.accounts[ps.id];
+  if (!a){
+    const accts = Object.values(DATA.accounts);
+    app.innerHTML = `
+      <div class="spread"><h2>🎟️ Battle Pass</h2><button class="ghost small" id="back">Back</button></div>
+      <div class="passhero"><div class="eyebrow">Current season</div><h1>${esc(meta.emoji + " " + meta.name)}</h1><p>${esc(passEndsLong(meta))}</p></div>
+      <div class="card"><h3>Whose battle pass?</h3>
+        ${accts.length ? `<div class="acct-grid">${accts.map(x => `<button data-acct="${x.id}">${avatarHtml(x.avatar,"md")}<span>${nameHtml(x)}</span><small>Tier ${seasonTier(x)}${x.season && x.season.prem && x.season.id===meta.id ? " ⭐" : ""}</small></button>`).join("")}</div>`
+          : `<p class="small-print">Make an account first.</p>`}</div>`;
+    $("#back").onclick = () => go("home");
+    app.querySelectorAll("[data-acct]").forEach(b => b.onclick = () => { const id = b.dataset.acct;
+      if (loggedIn(id)) go("pass", {pass:{id}}); else startQuiz(id, {view:"pass"}); });
+    return;
+  }
+  fixSeason(a);
+  const track = seasonTrack(meta.id), tier = seasonTier(a), xpIn = (a.season.xp||0) % SEASON_XP_PER, claimable = countClaimable(a, track);
+  const toast = S.toasts.length ? `<div class="toast">${S.toasts.map(esc).join("<br>")}</div>` : ""; S.toasts = [];
+  app.innerHTML = `
+    <div class="spread"><button class="ghost small" id="back">← Back</button><span class="row">${avatarHtml(a.avatar,"sm")}<b class="gb">${a.gbucks} Gbux</b></span></div>
+    ${toast}
+    <div class="passhero">
+      <div class="spread"><div class="eyebrow">${esc(meta.name)}${a.season.prem ? " · ⭐ PREMIUM" : ""}</div><div class="eyebrow">${esc(passEndsShort(meta))}</div></div>
+      <div class="spread" style="align-items:flex-end"><h1>Tier ${tier}</h1><small>${tier >= SEASON_TIERS ? "MAX TIER" : `${xpIn} / ${SEASON_XP_PER} to tier ${tier+1}`}</small></div>
+      <div class="pbar"><i style="width:${tier >= SEASON_TIERS ? 100 : (xpIn/SEASON_XP_PER*100).toFixed(1)}%"></i></div>
+      <p class="small-print" style="color:#fff;opacity:.9">Earn Season XP by playing any game — every ${SEASON_XP_PER} XP is a new tier.</p>
+    </div>
+    ${a.season.prem ? "" : `<div class="card center"><h3>⭐ Unlock Premium</h3>
+      <p class="small-print">Unlocks the premium reward on every tier: exclusive faces, name colors and effects you can't get anywhere else. You instantly get everything up to your current tier.</p>
+      ${a.gbucks >= SEASON_PRICE ? `<button class="big" id="buyprem">Unlock Premium · ${SEASON_PRICE} Gbux</button>` : `<p class="minus">Costs ${SEASON_PRICE} Gbux — you need ${SEASON_PRICE - a.gbucks} more.</p>`}</div>`}
+    ${claimable ? `<button class="big" id="claimall">🎁 Claim all (${claimable})</button>` : ""}
+    <div class="ptracklabel"><span>Tier</span><span>Free</span><span>⭐ Premium</span></div>
+    <div class="ptrack">
+      ${track.map((t,i) => { const T = i+1, cur = T === tier+1;
+        return `<div class="ptier ${cur?"cur":""}"${cur?' id="curtier"':""}><div class="tnum">${T}<small>TIER</small></div>${passCell(a,t.free,"free",T)}${passCell(a,t.prem,"prem",T)}</div>`; }).join("")}
+    </div>`;
+  $("#back").onclick = () => S.verified.includes(a.id) ? go("profile", {profile:{id:a.id, tab:"avatar"}}) : go("home");
+  const bp = $("#buyprem"); if (bp) bp.onclick = () => buyPremium(a);
+  const ca = $("#claimall"); if (ca) ca.onclick = () => claimAll(a, track);
+  app.querySelectorAll("[data-claim]").forEach(b => b.onclick = () => claimTier(a, track, b.dataset.claim));
+  if (!ps.scrolled){ const ct = $("#curtier"); if (ct) ct.scrollIntoView({block:"center"}); ps.scrolled = true; }
+}
 
 /* ================= boot ================= */
 window.claude?.hot?.snapshot?.(() => ({S}));

@@ -254,7 +254,7 @@
       <label>Message</label>
       <input id="an-text" maxlength="140" placeholder="Gbux sale this weekend!">
       <label>Show for</label>
-      <select id="an-for" onchange="toggleDate('an')"><option value="1">1 day</option><option value="3">3 days</option><option value="7">1 week</option><option value="custom">Pick a date…</option><option value="0">Until I remove it</option></select>
+      <select id="an-for" onchange="toggleDate('an')"><option value="1">1 hour</option><option value="4">4 hours</option><option value="8">8 hours</option><option value="24">1 day</option><option value="72">3 days</option><option value="168">1 week</option><option value="custom">Pick a date…</option><option value="0">Until I remove it</option></select>
       <input type="datetime-local" id="an-date" style="display:none;margin-top:8px" aria-label="Banner end date">
       <div class="btn-row"><button class="btn btn-primary" onclick="setAnnounce()">Post banner</button><button class="btn btn-danger" onclick="clearSetting('announce','an-status')">Remove</button></div>
       <div class="status" id="an-status"></div>
@@ -266,12 +266,29 @@
         <div><label>Extra Gbux on bundles (%)</label><input id="sale-gbux" type="number" min="0" max="500" placeholder="50"></div>
         <div><label>Shop items off (%)</label><input id="sale-shop" type="number" min="0" max="90" placeholder="25"></div>
       </div>
+      <label>Power-ups off (%)</label>
+      <input id="sale-power" type="number" min="0" max="90" placeholder="0">
+      <p class="token-note" style="margin-top:-2px">Power-ups discount separately. Leave at 0 to keep power-ups full price during a sale.</p>
       <label>Runs for</label>
-      <select id="sale-for" onchange="toggleDate('sale')"><option value="1">1 day</option><option value="2">2 days</option><option value="3">3 days</option><option value="7">1 week</option><option value="custom">Pick a date…</option></select>
+      <select id="sale-for" onchange="toggleDate('sale')"><option value="1">1 hour</option><option value="4">4 hours</option><option value="8">8 hours</option><option value="24">1 day</option><option value="48">2 days</option><option value="72">3 days</option><option value="168">1 week</option><option value="custom">Pick a date…</option></select>
       <input type="datetime-local" id="sale-date" style="display:none;margin-top:8px" aria-label="Sale end date">
       <div class="btn-row"><button class="btn btn-primary" onclick="setSale()">Start sale</button><button class="btn btn-danger" onclick="clearSetting('sale','sale-status')">End sale</button></div>
       <div class="status" id="sale-status"></div>
       <div class="token-note" id="sale-now"></div>
+    </div>
+    <div class="card">
+      <h2>🎟️ Battle Pass season</h2>
+      <p class="token-note" style="margin-top:-8px;margin-bottom:12px">Players climb tiers by earning XP in any game. Starting a new season resets everyone's tier and premium pass, but they keep the items they already unlocked.</p>
+      <div class="two-col">
+        <div><label>Season number</label><input id="se-id" type="number" min="1" placeholder="1"></div>
+        <div><label>Season name</label><input id="se-name" maxlength="40" placeholder="Season 1"></div>
+      </div>
+      <label>Ends</label>
+      <select id="se-for" onchange="toggleDate('se')"><option value="0">No end date</option><option value="1">1 hour</option><option value="4">4 hours</option><option value="8">8 hours</option><option value="24">1 day</option><option value="168">1 week</option><option value="336">2 weeks</option><option value="720">1 month</option><option value="custom">Pick a date…</option></select>
+      <input type="datetime-local" id="se-date" style="display:none;margin-top:8px" aria-label="Season end date">
+      <div class="btn-row"><button class="btn btn-primary" onclick="setSeason()">Save season</button><button class="btn" onclick="nextSeason()">Start next season →</button></div>
+      <div class="status" id="se-status"></div>
+      <div class="token-note" id="se-now"></div>
     </div>
     <div class="card">
       <h2>🧊 Freeze accounts</h2>
@@ -305,9 +322,10 @@
         <button class="btn" onclick="makeGift(500)">500</button><button class="btn" onclick="makeGift(1100)">1,100</button>
         <button class="btn" onclick="makeGift(5000)">5,000</button><button class="btn" onclick="makeGift(11000)">11,000</button>
       </div>
-      <label>Expires (optional)</label>
-      <input type="date" id="gift-exp" aria-label="Gift card expiration date">
-      <p class="token-note">Leave blank and the card never expires. It stops working at the end of the day you pick.</p>
+      <label>Expires</label>
+      <select id="gift-for" onchange="toggleDate('gift')"><option value="0">Never</option><option value="1">1 hour</option><option value="4">4 hours</option><option value="8">8 hours</option><option value="24">1 day</option><option value="168">1 week</option><option value="custom">Pick a date…</option></select>
+      <input type="datetime-local" id="gift-date" style="display:none;margin-top:8px" aria-label="Gift card expiration date">
+      <p class="token-note">Pick how long the card stays good for. "Never" means it never expires.</p>
       <div class="token-row" style="margin-top:10px"><input type="number" id="gift-amt" min="1" placeholder="Other amount">
         <button class="btn" onclick="makeGift(+document.getElementById('gift-amt').value)" style="flex:0;white-space:nowrap;padding:9px 14px;">Make</button></div>
       <div class="status" id="gift-status"></div>
@@ -778,7 +796,7 @@ function loadGbux(){
     ggnDb = app.database();
   } catch(e){ showStatus('gbux-status','✗ Could not connect: '+e.message,'error'); return; }
   gref("accounts").on("value", s => { ggnAccounts = s.val() || {}; drawAcctSelect(); drawGbux(); drawFreeze(); });
-  gref("settings").on("value", s => { ggnSettings = s.val() || {}; drawSettings(); });
+  gref("settings").on("value", s => { ggnSettings = s.val() || {}; drawSettings(); drawSeason(); });
   gref("requests").on("value", s => { ggnReqs = s.val() || {}; drawGbux(); });
   gref("giftcards").on("value", s => { ggnGifts = s.val() || {}; drawGifts(); drawGbux(); });
 }
@@ -791,9 +809,7 @@ async function makeGift(amount){
   let c = ""; for (let i = 0; i < 8; i++) c += GIFT_CHARS[Math.floor(Math.random()*GIFT_CHARS.length)];
   const code = c.slice(0,4) + "-" + c.slice(4);
   try {
-    const expDay = document.getElementById('gift-exp').value;
-    const expires = expDay ? new Date(expDay + "T23:59:59").getTime() : null;
-    if (expires && expires < Date.now()) { showStatus('gift-status','That expiration date already passed.','error'); return; }
+    let expires; try { expires = untilFrom('gift'); } catch(e){ showStatus('gift-status', e.message, 'error'); return; }
     await gref("giftcards/" + code).set({amount, made: Date.now(), expires});
     const el = document.getElementById('gift-status');
     el.className = 'status success';
@@ -813,13 +829,13 @@ function cancelGift(code){
 }
 // ── GAME NIGHT CONTROLS ──
 let ggnSettings = {};
-const DAY = 86400000;
+const DAY = 86400000, HOUR = 3600000;
 const endsText = x => x && x.until ? "until " + new Date(x.until).toLocaleString([], {weekday:"short", month:"short", day:"numeric", hour:"numeric", minute:"2-digit"}) : "until you remove it";
 const isLive = x => x && (!x.until || x.until > Date.now());
 function drawSettings(){
   const an = ggnSettings.announce, sale = ggnSettings.sale;
   document.getElementById('an-now').textContent = isLive(an) ? `Showing now: "${an.text}" ${endsText(an)}` : "No banner showing.";
-  document.getElementById('sale-now').textContent = isLive(sale) ? `Sale on: +${sale.gbux||0}% Gbux, ${sale.shop||0}% off the shop, ${endsText(sale)}` : "No sale running.";
+  document.getElementById('sale-now').textContent = isLive(sale) ? `Sale on: +${sale.gbux||0}% Gbux, ${sale.shop||0}% off items, ${sale.power||0}% off power-ups, ${endsText(sale)}` : "No sale running.";
 }
 // show the date box when "Pick a date…" is chosen
 function toggleDate(prefix){
@@ -836,7 +852,7 @@ function untilFrom(prefix){
     if (t <= Date.now()) throw new Error('That date already passed.');
     return t;
   }
-  return +v ? Date.now() + (+v)*DAY : null;
+  return +v ? Date.now() + (+v)*HOUR : null;
 }
 async function setAnnounce(){
   const text = document.getElementById('an-text').value.trim();
@@ -849,9 +865,10 @@ async function setAnnounce(){
 async function setSale(){
   const gbux = Math.max(0, Math.min(500, Math.floor(+document.getElementById('sale-gbux').value || 0)));
   const shop = Math.max(0, Math.min(90, Math.floor(+document.getElementById('sale-shop').value || 0)));
-  if (!gbux && !shop) { showStatus('sale-status','Set a Gbux bonus, a shop discount, or both.','error'); return; }
+  const power = Math.max(0, Math.min(90, Math.floor(+document.getElementById('sale-power').value || 0)));
+  if (!gbux && !shop && !power) { showStatus('sale-status','Set a Gbux bonus, a shop discount, a power-up discount, or any mix.','error'); return; }
   let until; try { until = untilFrom('sale'); } catch(e){ showStatus('sale-status', e.message, 'error'); return; }
-  try { await gref("settings/sale").set({gbux, shop, until, at: Date.now()}); showStatus('sale-status','✓ Sale started.','success'); }
+  try { await gref("settings/sale").set({gbux, shop, power, until, at: Date.now()}); showStatus('sale-status','✓ Sale started.','success'); }
   catch(e){ showStatus('sale-status','✗ '+e.message,'error'); }
 }
 async function clearSetting(key, statusId){
@@ -867,6 +884,27 @@ function drawFreeze(){
 }
 async function setFrozen(id, on){
   try { await gref(`accounts/${id}/frozen`).set(on ? true : null); } catch(e){ alert(e.message); }
+}
+function drawSeason(){
+  const now = document.getElementById('se-now'); if (!now) return;
+  const s = ggnSettings.season || {};
+  now.textContent = s.id ? `Live: ${s.name || ("Season " + s.id)} (season ${s.id})${s.until ? " · ends " + new Date(s.until).toLocaleString() : " · no end date"}` : "No season set — players see the default Season 1.";
+  if (s.id && !document.getElementById('se-id').value){ document.getElementById('se-id').value = s.id; document.getElementById('se-name').value = s.name || ""; }
+}
+async function setSeason(){
+  const id = Math.max(1, Math.floor(+document.getElementById('se-id').value || 1));
+  const name = document.getElementById('se-name').value.trim() || null;
+  let until; try { until = untilFrom('se'); } catch(e){ showStatus('se-status', e.message, 'error'); return; }
+  try { await gref("settings/season").set({id, name, until, at:Date.now()}); showStatus('se-status','\u2713 Season saved. Leave the name blank to use the game season name.','success'); }
+  catch(e){ showStatus('se-status','\u2717 '+e.message,'error'); }
+}
+async function nextSeason(){
+  const cur = (ggnSettings.season && ggnSettings.season.id) || 1, next = cur + 1;
+  if (!confirm("Start season " + next + "? This resets everyone's tier progress and premium pass. They keep the items they already unlocked.")) return;
+  try { await gref("settings/season").set({id:next, name:null, until:null, at:Date.now()});
+    document.getElementById('se-id').value = next; document.getElementById('se-name').value = "";
+    showStatus('se-status','\u2713 Season ' + next + ' started.','success'); }
+  catch(e){ showStatus('se-status','\u2717 '+e.message,'error'); }
 }
 function drawAcctSelect(){
   const sel = document.getElementById('gbux-acct'), cur = sel.value;
