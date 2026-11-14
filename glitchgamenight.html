@@ -152,6 +152,17 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid 
 .pk-snow{background:linear-gradient(140deg,#1d4ed8,#38bdf8)}
 .pk-arcade{background:linear-gradient(140deg,#0e7490,#7e22ce)}
 .pk-cafe{background:linear-gradient(140deg,#78350f,#b45309)}
+.pk-unrelic{background:linear-gradient(140deg,#0b0b1f,#5b21b6 55%,#06b6d4)}
+.pk-untravel{background:linear-gradient(140deg,#111827,#312e81 50%,#db2777)}
+.pk-unciv{background:linear-gradient(140deg,#78350f,#7c3aed 60%,#0f172a)}
+.roomrow{display:flex;gap:10px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:12px}
+.roomrow .ic{font-size:1.8rem;line-height:1}
+.roomrow small{color:var(--muted)}
+.tside{border:1px solid var(--line);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:8px}
+.tchip{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border:1px solid var(--line);border-radius:999px;margin:2px;font-size:.85rem;vertical-align:middle}
+.tchip .e{font-size:1rem}
+.tchip .sksw{width:20px;height:20px;border-radius:50%}
+.tchip .chipc{width:14px;height:14px}
 .pk-idol{background:linear-gradient(140deg,#d63384,#3b1d6e)}
 .pk-cursed{background:linear-gradient(140deg,#3d1a6e,#0d0d14)}
 .pk-glitch{background:linear-gradient(140deg,#118a4e,#0b2a3a)}
@@ -421,6 +432,13 @@ function untilRotation(){ const span = SHOP_ROT_HOURS * 36e5, ms = span - Date.n
   return h ? `${h}h ${m}m` : `${m}m`; }
 const shopRefreshText = () => curShop() ? `new featured in ${untilRotation()}` : `new featured in ${untilReset()}`;
 
+// character skins that come out of the Fractured Worlds: Travelers pack
+Object.assign(SKIN_SVG, {
+"un-riftwalker":`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M12 100 Q50 64 88 100Z" fill="#2e1065"/><path d="M28 62 Q26 22 50 20 Q74 22 72 62 Q62 52 50 52 Q38 52 28 62Z" fill="#4c1d95"/><ellipse cx="50" cy="46" rx="14" ry="13" fill="#0b0b1f"/><ellipse cx="44" cy="46" rx="3" ry="2" fill="#22d3ee"/><ellipse cx="56" cy="46" rx="3" ry="2" fill="#22d3ee"/><path d="M36 82 l6 -8 l4 6 l4 -8 l4 8 l4 -6 l6 8" stroke="#a78bfa" stroke-width="2" fill="none"/></svg>`,
+"un-glitchkid":`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M16 100 Q50 72 84 100Z" fill="#0891b2"/><rect x="45" y="56" width="10" height="12" fill="#eab688"/><circle cx="50" cy="46" r="17" fill="#f3c79b"/><path d="M33 38 Q50 26 67 38 L67 34 Q50 22 33 34Z" fill="#111"/><rect x="31" y="36" width="34" height="4" fill="#f0abfc" opacity=".85"/><rect x="28" y="50" width="22" height="4" fill="#22d3ee" opacity=".85"/><rect x="52" y="42" width="20" height="3" fill="#a3e635" opacity=".85"/><rect x="41" y="44" width="5" height="5" fill="#111"/><rect x="55" y="44" width="5" height="5" fill="#111"/><path d="M44 56 h4 v2 h4 v-2 h4" stroke="#7c2d12" stroke-width="2" fill="none"/></svg>`,
+"un-stareater":`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M18 100 Q14 40 50 26 Q86 40 82 100Z" fill="#1e1b4b"/><circle cx="34" cy="70" r="1.6" fill="#fff"/><circle cx="66" cy="80" r="1.4" fill="#fff"/><circle cx="62" cy="40" r="1.2" fill="#fde047"/><circle cx="40" cy="88" r="1.2" fill="#f0abfc"/><circle cx="50" cy="54" r="13" fill="#f8fafc"/><circle cx="50" cy="54" r="7" fill="#7c3aed"/><circle cx="50" cy="54" r="3" fill="#0b0b1f"/><circle cx="53" cy="51" r="1.6" fill="#fff"/><path d="M36 30 l-6 -10 M64 30 l6 -10" stroke="#818cf8" stroke-width="3" stroke-linecap="round"/><circle cx="30" cy="19" r="3" fill="#f0abfc"/><circle cx="70" cy="19" r="3" fill="#f0abfc"/></svg>`,
+"un-timekeeper":`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M18 100 Q50 76 82 100Z" fill="#78350f"/><circle cx="50" cy="46" r="20" fill="#b45309"/><circle cx="50" cy="46" r="16" fill="#fef3c7"/><path d="M50 46 V34 M50 46 L58 50" stroke="#1f2937" stroke-width="2.5" stroke-linecap="round"/><circle cx="50" cy="46" r="2" fill="#1f2937"/><path d="M50 31 v2 M50 59 v2 M35 46 h2 M63 46 h2" stroke="#92400e" stroke-width="2"/><rect x="46" y="20" width="8" height="6" rx="2" fill="#b45309"/><circle cx="36" cy="30" r="3" fill="#fbbf24"/><circle cx="64" cy="30" r="3" fill="#fbbf24"/></svg>`
+});
 // Season 2 packs replace the old packs while Season 2 is live (items people already own stay theirs)
 const SEASON_PACKS = {2: {
   stage:{name:"Stage Idols", css:"pk-stage", blurb:"Mics, spotlights and a sold-out show", items:[
@@ -440,7 +458,16 @@ const SEASON_PACKS = {2: {
     ["s2p-gamer","face","😎","Pro gamer"],["s2p-jackpot","badge","🎰","Jackpot"],["s2p-bowl","badge","🎳","Strike"],["s2p-neon","bg","linear-gradient(135deg,#22d3ee,#a855f7)","Neon Arcade"]]},
   cafe:{name:"Cozy Café", css:"pk-cafe", blurb:"Latte art and a rainy window seat", items:[
     ["s2p-boba","badge","🧋","Boba"],["s2p-croissant","badge","🥐","Croissant"],["s2p-cake","badge","🍰","Cake slice"],["s2p-pancake","badge","🥞","Pancakes"],
-    ["s2p-cat","face","😺","Café cat"],["s2p-plant","badge","🪴","Houseplant"],["s2p-rain","badge","🌧️","Rainy day"],["s2p-coffee","bg","linear-gradient(135deg,#d6a77a,#7c4a2d)","Coffee House"]]}
+    ["s2p-cat","face","😺","Café cat"],["s2p-plant","badge","🪴","Houseplant"],["s2p-rain","badge","🌧️","Rainy day"],["s2p-coffee","bg","linear-gradient(135deg,#d6a77a,#7c4a2d)","Coffee House"]]},
+  unrelics:{name:"Fractured Worlds: Relics", css:"pk-unrelic", blurb:"Things that fell out of a broken reality", items:[
+    ["un-hole","badge","🕳️","Black hole"],["un-hour","badge","⏳","Broken hourglass"],["un-atom","badge","⚛️","Split atom"],["un-tube","badge","🧪","Strange matter"],
+    ["un-core","badge","🔋","Power core"],["un-dust","badge","💫","Star dust"],["un-shard","badge","💠","Reality shard"],["un-rift","bg","linear-gradient(135deg,#0b0b1f,#5b21b6,#06b6d4,#0b0b1f)","The Rift"]]},
+  untravel:{name:"Fractured Worlds: Travelers", css:"pk-untravel", blurb:"Characters who slipped in from other worlds", items:[
+    ["un-sk-walker","skin",SKIN_SVG["un-riftwalker"],"Rift Walker"],["un-sk-glitch","skin",SKIN_SVG["un-glitchkid"],"Glitch Kid"],["un-sk-eater","skin",SKIN_SVG["un-stareater"],"Star Eater"],["un-sk-time","skin",SKIN_SVG["un-timekeeper"],"Time Keeper"],
+    ["un-genie","face","🧞","Rift genie"],["un-villain","face","🦹","Void villain"],["un-shadow","face","👤","Shadow"],["un-horizon","bg","linear-gradient(135deg,#000000,#312e81,#f59e0b)","Event Horizon"]]},
+  unciv:{name:"Fractured Worlds: Lost Civilizations", css:"pk-unciv", blurb:"Cities floating between broken worlds", items:[
+    ["uc-temple","badge","🏛️","Sky temple"],["uc-castle","badge","🏯","Floating castle"],["uc-fort","badge","🏰","Glitch citadel"],["uc-tower","badge","🗼","Signal spire"],
+    ["uc-arena","badge","🏟️","Star arena"],["uc-forge","badge","🌋","Core forge"],["uc-ruler","face","🤴","Lost ruler"],["uc-ruins","bg","linear-gradient(135deg,#78350f,#7c3aed,#0f172a)","Ancient Rift"]]}
 }};
 Object.values(SEASON_PACKS).forEach(set => Object.entries(set).forEach(([pid,p]) => addItems(p.items, {pack:pid})));
 function curPacks(){ return SEASON_PACKS[seasonMeta().id] || PACKS; }
@@ -919,6 +946,7 @@ function afterLogin(a, then){
   if (then.view === "lobby"){ addPlayer({acct:a.id}); go("lobby"); }
   else if (then.view === "shop") go("shop", {shop:{id:a.id, sel:null}});
   else if (then.view === "pass") go("pass", {pass:{id:a.id}});
+  else if (then.view === "livetrade") go("profile", {profile:{id:then.back, tab:"trade", sub:"live"}});
   else if (then.view === "online"){ const o = O(); o.acct = a.id; o.guest = null; o.step = "menu"; go("online"); }
   else go("profile", {profile:{id:a.id, tab:"avatar"}});
 }
@@ -1302,13 +1330,41 @@ async function sendGift(a, toId, kind, value){
   return {ok:`Sent ${ITEMS[id].name} to ${to.name}!`};
 }
 
-// trades live at trades/{id}: {from, to, give:[my items], want:[their items], status:"pending"|"done"|"declined"|"canceled"|"failed"}
-function offerTrade(a, toId, give, want){
+// trades live at trades/{id}: {from, to, give:[from's items], want:[to's items], gGive, gWant (Gbux), method:"offer"|"live",
+//   status:"pending"|"working"|"done"|"declined"|"canceled"|"failed"|"undoing"|"undone", at, doneAt}
+const UNDO_HOURS = 1;
+const UNDO_TEXT = UNDO_HOURS === 1 ? "1 hour" : UNDO_HOURS + " hours";
+// moves everything in a trade between the two accounts; reverse=true puts it all back (used by undo)
+async function swapTrade(t, reverse, logA, logB){
+  let give = t.give || [], want = t.want || [], gg = Math.max(0, Math.floor(+t.gGive || 0)), gw = Math.max(0, Math.floor(+t.gWant || 0));
+  if (reverse){ [give, want] = [want, give]; [gg, gw] = [gw, gg]; }
+  const A = t.from, B = t.to;
+  const a1 = await changeAccount(A, x => {
+    if (!give.every(id => x.items.includes(id)) || want.some(id => x.items.includes(id)) || x.gbucks < gg) return false;
+    give.forEach(id => dropItem(x, id)); want.forEach(id => x.items.push(id)); x.gbucks += gw - gg;
+    if (!reverse) stat(x, "trades"); if (logA) pushLog(x, logA);
+  });
+  if (!a1) return {err:A};
+  const b1 = await changeAccount(B, x => {
+    if (!want.every(id => x.items.includes(id)) || give.some(id => x.items.includes(id)) || x.gbucks < gw) return false;
+    want.forEach(id => dropItem(x, id)); give.forEach(id => x.items.push(id)); x.gbucks += gg - gw;
+    if (!reverse) stat(x, "trades"); if (logB) pushLog(x, logB);
+  });
+  if (!b1){
+    await changeAccount(A, x => { want.forEach(id => dropItem(x, id)); give.forEach(id => { if (!x.items.includes(id)) x.items.push(id); }); x.gbucks += gg - gw;
+      if (!reverse) x.stats.trades = Math.max(0, (x.stats.trades || 1) - 1); });
+    return {err:B};
+  }
+  return {ok:true, a:a1, b:b1};
+}
+const bothSides = t => ((t.give || []).length || +t.gGive) && ((t.want || []).length || +t.gWant);
+function offerTrade(a, toId, give, want, gGive, gWant){
   if (!fdb) return Promise.resolve("Trading needs the game to be online.");
-  if (!toId) return Promise.resolve("Pick who to trade with.");
-  if (!give.length || !want.length) return Promise.resolve("Pick at least one item on each side.");
-  const t = {from:a.id, fromName:a.name, to:toId, toName:DATA.accounts[toId].name, give, want, at:Date.now(), status:"pending"};
-  return ref("trades").push(t).then(() => ({ok:"Trade offer sent!"}));
+  if (!toId || !DATA.accounts[toId]) return Promise.resolve("Pick who to trade with.");
+  const t = {from:a.id, fromName:a.name, to:toId, toName:DATA.accounts[toId].name, give, want, gGive:Math.max(0, Math.floor(+gGive || 0)), gWant:Math.max(0, Math.floor(+gWant || 0)), at:Date.now(), status:"pending", method:"offer"};
+  if (!bothSides(t)) return Promise.resolve("Put something on both sides of the trade.");
+  if (t.gGive > a.gbucks) return Promise.resolve("You don't have that many Gbux.");
+  return ref("trades").push(clean(t)).then(() => ({ok:`Trade offer sent! ${t.toName} will see it on their Trade tab.`}));
 }
 const setTrade = (tid, status) => ref(`trades/${tid}/status`).set(status);
 async function acceptTrade(a, tid){
@@ -1317,88 +1373,184 @@ async function acceptTrade(a, tid){
   // claim the trade first so it can only be accepted once
   const claim = await ref(`trades/${tid}`).transaction(t => { if (t === null) return null; if (t.status !== "pending") return; return {...t, status:"working"}; });
   if (!claim.committed || !claim.snapshot.exists()) return "That trade was already handled.";
-  const t = claim.snapshot.val(), give = t.give || [], want = t.want || [];
-  const them = await changeAccount(t.from, x => {
-    if (!give.every(id => x.items.includes(id)) || want.some(id => x.items.includes(id))) return false;
-    give.forEach(id => dropItem(x, id)); want.forEach(id => x.items.push(id)); stat(x, "trades");
-    pushLog(x, `🤝 ${a.name} accepted your trade`);
-  });
-  if (!them){ await setTrade(tid, "failed"); return `${t.fromName} doesn't have those items anymore, so the trade was canceled.`; }
-  const me = await changeAccount(a.id, x => {
-    if (!want.every(id => x.items.includes(id)) || give.some(id => x.items.includes(id))) return false;
-    want.forEach(id => dropItem(x, id)); give.forEach(id => x.items.push(id)); stat(x, "trades");
-  });
-  if (!me){
-    // undo the other side
-    await changeAccount(t.from, x => { want.forEach(id => dropItem(x, id)); give.forEach(id => { if (!x.items.includes(id)) x.items.push(id); }); x.stats.trades = Math.max(0, (x.stats.trades||1) - 1); });
-    await setTrade(tid, "failed"); return "You don't have those items anymore, so the trade was canceled.";
-  }
-  await setTrade(tid, "done");
-  saveAccount(me);
-  return {ok:"Trade complete! 🤝"};
+  const t = claim.snapshot.val();
+  const r = await swapTrade(t, false, `🤝 ${a.name} accepted your trade`, null);
+  if (r.err){ await setTrade(tid, "failed"); return r.err === t.from ? `${t.fromName} doesn't have that stuff anymore, so the trade was canceled.` : "You don't have that stuff anymore, so the trade was canceled."; }
+  await ref(`trades/${tid}`).update({status:"done", doneAt:Date.now()});
+  saveAccount(r.b);
+  return {ok:`Trade complete! 🤝 Either of you can undo it for ${UNDO_TEXT} from 🕘 History.`};
+}
+// both players are on this device
+async function finishLiveTrade(lt){
+  if (!fdb) return "Trading needs the game to be online.";
+  const A = DATA.accounts[lt.a], B = DATA.accounts[lt.b];
+  if (!A || !B) return "Pick who to trade with.";
+  if (!loggedIn(B.id)) return `${B.name} needs to log in on this device first.`;
+  const t = {from:A.id, fromName:A.name, to:B.id, toName:B.name, give:lt.give, want:lt.take, gGive:Math.max(0, Math.floor(+lt.gGive || 0)), gWant:Math.max(0, Math.floor(+lt.gTake || 0)), at:Date.now(), method:"live"};
+  if (!bothSides(t)) return "Put something on both sides of the trade.";
+  const r = await swapTrade(t, false, `🤝 Traded with ${B.name} face to face`, `🤝 Traded with ${A.name} face to face`);
+  if (r.err) return `${r.err === A.id ? A.name : B.name} doesn't have that stuff anymore. Nothing was traded.`;
+  await ref("trades").push(clean({...t, status:"done", doneAt:Date.now()}));
+  saveAccount(r.a); saveAccount(r.b);
+  return {ok:`Trade complete! 🤝 Either of you can undo it for ${UNDO_TEXT} from 🕘 History.`};
+}
+// either player can put a finished trade back, for a while, in case someone traded on their account without asking
+async function undoTrade(a, tid){
+  const tr = DATA.trades[tid];
+  if (!tr || (tr.from !== a.id && tr.to !== a.id)) return "That trade is gone.";
+  if (tr.status !== "done" || Date.now() - (tr.doneAt || tr.at) > UNDO_HOURS * 36e5) return "That trade can't be undone anymore.";
+  const claim = await ref(`trades/${tid}`).transaction(t => { if (t === null) return null; if (t.status !== "done") return; return {...t, status:"undoing"}; });
+  if (!claim.committed || !claim.snapshot.exists()) return "That trade was already undone.";
+  const t = claim.snapshot.val(), other = t.from === a.id ? t.toName : t.fromName;
+  const note = `↩️ ${a.name} undid a trade, so everything went back`;
+  const r = await swapTrade(t, true, note, note);
+  if (r.err){ await setTrade(tid, "done");
+    return `Can't undo: ${r.err === t.from ? t.fromName : t.toName} doesn't have the traded stuff anymore (it may have been traded or gifted again).`; }
+  await ref(`trades/${tid}`).update({status:"undone", undoneBy:a.id, undoneAt:Date.now()});
+  return {ok:`Trade with ${other} undone. Everything went back to where it was.`};
 }
 
 const itemChip = (id, on, attr) => { const i = ITEMS[id];
   return `<button class="item" ${attr}="${id}" aria-pressed="${!!on}">${swatch(i)}${esc(i.name)}</button>`; };
+const tradeList = (ids, g) => { const parts = (ids || []).filter(id => ITEMS[id]).map(id => `<span class="tchip">${swatch(ITEMS[id])}${esc(ITEMS[id].name)}</span>`);
+  if (+g) parts.push(`<span class="tchip"><span class="e">💰</span>${fmt(+g)} Gbux</span>`);
+  return parts.length ? parts.join("") : `<span class="small-print">nothing yet</span>`; };
+const whenText = t => new Date(t).toLocaleString([], {month:"short", day:"numeric", hour:"numeric", minute:"2-digit"});
 function tradeTabHtml(a, p){
-  const g = p.gift || (p.gift = {to:"", kind:"gbux", amt:"", item:null});
-  const tr = p.trade || (p.trade = {to:"", give:[], want:[]});
+  const sub = p.sub || "live";
+  const trades = Object.entries(DATA.trades || {}).map(([tid, t]) => ({...t, tid}));
+  const incoming = trades.filter(t => t.to === a.id && t.status === "pending");
   const others = Object.values(DATA.accounts).filter(x => x.id !== a.id && !x.frozen).sort((x,y) => x.name.localeCompare(y.name));
   const opts = sel => `<option value="">Pick a player</option>` + others.map(x => `<option value="${x.id}" ${sel===x.id?"selected":""}>${esc(x.name)}</option>`).join("");
   const mine = a.items.filter(giftable);
-  const target = DATA.accounts[tr.to];
-  const theirs = target ? target.items.filter(id => giftable(id) && !a.items.includes(id)) : [];
-  const trades = Object.entries(DATA.trades || {}).map(([tid, t]) => ({...t, tid}));
-  const incoming = trades.filter(t => t.to === a.id && t.status === "pending");
-  const outgoing = trades.filter(t => t.from === a.id && t.status === "pending");
-  const list = ids => (ids || []).map(id => ITEMS[id] ? `${ITEMS[id].type==="bg" ? "🎨" : ITEMS[id].type==="nametag" ? "🏷️" : ITEMS[id].v} ${esc(ITEMS[id].name)}` : "").join(", ");
   const inbox = (a.inbox || []).slice().reverse();
-  return `
-    ${p.msg ? `<div class="toast" role="status">${esc(p.msg)}</div>` : ""}
-    ${inbox.length ? `<div class="card"><h3>📬 Your mail</h3>${inbox.map(m => `<p class="small-print">${esc(m.text)}</p>`).join("")}</div>` : ""}
-    ${incoming.length ? `<div class="card"><h3>🤝 Trade offers for you</h3>${incoming.map(t => `
-      <div class="tradebox"><b>${esc(t.fromName)}</b> gives: ${list(t.give)}<br><b>You</b> give: ${list(t.want)}
-        <div class="row"><button class="small" data-accept="${t.tid}">Accept</button><button class="small ghost" data-decline="${t.tid}">Decline</button></div></div>`).join("")}</div>` : ""}
-    <div class="card">
+  let body = "";
+  if (sub === "live"){
+    const lt = S.live && S.live.a === a.id ? S.live : (S.live = {a:a.id, b:"", give:[], take:[], gGive:"", gTake:"", okA:false, okB:false});
+    const B = DATA.accounts[lt.b];
+    body = `<div class="card"><h3>🤝 Trade here, face to face</h3>
+      <p class="small-print">Both players on this device. Each of you picks what you give, you both agree, then it swaps.</p>
+      <label for="lt-b">Trade with</label><select id="lt-b">${opts(lt.b)}</select>`;
+    if (B && !loggedIn(B.id)){
+      body += `<div class="tradebox center"><p><b>${esc(B.name)}</b>, it's your turn. Log in on this device so we know it's really you.</p>
+        <button id="lt-login">I'm ${esc(B.name)}, log in</button></div></div>`;
+    } else if (B){
+      const aItems = a.items.filter(id => giftable(id) && !B.items.includes(id));
+      const bItems = B.items.filter(id => giftable(id) && !a.items.includes(id));
+      const side = (who, list, sel, attr, gid, gval, ok) => `<div class="tside">
+          <div class="spread"><b>${nameHtml(who)} gives</b>${ok ? `<span class="tag">✅ agreed</span>` : ""}</div>
+          ${list.length ? `<div class="items">${list.map(id => itemChip(id, sel.includes(id), attr)).join("")}</div>` : `<p class="small-print">Nothing ${esc(who.name)} can trade that the other player doesn't already have.</p>`}
+          <label for="${gid}">Gbux (has ${fmt(who.gbucks)})</label><input id="${gid}" type="number" min="0" max="${who.gbucks}" placeholder="0" value="${esc(gval)}"></div>`;
+      const both = lt.okA && lt.okB;
+      body += side(a, aItems, lt.give, "data-ltgive", "lt-ga", lt.gGive, lt.okA) + side(B, bItems, lt.take, "data-lttake", "lt-gb", lt.gTake, lt.okB) + `
+        <div class="tradebox"><div><b>${esc(a.name)}</b> gives: ${tradeList(lt.give, lt.gGive)}</div><div><b>${esc(B.name)}</b> gives: ${tradeList(lt.take, lt.gTake)}</div></div>
+        <div class="tabs"><button class="small" id="lt-okA" aria-pressed="${lt.okA}">${lt.okA ? "✅" : "⬜"} ${esc(a.name)} agrees</button><button class="small" id="lt-okB" aria-pressed="${lt.okB}">${lt.okB ? "✅" : "⬜"} ${esc(B.name)} agrees</button></div>
+        <button class="big" id="lt-go" ${both ? "" : "disabled"}>${both ? "Complete trade" : "Both players need to agree"}</button>
+        <p class="small-print">Changing anything clears both agreements. Made a mistake, or someone traded on your account without asking? Undo it within ${UNDO_TEXT} from 🕘 History.</p></div>`;
+    } else body += `</div>`;
+  } else if (sub === "offer"){
+    const tr = p.trade || (p.trade = {to:"", give:[], want:[], gGive:"", gWant:""});
+    const target = DATA.accounts[tr.to];
+    const theirs = target ? target.items.filter(id => giftable(id) && !a.items.includes(id)) : [];
+    const outgoing = trades.filter(t => t.from === a.id && t.status === "pending");
+    body = `<div class="card"><h3>📨 Send a trade offer</h3>
+      <p class="small-print">For players on a different device. They see the offer on their Trade tab and can accept or decline.</p>
+      <label for="t-to">Trade with</label><select id="t-to">${opts(tr.to)}</select>
+      <div class="tside"><b>You give</b>
+        ${mine.length ? `<div class="items">${mine.map(id => itemChip(id, tr.give.includes(id), "data-tgive")).join("")}</div>` : `<p class="small-print">You don't have any tradeable items yet.</p>`}
+        <label for="t-gg">Gbux (you have ${fmt(a.gbucks)})</label><input id="t-gg" type="number" min="0" max="${a.gbucks}" placeholder="0" value="${esc(tr.gGive)}"></div>
+      ${target ? `<div class="tside"><b>You want from ${esc(target.name)}</b>
+        ${theirs.length ? `<div class="items">${theirs.map(id => itemChip(id, tr.want.includes(id), "data-twant")).join("")}</div>` : `<p class="small-print">${esc(target.name)} doesn't have anything you don't already own.</p>`}
+        <label for="t-gw">Gbux from ${esc(target.name)}</label><input id="t-gw" type="number" min="0" placeholder="0" value="${esc(tr.gWant)}"></div>` : ""}
+      <button class="big" id="t-send">Send trade offer</button>
+      ${outgoing.length ? `<label>Your offers waiting for an answer</label>${outgoing.map(t => `
+        <div class="tradebox">To <b>${esc(t.toName)}</b><div>You give: ${tradeList(t.give, t.gGive)}</div><div>You get: ${tradeList(t.want, t.gWant)}</div>
+          <div class="row"><button class="small ghost" data-cancel="${t.tid}">Cancel offer</button></div></div>`).join("")}` : ""}
+    </div>`;
+  } else if (sub === "gift"){
+    const g = p.gift || (p.gift = {to:"", kind:"gbux", amt:"", item:null});
+    body = `<div class="card">
       <h3>💝 Send a gift</h3>
       <p class="small-print">Free, no fee. Send Gbux or an item you own.</p>
       <label for="g-to">To</label><select id="g-to">${opts(g.to)}</select>
       <div class="tabs" style="margin-top:8px"><button class="small" id="g-gbux" aria-pressed="${g.kind==="gbux"}">💰 Gbux</button><button class="small" id="g-item" aria-pressed="${g.kind==="item"}">🎒 Item</button></div>
       ${g.kind === "gbux" ? `<label for="g-amt">How many Gbux? (you have ${fmt(a.gbucks)})</label><input id="g-amt" type="number" min="1" max="${a.gbucks}" value="${esc(g.amt)}">`
-        : mine.length ? `<label>Pick an item</label><div class="items">${mine.map(id => itemChip(id, g.item === id, "data-gitem")).join("")}</div>` : `<p class="small-print">You don't have any items you can give. Starter items and level rewards can't be given away.</p>`}
+        : mine.length ? `<label>Pick an item</label><div class="items">${mine.map(id => itemChip(id, g.item === id, "data-gitem")).join("")}</div>` : `<p class="small-print">You don't have any items you can give. Starter items can't be given away.</p>`}
       <button class="big" id="g-send" style="margin-top:10px">Send gift</button>
-    </div>
-    <div class="card">
-      <h3>🤝 Make a trade</h3>
-      <p class="small-print">Pick what you give and what you want. They get the offer and can accept or decline.</p>
-      <label for="t-to">Trade with</label><select id="t-to">${opts(tr.to)}</select>
-      <label>You give</label>
-      ${mine.length ? `<div class="items">${mine.map(id => itemChip(id, tr.give.includes(id), "data-tgive")).join("")}</div>` : `<p class="small-print">You don't have any tradeable items yet.</p>`}
-      ${target ? `<label>You want from ${esc(target.name)}</label>
-        ${theirs.length ? `<div class="items">${theirs.map(id => itemChip(id, tr.want.includes(id), "data-twant")).join("")}</div>` : `<p class="small-print">${esc(target.name)} doesn't have anything you don't already own.</p>`}` : ""}
-      <button class="big" id="t-send" style="margin-top:10px">Send trade offer</button>
-      ${outgoing.length ? `<label>Your offers waiting for an answer</label>${outgoing.map(t => `
-        <div class="tradebox">To <b>${esc(t.toName)}</b>: ${list(t.give)} for ${list(t.want)} <button class="small ghost" data-cancel="${t.tid}">Cancel</button></div>`).join("")}` : ""}
     </div>`;
+  } else {
+    const hist = trades.filter(t => (t.from === a.id || t.to === a.id) && t.status !== "pending" && t.status !== "working")
+      .sort((x,y) => (y.doneAt || y.at) - (x.doneAt || x.at)).slice(0, 15);
+    const label = {done:"✅ Done", undone:"↩️ Undone", declined:"❌ Declined", canceled:"🚫 Canceled", failed:"⚠️ Didn't go through", undoing:"↩️ Undoing…"};
+    body = `<div class="card"><h3>🕘 Trade history</h3>
+      <p class="small-print">You can undo a finished trade for ${UNDO_TEXT}. Everything goes back to both players, as long as they still have it.</p>
+      ${hist.length ? hist.map(t => { const meFrom = t.from === a.id, other = meFrom ? t.toName : t.fromName;
+        const left = t.status === "done" ? UNDO_HOURS * 36e5 - (Date.now() - (t.doneAt || t.at)) : 0;
+        return `<div class="tradebox"><div class="spread"><b>${esc(other)}</b><span class="tag">${label[t.status] || esc(t.status)}</span></div>
+          <small>${t.method === "live" ? "Face to face" : "Offer"} · ${whenText(t.doneAt || t.at)}</small>
+          <div>You gave: ${tradeList(meFrom ? t.give : t.want, meFrom ? t.gGive : t.gWant)}</div>
+          <div>You got: ${tradeList(meFrom ? t.want : t.give, meFrom ? t.gWant : t.gGive)}</div>
+          ${left > 0 ? `<div class="row"><button class="small ghost" data-undo="${t.tid}">↩️ Undo this trade</button><small>${left >= 36e5 ? Math.ceil(left / 36e5) + "h" : Math.max(1, Math.ceil(left / 6e4)) + " min"} left to undo</small></div>` : ""}</div>`; }).join("")
+        : `<p class="small-print">No trades yet.</p>`}</div>`;
+  }
+  return `
+    ${p.msg ? `<div class="toast" role="status">${esc(p.msg)}</div>` : ""}
+    ${incoming.length ? `<div class="card"><h3>📨 Trade offers for you</h3>${incoming.map(t => `
+      <div class="tradebox"><b>${esc(t.fromName)}</b> wants to trade
+        <div>You get: ${tradeList(t.give, t.gGive)}</div><div>You give: ${tradeList(t.want, t.gWant)}</div>
+        <div class="row"><button class="small" data-accept="${t.tid}">Accept</button><button class="small ghost" data-decline="${t.tid}">Decline</button></div></div>`).join("")}</div>` : ""}
+    ${inbox.length ? `<div class="card"><h3>📬 Your mail</h3>${inbox.map(m => `<p class="small-print">${esc(m.text)}</p>`).join("")}</div>` : ""}
+    <div class="tabs">${[["live","🤝 Trade here"],["offer","📨 Offer"],["gift","💝 Gift"],["history","🕘 History"]].map(([k,t]) => `<button class="small" data-tsub="${k}" aria-pressed="${sub===k}">${t}</button>`).join("")}</div>
+    ${body}`;
 }
 function bindTradeTab(a, p){
-  const g = p.gift, tr = p.trade;
   const done = r => { p.msg = typeof r === "string" ? r : r.ok; if (typeof r !== "string"){ p.gift = null; p.trade = null; } render(); };
   const busy = id => { const b = $(id); if (b){ b.disabled = true; b.textContent = "Working…"; } };
+  const on = (sel, ev, fn) => { const el = $(sel); if (el) el[ev] = fn; };
+  const each = (sel, fn) => document.querySelectorAll(sel).forEach(fn);
   p.msg = null;
-  $("#g-to").onchange = e => { g.to = e.target.value; };
-  $("#g-gbux").onclick = () => { g.kind = "gbux"; render(); };
-  $("#g-item").onclick = () => { g.kind = "item"; render(); };
-  const amt = $("#g-amt"); if (amt) amt.oninput = () => { g.amt = amt.value; };
-  document.querySelectorAll("[data-gitem]").forEach(b => b.onclick = () => { g.item = b.dataset.gitem; render(); });
-  $("#g-send").onclick = () => { busy("#g-send"); sendGift(a, g.to, g.kind, g.kind === "gbux" ? +g.amt : g.item).then(done); };
-  $("#t-to").onchange = e => { tr.to = e.target.value; tr.want = []; render(); };
-  document.querySelectorAll("[data-tgive]").forEach(b => b.onclick = () => { const id = b.dataset.tgive; tr.give = tr.give.includes(id) ? tr.give.filter(x => x !== id) : tr.give.concat(id); render(); });
-  document.querySelectorAll("[data-twant]").forEach(b => b.onclick = () => { const id = b.dataset.twant; tr.want = tr.want.includes(id) ? tr.want.filter(x => x !== id) : tr.want.concat(id); render(); });
-  $("#t-send").onclick = () => { busy("#t-send"); offerTrade(a, tr.to, tr.give, tr.want).then(done); };
-  document.querySelectorAll("[data-accept]").forEach(b => b.onclick = () => { b.disabled = true; acceptTrade(a, b.dataset.accept).then(done); });
-  document.querySelectorAll("[data-decline]").forEach(b => b.onclick = () => setTrade(b.dataset.decline, "declined"));
-  document.querySelectorAll("[data-cancel]").forEach(b => b.onclick = () => setTrade(b.dataset.cancel, "canceled"));
+  each("[data-tsub]", b => b.onclick = () => { p.sub = b.dataset.tsub; render(); });
+  // face to face
+  const lt = S.live;
+  if (lt && lt.a === a.id){
+    const reset = () => { lt.okA = false; lt.okB = false; };
+    on("#lt-b", "onchange", e => { Object.assign(lt, {b:e.target.value, give:[], take:[], gGive:"", gTake:"", okA:false, okB:false}); render(); });
+    on("#lt-login", "onclick", () => startQuiz(lt.b, {view:"livetrade", back:a.id}));
+    each("[data-ltgive]", b => b.onclick = () => { const id = b.dataset.ltgive; lt.give = lt.give.includes(id) ? lt.give.filter(x => x !== id) : lt.give.concat(id); reset(); render(); });
+    each("[data-lttake]", b => b.onclick = () => { const id = b.dataset.lttake; lt.take = lt.take.includes(id) ? lt.take.filter(x => x !== id) : lt.take.concat(id); reset(); render(); });
+    on("#lt-ga", "onchange", e => { lt.gGive = e.target.value; reset(); render(); });
+    on("#lt-gb", "onchange", e => { lt.gTake = e.target.value; reset(); render(); });
+    on("#lt-okA", "onclick", () => { lt.okA = !lt.okA; render(); });
+    on("#lt-okB", "onclick", () => { lt.okB = !lt.okB; render(); });
+    on("#lt-go", "onclick", () => { busy("#lt-go"); finishLiveTrade(lt).then(r => { if (typeof r !== "string") S.live = null; done(r); }); });
+  }
+  // offers
+  const tr = p.trade;
+  if (tr){
+    on("#t-to", "onchange", e => { tr.to = e.target.value; tr.want = []; tr.gWant = ""; render(); });
+    each("[data-tgive]", b => b.onclick = () => { const id = b.dataset.tgive; tr.give = tr.give.includes(id) ? tr.give.filter(x => x !== id) : tr.give.concat(id); render(); });
+    each("[data-twant]", b => b.onclick = () => { const id = b.dataset.twant; tr.want = tr.want.includes(id) ? tr.want.filter(x => x !== id) : tr.want.concat(id); render(); });
+    on("#t-gg", "onchange", e => { tr.gGive = e.target.value; });
+    on("#t-gw", "onchange", e => { tr.gWant = e.target.value; });
+    on("#t-send", "onclick", () => { tr.gGive = ($("#t-gg") || {}).value || ""; tr.gWant = ($("#t-gw") || {}).value || "";
+      busy("#t-send"); offerTrade(a, tr.to, tr.give, tr.want, tr.gGive, tr.gWant).then(done); });
+  }
+  // gifts
+  const g = p.gift;
+  if (g){
+    on("#g-to", "onchange", e => { g.to = e.target.value; });
+    on("#g-gbux", "onclick", () => { g.kind = "gbux"; render(); });
+    on("#g-item", "onclick", () => { g.kind = "item"; render(); });
+    on("#g-amt", "oninput", e => { g.amt = e.target.value; });
+    each("[data-gitem]", b => b.onclick = () => { g.item = b.dataset.gitem; render(); });
+    on("#g-send", "onclick", () => { busy("#g-send"); sendGift(a, g.to, g.kind, g.kind === "gbux" ? +g.amt : g.item).then(done); });
+  }
+  each("[data-accept]", b => b.onclick = () => { b.disabled = true; acceptTrade(a, b.dataset.accept).then(done); });
+  each("[data-decline]", b => b.onclick = () => setTrade(b.dataset.decline, "declined"));
+  each("[data-cancel]", b => b.onclick = () => setTrade(b.dataset.cancel, "canceled"));
+  each("[data-undo]", b => b.onclick = () => {
+    if (!confirm("Undo this trade? Everything goes back to both players.")) return;
+    b.disabled = true; undoTrade(a, b.dataset.undo).then(done); });
 }
 
 /* ================= item shop: commons + rares always in stock, epic/legendary featured weekly ================= */
@@ -2087,7 +2239,7 @@ async function hostRoom(game){
   for (let t = 0; t < 6; t++){ code = makeCode(); if (!(await ref("rooms/" + code).get()).exists()) break; }
   const l = S.lobby[game];
   const settings = game === "lizard" ? {cat:l.cat, lizards:l.lizards} : game === "dash" ? {cat:l.cat, time:l.time, rounds:l.rounds} : {packs:l.packs || Object.keys(TPACKS), rare:l.rare, scoring:l.scoring, win:l.win};
-  await ref("rooms/" + code).set(clean({game, host:DEVICE, created:Date.now(), settings}));
+  await ref("rooms/" + code).set(clean({game, host:DEVICE, hostName:onlineMe().name, created:Date.now(), settings}));
   joinRoom(code);
 }
 async function joinRoom(code){
@@ -2101,6 +2253,7 @@ async function joinRoom(code){
   await pref.set(clean({name:me.name, acct:me.acct, order:Date.now()}));
   pref.onDisconnect().remove();
   o.code = code; o.err = ""; o.step = "room";
+  if (roomsOff) roomsOff();
   if (roomOff) roomOff();
   const rr = ref("rooms/" + code);
   const cb = rr.on("value", s => { ROOM = s.val(); onRoomChange(); });
@@ -2263,27 +2416,54 @@ function renderOnlineWho(app){
   app.querySelectorAll("[data-acct]").forEach(b => b.onclick = () => { const id = b.dataset.acct;
     if (loggedIn(id)){ const o = O(); o.acct = id; o.step = "menu"; render(); } else startQuiz(id, {view:"online"}); });
 }
+// every room is public: the online menu lists the open ones so you can just tap Join
+let ROOMS_OPEN = {}, roomsOff = null;
+function watchOpenRooms(){
+  if (roomsOff || !fdb) return;
+  const q = ref("rooms").orderByChild("created").startAt(Date.now() - 6 * 36e5);
+  const cb = q.on("value", snap => { ROOMS_OPEN = snap.val() || {}; drawRoomList(); }, () => {});
+  roomsOff = () => { q.off("value", cb); roomsOff = null; };
+}
+function roomHostName(r){ const pl = r.players && r.players[r.host];
+  if (pl) return pl.acct && DATA.accounts[pl.acct] ? DATA.accounts[pl.acct].name : pl.name; return r.hostName || "Someone"; }
+function openRoomsHtml(){
+  if (!fdb) return `<p class="small-print">Online rooms need an internet connection.</p>`;
+  const list = Object.entries(ROOMS_OPEN).map(([code, r]) => ({code, r, n: r && r.players ? Object.keys(r.players).length : 0}))
+    .filter(x => x.r && x.n > 0 && GAME_TITLE[x.r.game]);
+  list.sort((x, y) => (!!x.r.round - !!y.r.round) || (y.r.created - x.r.created));
+  if (!list.length) return `<p class="small-print">No open rooms right now. Host one and everyone else will see it here.</p>`;
+  return list.map(({code, r, n}) => { const t = GAME_TITLE[r.game], sp = t.indexOf(" ");
+    return `<div class="roomrow"><span class="ic">${t.slice(0, sp)}</span><span style="flex:1;min-width:0"><b>${esc(t.slice(sp + 1))}</b><br>
+      <small>${esc(roomHostName(r))}'s room · ${n} player${n > 1 ? "s" : ""} · ${r.round ? "playing now" : "waiting to start"}</small></span>
+      <button class="small" data-joinroom="${code}">Join</button></div>`; }).join("");
+}
+function bindRoomList(){ document.querySelectorAll("[data-joinroom]").forEach(b => b.onclick = () => { b.disabled = true; b.textContent = "Joining…"; joinRoom(b.dataset.joinroom); }); }
+function drawRoomList(){ const el = $("#roomlist"); if (!el || S.view !== "online") return; el.innerHTML = openRoomsHtml(); bindRoomList(); }
 function renderOnlineMenu(app){
   const o = O(), me = onlineMe();
+  watchOpenRooms();
   app.innerHTML = `
     <div class="spread"><h2>🌐 Play online</h2><button class="ghost small" id="back">← Hub</button></div>
     <div class="card"><div class="spread"><span class="row">${avatarHtml(o.acct ? DATA.accounts[o.acct]?.avatar : guestAv,"sm")}<b>${esc(me.name)}</b>${o.acct ? "" : `<span class="tag">guest</span>`}</span>
       <button class="ghost small" id="switch">Switch</button></div></div>
     ${o.err ? `<div class="toast">${esc(o.err)}</div>` : ""}
-    <div class="card"><h3>Join a room</h3>
-      <div class="row" style="flex-wrap:nowrap"><input type="text" id="code" maxlength="4" placeholder="ABCD" style="text-transform:uppercase;font:400 1.4rem var(--display);letter-spacing:.2em"><button id="join">Join</button></div></div>
+    <div class="card"><div class="spread"><h3>🟢 Open rooms</h3><span class="tag">updates live</span></div>
+      <div id="roomlist" style="display:flex;flex-direction:column;gap:8px">${openRoomsHtml()}</div></div>
     <div class="card"><h3>Host a room</h3>
       <button class="gamecard gc-liz" id="h-liz"><span class="ic">🦎</span><span><b>Lizard in the Room</b><span>3+ players</span></span></button>
       <button class="gamecard gc-tsu" id="h-tsu"><span class="ic">🌊</span><span><b>Tsunami Meter</b><span>2+ players</span></span></button>
       <button class="gamecard gc-dash" id="h-dash"><span class="ic">🎨</span><span><b>Doodle Dash</b><span>2+ players</span></span></button>
-      <p class="small-print">You get a 4-letter code. Everyone else opens Glitch Game Night, taps Play online and types it in.</p></div>`;
-  $("#back").onclick = () => go("home");
+      <p class="small-print">Your room shows up in Open rooms for everyone, so they can just tap Join.</p></div>
+    <div class="card"><h3>Have a room code?</h3>
+      <div class="row" style="flex-wrap:nowrap"><input type="text" id="code" maxlength="4" placeholder="ABCD" style="text-transform:uppercase;font:400 1.4rem var(--display);letter-spacing:.2em"><button id="join">Join</button></div></div>`;
+  $("#back").onclick = () => { if (roomsOff) roomsOff(); go("home"); };
   $("#switch").onclick = () => { o.step = "who"; o.err = ""; render(); };
   $("#join").onclick = () => joinRoom($("#code").value);
   $("#code").onkeydown = e => { if (e.key === "Enter") joinRoom(e.target.value); };
   $("#h-liz").onclick = () => hostRoom("lizard");
   $("#h-tsu").onclick = () => hostRoom("tsunami");
   $("#h-dash").onclick = () => hostRoom("dash");
+  bindRoomList();
 }
 function roomScores(){
   const ps = rPlayers(), sc = ROOM.scores || {};
