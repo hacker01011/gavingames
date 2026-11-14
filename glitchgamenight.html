@@ -152,9 +152,6 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid 
 .pk-snow{background:linear-gradient(140deg,#1d4ed8,#38bdf8)}
 .pk-arcade{background:linear-gradient(140deg,#0e7490,#7e22ce)}
 .pk-cafe{background:linear-gradient(140deg,#78350f,#b45309)}
-.pk-unrelic{background:linear-gradient(140deg,#0b0b1f,#5b21b6 55%,#06b6d4)}
-.pk-untravel{background:linear-gradient(140deg,#111827,#312e81 50%,#db2777)}
-.pk-unciv{background:linear-gradient(140deg,#78350f,#7c3aed 60%,#0f172a)}
 .roomrow{display:flex;gap:10px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:12px}
 .roomrow .ic{font-size:1.8rem;line-height:1}
 .roomrow small{color:var(--muted)}
@@ -432,13 +429,6 @@ function untilRotation(){ const span = SHOP_ROT_HOURS * 36e5, ms = span - Date.n
   return h ? `${h}h ${m}m` : `${m}m`; }
 const shopRefreshText = () => curShop() ? `new featured in ${untilRotation()}` : `new featured in ${untilReset()}`;
 
-// character skins that come out of the Fractured Worlds: Travelers pack
-Object.assign(SKIN_SVG, {
-"un-riftwalker":`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M12 100 Q50 64 88 100Z" fill="#2e1065"/><path d="M28 62 Q26 22 50 20 Q74 22 72 62 Q62 52 50 52 Q38 52 28 62Z" fill="#4c1d95"/><ellipse cx="50" cy="46" rx="14" ry="13" fill="#0b0b1f"/><ellipse cx="44" cy="46" rx="3" ry="2" fill="#22d3ee"/><ellipse cx="56" cy="46" rx="3" ry="2" fill="#22d3ee"/><path d="M36 82 l6 -8 l4 6 l4 -8 l4 8 l4 -6 l6 8" stroke="#a78bfa" stroke-width="2" fill="none"/></svg>`,
-"un-glitchkid":`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M16 100 Q50 72 84 100Z" fill="#0891b2"/><rect x="45" y="56" width="10" height="12" fill="#eab688"/><circle cx="50" cy="46" r="17" fill="#f3c79b"/><path d="M33 38 Q50 26 67 38 L67 34 Q50 22 33 34Z" fill="#111"/><rect x="31" y="36" width="34" height="4" fill="#f0abfc" opacity=".85"/><rect x="28" y="50" width="22" height="4" fill="#22d3ee" opacity=".85"/><rect x="52" y="42" width="20" height="3" fill="#a3e635" opacity=".85"/><rect x="41" y="44" width="5" height="5" fill="#111"/><rect x="55" y="44" width="5" height="5" fill="#111"/><path d="M44 56 h4 v2 h4 v-2 h4" stroke="#7c2d12" stroke-width="2" fill="none"/></svg>`,
-"un-stareater":`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M18 100 Q14 40 50 26 Q86 40 82 100Z" fill="#1e1b4b"/><circle cx="34" cy="70" r="1.6" fill="#fff"/><circle cx="66" cy="80" r="1.4" fill="#fff"/><circle cx="62" cy="40" r="1.2" fill="#fde047"/><circle cx="40" cy="88" r="1.2" fill="#f0abfc"/><circle cx="50" cy="54" r="13" fill="#f8fafc"/><circle cx="50" cy="54" r="7" fill="#7c3aed"/><circle cx="50" cy="54" r="3" fill="#0b0b1f"/><circle cx="53" cy="51" r="1.6" fill="#fff"/><path d="M36 30 l-6 -10 M64 30 l6 -10" stroke="#818cf8" stroke-width="3" stroke-linecap="round"/><circle cx="30" cy="19" r="3" fill="#f0abfc"/><circle cx="70" cy="19" r="3" fill="#f0abfc"/></svg>`,
-"un-timekeeper":`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M18 100 Q50 76 82 100Z" fill="#78350f"/><circle cx="50" cy="46" r="20" fill="#b45309"/><circle cx="50" cy="46" r="16" fill="#fef3c7"/><path d="M50 46 V34 M50 46 L58 50" stroke="#1f2937" stroke-width="2.5" stroke-linecap="round"/><circle cx="50" cy="46" r="2" fill="#1f2937"/><path d="M50 31 v2 M50 59 v2 M35 46 h2 M63 46 h2" stroke="#92400e" stroke-width="2"/><rect x="46" y="20" width="8" height="6" rx="2" fill="#b45309"/><circle cx="36" cy="30" r="3" fill="#fbbf24"/><circle cx="64" cy="30" r="3" fill="#fbbf24"/></svg>`
-});
 // Season 2 packs replace the old packs while Season 2 is live (items people already own stay theirs)
 const SEASON_PACKS = {2: {
   stage:{name:"Stage Idols", css:"pk-stage", blurb:"Mics, spotlights and a sold-out show", items:[
@@ -458,16 +448,7 @@ const SEASON_PACKS = {2: {
     ["s2p-gamer","face","😎","Pro gamer"],["s2p-jackpot","badge","🎰","Jackpot"],["s2p-bowl","badge","🎳","Strike"],["s2p-neon","bg","linear-gradient(135deg,#22d3ee,#a855f7)","Neon Arcade"]]},
   cafe:{name:"Cozy Café", css:"pk-cafe", blurb:"Latte art and a rainy window seat", items:[
     ["s2p-boba","badge","🧋","Boba"],["s2p-croissant","badge","🥐","Croissant"],["s2p-cake","badge","🍰","Cake slice"],["s2p-pancake","badge","🥞","Pancakes"],
-    ["s2p-cat","face","😺","Café cat"],["s2p-plant","badge","🪴","Houseplant"],["s2p-rain","badge","🌧️","Rainy day"],["s2p-coffee","bg","linear-gradient(135deg,#d6a77a,#7c4a2d)","Coffee House"]]},
-  unrelics:{name:"Fractured Worlds: Relics", css:"pk-unrelic", blurb:"Things that fell out of a broken reality", items:[
-    ["un-hole","badge","🕳️","Black hole"],["un-hour","badge","⏳","Broken hourglass"],["un-atom","badge","⚛️","Split atom"],["un-tube","badge","🧪","Strange matter"],
-    ["un-core","badge","🔋","Power core"],["un-dust","badge","💫","Star dust"],["un-shard","badge","💠","Reality shard"],["un-rift","bg","linear-gradient(135deg,#0b0b1f,#5b21b6,#06b6d4,#0b0b1f)","The Rift"]]},
-  untravel:{name:"Fractured Worlds: Travelers", css:"pk-untravel", blurb:"Characters who slipped in from other worlds", items:[
-    ["un-sk-walker","skin",SKIN_SVG["un-riftwalker"],"Rift Walker"],["un-sk-glitch","skin",SKIN_SVG["un-glitchkid"],"Glitch Kid"],["un-sk-eater","skin",SKIN_SVG["un-stareater"],"Star Eater"],["un-sk-time","skin",SKIN_SVG["un-timekeeper"],"Time Keeper"],
-    ["un-genie","face","🧞","Rift genie"],["un-villain","face","🦹","Void villain"],["un-shadow","face","👤","Shadow"],["un-horizon","bg","linear-gradient(135deg,#000000,#312e81,#f59e0b)","Event Horizon"]]},
-  unciv:{name:"Fractured Worlds: Lost Civilizations", css:"pk-unciv", blurb:"Cities floating between broken worlds", items:[
-    ["uc-temple","badge","🏛️","Sky temple"],["uc-castle","badge","🏯","Floating castle"],["uc-fort","badge","🏰","Glitch citadel"],["uc-tower","badge","🗼","Signal spire"],
-    ["uc-arena","badge","🏟️","Star arena"],["uc-forge","badge","🌋","Core forge"],["uc-ruler","face","🤴","Lost ruler"],["uc-ruins","bg","linear-gradient(135deg,#78350f,#7c3aed,#0f172a)","Ancient Rift"]]}
+    ["s2p-cat","face","😺","Café cat"],["s2p-plant","badge","🪴","Houseplant"],["s2p-rain","badge","🌧️","Rainy day"],["s2p-coffee","bg","linear-gradient(135deg,#d6a77a,#7c4a2d)","Coffee House"]]}
 }};
 Object.values(SEASON_PACKS).forEach(set => Object.entries(set).forEach(([pid,p]) => addItems(p.items, {pack:pid})));
 function curPacks(){ return SEASON_PACKS[seasonMeta().id] || PACKS; }
@@ -1283,7 +1264,7 @@ const SLOT_DEFAULT = {face:"f-frog", bg:"bg-sky"};
 function dropItem(acc, id){
   const k = acc.items.indexOf(id); if (k < 0) return false;
   acc.items.splice(k, 1);
-  const t = ITEMS[id].type; if (acc.avatar[t] === id) acc.avatar[t] = SLOT_DEFAULT[t] || null;
+  const it = ITEMS[id]; if (it && acc.avatar[it.type] === id) acc.avatar[it.type] = SLOT_DEFAULT[it.type] || null;
   return true;
 }
 // Changes one account in place on the server so it never overwrites someone else's newer save.
@@ -1339,20 +1320,26 @@ async function swapTrade(t, reverse, logA, logB){
   let give = t.give || [], want = t.want || [], gg = Math.max(0, Math.floor(+t.gGive || 0)), gw = Math.max(0, Math.floor(+t.gWant || 0));
   if (reverse){ [give, want] = [want, give]; [gg, gw] = [gw, gg]; }
   const A = t.from, B = t.to;
-  const a1 = await changeAccount(A, x => {
-    if (!give.every(id => x.items.includes(id)) || want.some(id => x.items.includes(id)) || x.gbucks < gg) return false;
-    give.forEach(id => dropItem(x, id)); want.forEach(id => x.items.push(id)); x.gbucks += gw - gg;
-    if (!reverse) stat(x, "trades"); if (logA) pushLog(x, logA);
-  });
+  let a1 = null, b1 = null;
+  try {
+    a1 = await changeAccount(A, x => {
+      if (!give.every(id => x.items.includes(id)) || want.some(id => x.items.includes(id)) || x.gbucks < gg) return false;
+      give.forEach(id => dropItem(x, id)); want.forEach(id => x.items.push(id)); x.gbucks += gw - gg;
+      if (!reverse) stat(x, "trades"); if (logA) pushLog(x, logA);
+    });
+  } catch(e){ console.warn("trade step 1 failed", e); a1 = null; }
   if (!a1) return {err:A};
-  const b1 = await changeAccount(B, x => {
-    if (!want.every(id => x.items.includes(id)) || give.some(id => x.items.includes(id)) || x.gbucks < gw) return false;
-    want.forEach(id => dropItem(x, id)); give.forEach(id => x.items.push(id)); x.gbucks += gg - gw;
-    if (!reverse) stat(x, "trades"); if (logB) pushLog(x, logB);
-  });
+  try {
+    b1 = await changeAccount(B, x => {
+      if (!want.every(id => x.items.includes(id)) || give.some(id => x.items.includes(id)) || x.gbucks < gw) return false;
+      want.forEach(id => dropItem(x, id)); give.forEach(id => x.items.push(id)); x.gbucks += gg - gw;
+      if (!reverse) stat(x, "trades"); if (logB) pushLog(x, logB);
+    });
+  } catch(e){ console.warn("trade step 2 failed", e); b1 = null; }
   if (!b1){
+    // put the first player's side back so nobody ends up with half a trade
     await changeAccount(A, x => { want.forEach(id => dropItem(x, id)); give.forEach(id => { if (!x.items.includes(id)) x.items.push(id); }); x.gbucks += gg - gw;
-      if (!reverse) x.stats.trades = Math.max(0, (x.stats.trades || 1) - 1); });
+      if (!reverse) x.stats.trades = Math.max(0, (x.stats.trades || 1) - 1); }).catch(e => console.warn("trade rollback failed", e));
     return {err:B};
   }
   return {ok:true, a:a1, b:b1};
@@ -1371,7 +1358,7 @@ async function acceptTrade(a, tid){
   const tr = DATA.trades[tid];
   if (!tr || tr.to !== a.id) return "That trade is gone.";
   // claim the trade first so it can only be accepted once
-  const claim = await ref(`trades/${tid}`).transaction(t => { if (t === null) return null; if (t.status !== "pending") return; return {...t, status:"working"}; });
+  const claim = await ref(`trades/${tid}`).transaction(t => { if (t === null) return null; if (t.status !== "pending") return; return {...t, status:"working", workStart:Date.now()}; });
   if (!claim.committed || !claim.snapshot.exists()) return "That trade was already handled.";
   const t = claim.snapshot.val();
   const r = await swapTrade(t, false, `🤝 ${a.name} accepted your trade`, null);
@@ -1399,7 +1386,7 @@ async function undoTrade(a, tid){
   const tr = DATA.trades[tid];
   if (!tr || (tr.from !== a.id && tr.to !== a.id)) return "That trade is gone.";
   if (tr.status !== "done" || Date.now() - (tr.doneAt || tr.at) > UNDO_HOURS * 36e5) return "That trade can't be undone anymore.";
-  const claim = await ref(`trades/${tid}`).transaction(t => { if (t === null) return null; if (t.status !== "done") return; return {...t, status:"undoing"}; });
+  const claim = await ref(`trades/${tid}`).transaction(t => { if (t === null) return null; if (t.status !== "done") return; return {...t, status:"undoing", workStart:Date.now()}; });
   if (!claim.committed || !claim.snapshot.exists()) return "That trade was already undone.";
   const t = claim.snapshot.val(), other = t.from === a.id ? t.toName : t.fromName;
   const note = `↩️ ${a.name} undid a trade, so everything went back`;
@@ -1410,6 +1397,29 @@ async function undoTrade(a, tid){
   return {ok:`Trade with ${other} undone. Everything went back to where it was.`};
 }
 
+// A trade can get stuck halfway if the page closes in the middle of it. Look at who actually holds the items and fix its status.
+function tradeState(t){
+  const A = DATA.accounts[t.from], B = DATA.accounts[t.to], give = t.give || [], want = t.want || [];
+  if (!A || !B || (!give.length && !want.length)) return "unknown";
+  const holds = (acc, ids) => ids.every(id => acc.items.includes(id)), lacks = (acc, ids) => ids.every(id => !acc.items.includes(id));
+  if (holds(A, want) && lacks(A, give) && holds(B, give) && lacks(B, want)) return "swapped";
+  if (holds(A, give) && lacks(A, want) && holds(B, want) && lacks(B, give)) return "original";
+  return "mixed";
+}
+const repairedTrades = new Set();
+function repairStuckTrades(a){
+  if (!fdb) return;
+  Object.entries(DATA.trades || {}).forEach(([tid, t]) => {
+    if (repairedTrades.has(tid) || (t.from !== a.id && t.to !== a.id)) return;
+    if (t.status !== "working" && t.status !== "undoing") return;
+    if (Date.now() - (t.workStart || t.at) < 60e3) return;   // give a trade in progress a minute to finish
+    const st = tradeState(t); repairedTrades.add(tid);
+    const fix = t.status === "working"
+      ? (st === "swapped" ? {status:"done", doneAt:t.workStart || t.at} : st === "original" ? {status:"failed"} : null)
+      : (st === "original" ? {status:"undone", undoneAt:Date.now()} : st === "swapped" ? {status:"done"} : null);
+    if (fix) ref(`trades/${tid}`).update(fix).catch(e => console.warn("trade repair failed", e));
+  });
+}
 const itemChip = (id, on, attr) => { const i = ITEMS[id];
   return `<button class="item" ${attr}="${id}" aria-pressed="${!!on}">${swatch(i)}${esc(i.name)}</button>`; };
 const tradeList = (ids, g) => { const parts = (ids || []).filter(id => ITEMS[id]).map(id => `<span class="tchip">${swatch(ITEMS[id])}${esc(ITEMS[id].name)}</span>`);
@@ -1479,9 +1489,9 @@ function tradeTabHtml(a, p){
       <button class="big" id="g-send" style="margin-top:10px">Send gift</button>
     </div>`;
   } else {
-    const hist = trades.filter(t => (t.from === a.id || t.to === a.id) && t.status !== "pending" && t.status !== "working")
+    const hist = trades.filter(t => (t.from === a.id || t.to === a.id) && t.status !== "pending")
       .sort((x,y) => (y.doneAt || y.at) - (x.doneAt || x.at)).slice(0, 15);
-    const label = {done:"✅ Done", undone:"↩️ Undone", declined:"❌ Declined", canceled:"🚫 Canceled", failed:"⚠️ Didn't go through", undoing:"↩️ Undoing…"};
+    const label = {done:"✅ Done", undone:"↩️ Undone", declined:"❌ Declined", canceled:"🚫 Canceled", failed:"⚠️ Didn't go through", undoing:"↩️ Undoing…", working:"⏳ Finishing…"};
     body = `<div class="card"><h3>🕘 Trade history</h3>
       <p class="small-print">You can undo a finished trade for ${UNDO_TEXT}. Everything goes back to both players, as long as they still have it.</p>
       ${hist.length ? hist.map(t => { const meFrom = t.from === a.id, other = meFrom ? t.toName : t.fromName;
@@ -1509,6 +1519,7 @@ function bindTradeTab(a, p){
   const on = (sel, ev, fn) => { const el = $(sel); if (el) el[ev] = fn; };
   const each = (sel, fn) => document.querySelectorAll(sel).forEach(fn);
   p.msg = null;
+  repairStuckTrades(a);
   each("[data-tsub]", b => b.onclick = () => { p.sub = b.dataset.tsub; render(); });
   // face to face
   const lt = S.live;
